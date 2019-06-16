@@ -19,12 +19,7 @@ package com.baidu.brpc.naming.zookeeper;
 import com.baidu.brpc.client.instance.Endpoint;
 import com.baidu.brpc.client.instance.ServiceInstance;
 import com.baidu.brpc.exceptions.RpcException;
-import com.baidu.brpc.naming.BrpcURL;
-import com.baidu.brpc.naming.Constants;
-import com.baidu.brpc.naming.NamingService;
-import com.baidu.brpc.naming.NotifyListener;
-import com.baidu.brpc.naming.RegisterInfo;
-import com.baidu.brpc.naming.SubscribeInfo;
+import com.baidu.brpc.naming.*;
 import com.baidu.brpc.utils.CustomThreadFactory;
 import com.baidu.brpc.utils.GsonUtils;
 import io.netty.util.HashedWheelTimer;
@@ -57,6 +52,7 @@ public class ZookeeperNamingService implements NamingService {
     protected CuratorFramework client;
     private int retryInterval;
     private Timer timer;
+    //TODO:作用是什么
     protected ConcurrentSet<RegisterInfo> failedRegisters =
             new ConcurrentSet<RegisterInfo>();
     protected ConcurrentSet<RegisterInfo> failedUnregisters =
@@ -172,6 +168,7 @@ public class ZookeeperNamingService implements NamingService {
                             break;
                         }
                         case CHILD_UPDATED:
+                            //TODO:为什么update不监听
                             break;
                         default:
                             break;

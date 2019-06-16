@@ -1,12 +1,10 @@
 package com.baidu.brpc.utils;
 
 
-import java.util.Date;
-
-import org.junit.Assert;
+import com.google.gson.reflect.TypeToken;
 import org.junit.Test;
 
-import com.google.gson.reflect.TypeToken;
+import java.util.Date;
 
 public class GsonUtilsTest {
 

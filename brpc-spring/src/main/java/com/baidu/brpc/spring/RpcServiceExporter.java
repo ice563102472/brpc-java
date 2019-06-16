@@ -15,28 +15,26 @@
  */
 package com.baidu.brpc.spring;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.baidu.brpc.interceptor.Interceptor;
 import com.baidu.brpc.naming.NamingOptions;
-import com.baidu.brpc.naming.NamingServiceFactory;
 import com.baidu.brpc.server.RpcServer;
 import com.baidu.brpc.server.RpcServerOptions;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * PBRPC exporter for standard PROTOBUF RPC implementation from jprotobuf-rpc-socket.
- * 
+ *
  * @author xiemalin
  * @since 2.17
  */
@@ -45,10 +43,14 @@ import org.springframework.util.Assert;
 @Slf4j
 public class RpcServiceExporter extends RpcServerOptions implements InitializingBean, DisposableBean {
 
-    /** The pr rpc server. */
+    /**
+     * The pr rpc server.
+     */
     private RpcServer prRpcServer;
-    
-    /** The service port. */
+
+    /**
+     * The service port.
+     */
     private int servicePort;
 
     /**
@@ -74,10 +76,13 @@ public class RpcServiceExporter extends RpcServerOptions implements Initializing
     /**
      * the register services which use individual thread pool
      */
-    private Map<RpcServerOptions, Object> customOptionsServiceMap = new HashMap<RpcServerOptions, Object>();
-    
-	/** The interceptor. */
-	private List<Interceptor> interceptors;
+    private Map<RpcServerOptions, Object> customOptionsServiceMap
+            = new HashMap<RpcServerOptions, Object>();
+
+    /**
+     * The interceptor.
+     */
+    private List<Interceptor> interceptors;
 
     /* (non-Javadoc)
      * @see org.springframework.beans.factory.DisposableBean#destroy()
@@ -98,7 +103,7 @@ public class RpcServiceExporter extends RpcServerOptions implements Initializing
         if (registerServices.size() == 0 && customOptionsServiceMap.size() == 0) {
             throw new IllegalArgumentException("No register service specified.");
         }
-        
+
         prRpcServer = new RpcServer(servicePort, this, interceptors);
         NamingOptions namingOptions = new NamingOptions();
         namingOptions.setGroup(group);
@@ -106,11 +111,12 @@ public class RpcServiceExporter extends RpcServerOptions implements Initializing
         namingOptions.setIgnoreFailOfNamingService(ignoreFailOfNamingService);
 
         for (Object service : registerServices) {
-            prRpcServer.registerService(service, AopUtils.getTargetClass(service), namingOptions, null);
+            prRpcServer.registerService(service, AopUtils.getTargetClass(service), namingOptions,
+                                        null);
         }
         for (Map.Entry<RpcServerOptions, Object> entry : customOptionsServiceMap.entrySet()) {
             prRpcServer.registerService(entry.getValue(), AopUtils.getTargetClass(entry.getValue()), namingOptions,
-                    entry.getKey());
+                                        entry.getKey());
         }
 
         prRpcServer.start();

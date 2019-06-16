@@ -16,13 +16,6 @@
 
 package com.baidu.brpc.server.handler;
 
-import static io.netty.handler.codec.http.HttpHeaderNames.CONNECTION;
-import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_LENGTH;
-import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
-import static io.netty.handler.codec.http.HttpResponseStatus.OK;
-import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
-
-import com.baidu.brpc.exceptions.RpcException;
 import com.baidu.brpc.protocol.Protocol;
 import com.baidu.brpc.protocol.Request;
 import com.baidu.brpc.protocol.Response;
@@ -31,22 +24,20 @@ import com.baidu.brpc.protocol.http.HttpRpcProtocol;
 import com.baidu.brpc.server.RpcServer;
 import com.baidu.brpc.server.ServerStatus;
 import com.baidu.brpc.utils.ThreadPool;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.http.DefaultFullHttpResponse;
-import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpHeaderValues;
-import io.netty.handler.codec.http.HttpHeaders;
-import io.netty.handler.codec.http.HttpUtil;
+import io.netty.handler.codec.http.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+
+import static io.netty.handler.codec.http.HttpHeaderNames.*;
+import static io.netty.handler.codec.http.HttpResponseStatus.OK;
+import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 @Slf4j
 @Setter

@@ -16,13 +16,11 @@
 
 package com.baidu.brpc.example.standard;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.baidu.brpc.RpcContext;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by wenweihu86 on 2017/4/25.

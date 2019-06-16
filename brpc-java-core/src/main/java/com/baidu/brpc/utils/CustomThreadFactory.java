@@ -29,12 +29,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class CustomThreadFactory implements ThreadFactory {
 
     private AtomicInteger threadNumber = new AtomicInteger(1);
-    private String namePrefix;
-    private ThreadGroup group;
+    private String        namePrefix;
+    private ThreadGroup   group;
 
     public CustomThreadFactory(String namePrefix) {
         SecurityManager s = System.getSecurityManager();
-        this.group = (s != null) ? s.getThreadGroup() :
+        this.group      = (s != null) ? s.getThreadGroup() :
                 Thread.currentThread().getThreadGroup();
         this.namePrefix = namePrefix + "-";
     }
@@ -42,7 +42,7 @@ public class CustomThreadFactory implements ThreadFactory {
     @Override
     public Thread newThread(Runnable r) {
         String name = namePrefix + threadNumber.getAndIncrement();
-        Thread t = new FastThreadLocalThread(group, r, name, 0);
+        Thread t    = new FastThreadLocalThread(group, r, name, 0);
         t.setDaemon(true);
         t.setPriority(Thread.NORM_PRIORITY);
         log.info("create thread:{}", name);

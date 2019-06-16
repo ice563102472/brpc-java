@@ -1,5 +1,13 @@
 package com.baidu.brpc.client.channel;
 
+import com.baidu.brpc.ChannelInfo;
+import com.baidu.brpc.client.RpcClient;
+import com.baidu.brpc.client.RpcClientOptions;
+import com.baidu.brpc.client.instance.ServiceInstance;
+import com.baidu.brpc.utils.CustomThreadFactory;
+import io.netty.channel.Channel;
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.NoSuchElementException;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -7,15 +15,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
-
-import com.baidu.brpc.ChannelInfo;
-import com.baidu.brpc.client.RpcClient;
-import com.baidu.brpc.client.RpcClientOptions;
-import com.baidu.brpc.client.instance.ServiceInstance;
-import com.baidu.brpc.utils.CustomThreadFactory;
-
-import io.netty.channel.Channel;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * BrpcSingleChannel class keeps single persistent connection with one server

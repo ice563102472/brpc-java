@@ -15,9 +15,9 @@
  */
 package com.baidu.brpc.naming;
 
-import java.util.List;
-
 import com.baidu.brpc.client.instance.ServiceInstance;
+
+import java.util.List;
 
 public interface NamingService {
     /**
@@ -37,7 +37,6 @@ public interface NamingService {
 
     /**
      * 取消订阅.
-     *
      */
     void unsubscribe(SubscribeInfo subscribeInfo);
 

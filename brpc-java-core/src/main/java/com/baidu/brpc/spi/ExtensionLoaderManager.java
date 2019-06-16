@@ -38,17 +38,19 @@ public class ExtensionLoaderManager {
     }
 
     public void loadNamingService() {
-        NamingServiceFactoryManager manager = NamingServiceFactoryManager.getInstance();
-        ServiceLoader<NamingServiceFactory> namingServiceFactories = ServiceLoader.load(NamingServiceFactory.class);
+        NamingServiceFactoryManager         manager                = NamingServiceFactoryManager.getInstance();
+        ServiceLoader<NamingServiceFactory> namingServiceFactories = ServiceLoader.load(
+                NamingServiceFactory.class);
         for (NamingServiceFactory namingServiceFactory : namingServiceFactories) {
             manager.registerNamingServiceFactory(namingServiceFactory);
         }
     }
 
     public void loadProtocol(String encoding) {
-        ProtocolManager protocolManager = ProtocolManager.getInstance();
-        ServiceLoader<ProtocolFactory> protocolFactories = ServiceLoader.load(ProtocolFactory.class);
-        List<ProtocolFactory> protocolFactoryList = new ArrayList<ProtocolFactory>();
+        ProtocolManager                protocolManager     = ProtocolManager.getInstance();
+        ServiceLoader<ProtocolFactory> protocolFactories   = ServiceLoader.load(
+                ProtocolFactory.class);
+        List<ProtocolFactory>          protocolFactoryList = new ArrayList<ProtocolFactory>();
         for (ProtocolFactory protocolFactory : protocolFactories) {
             protocolFactoryList.add(protocolFactory);
         }
@@ -64,8 +66,9 @@ public class ExtensionLoaderManager {
     }
 
     public void loadLoadBalance() {
-        LoadBalanceManager loadBalanceManager = LoadBalanceManager.getInstance();
-        ServiceLoader<LoadBalanceFactory> loadBalanceFactories = ServiceLoader.load(LoadBalanceFactory.class);
+        LoadBalanceManager                loadBalanceManager   = LoadBalanceManager.getInstance();
+        ServiceLoader<LoadBalanceFactory> loadBalanceFactories = ServiceLoader.load(
+                LoadBalanceFactory.class);
         for (LoadBalanceFactory loadBalanceFactory : loadBalanceFactories) {
             loadBalanceManager.registerLoadBalanceFactory(loadBalanceFactory);
         }

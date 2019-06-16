@@ -1,9 +1,9 @@
-syntax="proto2";
+syntax = "proto2";
 import "options.proto";
 
 package brpc;
-option java_package="com.baidu.brpc.protocol";
-option java_outer_classname="StreamingRpcProto";
+option java_package = "com.baidu.brpc.protocol";
+option java_outer_classname = "StreamingRpcProto";
 
 message StreamSettings {
     required int64 stream_id = 1;
@@ -16,7 +16,7 @@ enum FrameType {
     FRAME_TYPE_RST = 1;
     FRAME_TYPE_CLOSE = 2;
     FRAME_TYPE_DATA = 3;
-    FRAME_TYPE_FEEDBACK= 4;
+    FRAME_TYPE_FEEDBACK = 4;
 }
 
 message StreamFrameMeta {

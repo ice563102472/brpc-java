@@ -33,7 +33,6 @@ public abstract class RpcXmlConfigurationTestBase {
      * context of {@link AbstractApplicationContext}
      */
     protected AbstractApplicationContext context;
-    
 
 
     @Before
@@ -41,7 +40,7 @@ public abstract class RpcXmlConfigurationTestBase {
         context =
                 new ClassPathXmlApplicationContext(getConfigurationPath());
     }
-    
+
     protected abstract String getConfigurationPath();
 
     @After

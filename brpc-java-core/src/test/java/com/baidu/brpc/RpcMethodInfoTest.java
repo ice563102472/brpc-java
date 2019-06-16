@@ -26,7 +26,7 @@ import java.lang.reflect.Method;
 public class RpcMethodInfoTest {
     @Test
     public void testRpcMethodInfo() throws Exception {
-        Method method = EchoService.class.getMethod("echo", Echo.EchoRequest.class);
+        Method        method        = EchoService.class.getMethod("echo", Echo.EchoRequest.class);
         RpcMethodInfo rpcMethodInfo = new RpcMethodInfo(method);
         Assert.assertTrue(rpcMethodInfo != null);
         Assert.assertTrue(rpcMethodInfo.getMethodName().equals("Echo"));

@@ -15,30 +15,20 @@
  */
 package com.baidu.brpc.protocol.http;
 
-import static io.netty.buffer.Unpooled.directBuffer;
-import static io.netty.buffer.Unpooled.unreleasableBuffer;
-import static io.netty.handler.codec.http.HttpConstants.CR;
-import static io.netty.handler.codec.http.HttpConstants.LF;
+import io.netty.buffer.*;
+import io.netty.channel.FileRegion;
+import io.netty.handler.codec.http.*;
+import io.netty.util.CharsetUtil;
+import io.netty.util.internal.StringUtil;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufUtil;
-import io.netty.buffer.CompositeByteBuf;
-import io.netty.buffer.Unpooled;
-import io.netty.buffer.UnpooledByteBufAllocator;
-import io.netty.channel.FileRegion;
-import io.netty.handler.codec.http.HttpContent;
-import io.netty.handler.codec.http.HttpHeaders;
-import io.netty.handler.codec.http.HttpMessage;
-import io.netty.handler.codec.http.HttpObject;
-import io.netty.handler.codec.http.HttpObjectEncoder;
-import io.netty.handler.codec.http.HttpUtil;
-import io.netty.handler.codec.http.LastHttpContent;
-import io.netty.util.CharsetUtil;
-import io.netty.util.internal.StringUtil;
+import static io.netty.buffer.Unpooled.directBuffer;
+import static io.netty.buffer.Unpooled.unreleasableBuffer;
+import static io.netty.handler.codec.http.HttpConstants.CR;
+import static io.netty.handler.codec.http.HttpConstants.LF;
 
 /**
  * Migrate from netty {@link HttpObjectEncoder}

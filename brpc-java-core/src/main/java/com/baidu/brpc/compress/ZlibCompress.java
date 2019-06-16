@@ -16,12 +16,12 @@
 
 package com.baidu.brpc.compress;
 
-import com.google.protobuf.CodedOutputStream;
 import com.baidu.brpc.ProtobufRpcMethodInfo;
 import com.baidu.brpc.RpcMethodInfo;
 import com.baidu.brpc.buffer.DynamicCompositeByteBuf;
 import com.baidu.brpc.buffer.DynamicCompositeByteBufInputStream;
 import com.baidu.brpc.utils.IOUtils;
+import com.google.protobuf.CodedOutputStream;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufOutputStream;
@@ -39,18 +39,20 @@ import java.util.zip.InflaterInputStream;
 public class ZlibCompress implements Compress {
     @Override
     public ByteBuf compressInput(Object proto, RpcMethodInfo rpcMethodInfo) throws IOException {
-        int protoSize = rpcMethodInfo.getInputSerializedSize(proto);
-        ByteBuf resBuf = Unpooled.buffer(protoSize);
+        int          protoSize    = rpcMethodInfo.getInputSerializedSize(proto);
+        ByteBuf      resBuf       = Unpooled.buffer(protoSize);
         OutputStream outputStream = new ByteBufOutputStream(resBuf);
         outputStream = new DeflaterOutputStream(outputStream);
-        CodedOutputStream codedOutputStream = CodedOutputStream.newInstance(outputStream, protoSize);
+        CodedOutputStream codedOutputStream = CodedOutputStream.newInstance(outputStream,
+                                                                            protoSize);
         rpcMethodInfo.inputWriteToStream(proto, codedOutputStream);
         outputStream.close();
         return resBuf;
     }
 
     @Override
-    public Object uncompressOutput(ByteBuf byteBuf, RpcMethodInfo rpcMethodInfo) throws IOException {
+    public Object uncompressOutput(ByteBuf byteBuf,
+                                   RpcMethodInfo rpcMethodInfo) throws IOException {
         InputStream inputStream = new ByteBufInputStream(byteBuf);
         inputStream = new InflaterInputStream(inputStream);
         try {
@@ -82,7 +84,8 @@ public class ZlibCompress implements Compress {
     }
 
     @Override
-    public Object uncompressOutput(DynamicCompositeByteBuf byteBuf, RpcMethodInfo rpcMethodInfo) throws IOException {
+    public Object uncompressOutput(DynamicCompositeByteBuf byteBuf,
+                                   RpcMethodInfo rpcMethodInfo) throws IOException {
         InputStream inputStream = new DynamicCompositeByteBufInputStream(byteBuf);
         inputStream = new InflaterInputStream(inputStream);
         try {
@@ -130,7 +133,8 @@ public class ZlibCompress implements Compress {
     }
 
     @Override
-    public Object uncompressInput(DynamicCompositeByteBuf byteBuf, RpcMethodInfo rpcMethodInfo) throws IOException {
+    public Object uncompressInput(DynamicCompositeByteBuf byteBuf,
+                                  RpcMethodInfo rpcMethodInfo) throws IOException {
         InputStream inputStream = new DynamicCompositeByteBufInputStream(byteBuf);
         inputStream = new InflaterInputStream(inputStream);
         try {
@@ -147,11 +151,12 @@ public class ZlibCompress implements Compress {
 
     @Override
     public ByteBuf compressOutput(Object proto, RpcMethodInfo rpcMethodInfo) throws IOException {
-        int protoSize = rpcMethodInfo.getOutputSerializedSize(proto);
-        ByteBuf resBuf = Unpooled.buffer(protoSize);
+        int          protoSize    = rpcMethodInfo.getOutputSerializedSize(proto);
+        ByteBuf      resBuf       = Unpooled.buffer(protoSize);
         OutputStream outputStream = new ByteBufOutputStream(resBuf);
         outputStream = new DeflaterOutputStream(outputStream);
-        CodedOutputStream codedOutputStream = CodedOutputStream.newInstance(outputStream, protoSize);
+        CodedOutputStream codedOutputStream = CodedOutputStream.newInstance(outputStream,
+                                                                            protoSize);
         rpcMethodInfo.outputWriteToStream(proto, codedOutputStream);
         outputStream.close();
         return resBuf;

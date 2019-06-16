@@ -16,12 +16,11 @@
 
 package com.baidu.brpc.client.instance;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * Created by wenweihu86 on 2017/5/17.

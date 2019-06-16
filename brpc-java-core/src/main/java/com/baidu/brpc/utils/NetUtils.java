@@ -30,31 +30,45 @@ import java.util.regex.Pattern;
 
 /**
  * Utiltiy class for net.
- * 
+ *
  * @author xiemalin
  * @since 2.27
  */
 public class NetUtils {
 
-    /** The Constant logger. */
+    /**
+     * The Constant logger.
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(NetUtils.class);
 
-    /** The Constant LOCALHOST. */
+    /**
+     * The Constant LOCALHOST.
+     */
     public static final String LOCALHOST = "127.0.0.1";
 
-    /** The Constant ANYHOST. */
+    /**
+     * The Constant ANYHOST.
+     */
     public static final String ANYHOST = "0.0.0.0";
 
-    /** The Constant RND_PORT_START. */
+    /**
+     * The Constant RND_PORT_START.
+     */
     private static final int RND_PORT_START = 30000;
 
-    /** The Constant RND_PORT_RANGE. */
+    /**
+     * The Constant RND_PORT_RANGE.
+     */
     private static final int RND_PORT_RANGE = 10000;
 
-    /** The Constant RANDOM. */
+    /**
+     * The Constant RANDOM.
+     */
     private static final Random RANDOM = new Random(System.currentTimeMillis());
-    
-    /** The local address. */
+
+    /**
+     * The local address.
+     */
     private static volatile InetAddress LOCAL_ADDRESS = null;
 
     /**
@@ -118,10 +132,14 @@ public class NetUtils {
         return port;
     }
 
-    /** The Constant MIN_PORT. */
+    /**
+     * The Constant MIN_PORT.
+     */
     private static final int MIN_PORT = 0;
 
-    /** The Constant MAX_PORT. */
+    /**
+     * The Constant MAX_PORT.
+     */
     private static final int MAX_PORT = 65535;
 
     /**
@@ -134,8 +152,11 @@ public class NetUtils {
         return port > MIN_PORT || port <= MAX_PORT;
     }
 
-    /** The Constant ADDRESS_PATTERN. */
-    private static final Pattern ADDRESS_PATTERN = Pattern.compile("^\\d{1,3}(\\.\\d{1,3}){3}\\:\\d{1,5}$");
+    /**
+     * The Constant ADDRESS_PATTERN.
+     */
+    private static final Pattern ADDRESS_PATTERN = Pattern.compile(
+            "^\\d{1,3}(\\.\\d{1,3}){3}\\:\\d{1,5}$");
 
     /**
      * Checks if is valid address.
@@ -147,7 +168,9 @@ public class NetUtils {
         return ADDRESS_PATTERN.matcher(address).matches();
     }
 
-    /** The Constant LOCAL_IP_PATTERN. */
+    /**
+     * The Constant LOCAL_IP_PATTERN.
+     */
     private static final Pattern LOCAL_IP_PATTERN = Pattern.compile("127(\\.\\d{1,3}){3}$");
 
     /**
@@ -157,7 +180,8 @@ public class NetUtils {
      * @return true, if is local host
      */
     public static boolean isLocalHost(String host) {
-        return host != null && (LOCAL_IP_PATTERN.matcher(host).matches() || host.equalsIgnoreCase("localhost"));
+        return host != null &&
+               (LOCAL_IP_PATTERN.matcher(host).matches() || host.equalsIgnoreCase("localhost"));
     }
 
     /**
@@ -177,8 +201,9 @@ public class NetUtils {
      * @return true, if is invalid local host
      */
     public static boolean isInvalidLocalHost(String host) {
-        return host == null || host.length() == 0 || host.equalsIgnoreCase("localhost") || host.equals("0.0.0.0")
-                || (LOCAL_IP_PATTERN.matcher(host).matches());
+        return host == null || host.length() == 0 || host.equalsIgnoreCase("localhost") ||
+               host.equals("0.0.0.0")
+               || (LOCAL_IP_PATTERN.matcher(host).matches());
     }
 
     /**
@@ -199,10 +224,13 @@ public class NetUtils {
      * @return the local socket address
      */
     public static InetSocketAddress getLocalSocketAddress(String host, int port) {
-        return isInvalidLocalHost(host) ? new InetSocketAddress(port) : new InetSocketAddress(host, port);
+        return isInvalidLocalHost(host) ? new InetSocketAddress(port) :
+                new InetSocketAddress(host, port);
     }
 
-    /** The Constant IP_PATTERN. */
+    /**
+     * The Constant IP_PATTERN.
+     */
     private static final Pattern IP_PATTERN = Pattern.compile("\\d{1,3}(\\.\\d{1,3}){3,5}$");
 
     /**
@@ -212,10 +240,10 @@ public class NetUtils {
      * @return true, if is valid address
      */
     private static boolean isValidAddress(InetAddress address) {
-        if (address == null || address.isLoopbackAddress())
-            return false;
+        if (address == null || address.isLoopbackAddress()) { return false; }
         String name = address.getHostAddress();
-        return (name != null && !ANYHOST.equals(name) && !LOCALHOST.equals(name) && IP_PATTERN.matcher(name).matches());
+        return (name != null && !ANYHOST.equals(name) && !LOCALHOST.equals(name) &&
+                IP_PATTERN.matcher(name).matches());
     }
 
     /**
@@ -224,8 +252,7 @@ public class NetUtils {
      * @return the local address
      */
     public static InetAddress getLocalAddress() {
-        if (LOCAL_ADDRESS != null)
-            return LOCAL_ADDRESS;
+        if (LOCAL_ADDRESS != null) { return LOCAL_ADDRESS; }
         InetAddress localAddress = getLocalAddress0();
         LOCAL_ADDRESS = localAddress;
         return localAddress;
@@ -261,7 +288,7 @@ public class NetUtils {
             if (interfaces != null) {
                 while (interfaces.hasMoreElements()) {
                     try {
-                        NetworkInterface network = interfaces.nextElement();
+                        NetworkInterface         network   = interfaces.nextElement();
                         Enumeration<InetAddress> addresses = network.getInetAddresses();
                         if (addresses != null) {
                             while (addresses.hasMoreElements()) {

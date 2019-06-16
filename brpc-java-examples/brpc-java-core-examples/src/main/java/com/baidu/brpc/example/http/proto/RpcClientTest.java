@@ -1,9 +1,5 @@
 package com.baidu.brpc.example.http.proto;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Future;
-
 import com.baidu.brpc.client.BrpcProxy;
 import com.baidu.brpc.client.RpcCallback;
 import com.baidu.brpc.client.RpcClient;
@@ -18,6 +14,10 @@ import com.baidu.brpc.example.standard.EchoServiceAsync;
 import com.baidu.brpc.exceptions.RpcException;
 import com.baidu.brpc.interceptor.Interceptor;
 import com.baidu.brpc.protocol.Options.ProtocolType;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Future;
 
 public class RpcClientTest {
 

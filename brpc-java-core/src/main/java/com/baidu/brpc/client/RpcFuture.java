@@ -4,22 +4,20 @@
 
 package com.baidu.brpc.client;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.baidu.brpc.ChannelInfo;
 import com.baidu.brpc.RpcContext;
 import com.baidu.brpc.RpcMethodInfo;
 import com.baidu.brpc.exceptions.RpcException;
 import com.baidu.brpc.protocol.Response;
 import com.baidu.brpc.utils.CollectionUtils;
-
 import io.netty.util.Timeout;
 import lombok.Getter;
 import lombok.Setter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings("unchecked")
 @Setter
@@ -28,30 +26,30 @@ public class RpcFuture<T> implements AsyncAwareFuture<T> {
     private static final Logger LOG = LoggerFactory.getLogger(RpcFuture.class);
 
     private CountDownLatch latch;
-    private Timeout timeout;
+    private Timeout        timeout;
 
     private RpcCallback<T> callback;  // callback cannot be set after init
-    private ChannelInfo channelInfo;
-    private RpcClient rpcClient;
-    private RpcMethodInfo rpcMethodInfo;
+    private ChannelInfo    channelInfo;
+    private RpcClient      rpcClient;
+    private RpcMethodInfo  rpcMethodInfo;
 
     private Response response;
-    private boolean isDone;
+    private boolean  isDone;
     // record the time of request
     // used in FAIR load balancing
-    private long startTime;
-    private long endTime;
+    private long     startTime;
+    private long     endTime;
 
     private volatile long logId;
 
     public RpcFuture() {
-        this.latch = new CountDownLatch(1);
+        this.latch     = new CountDownLatch(1);
         this.startTime = System.currentTimeMillis();
     }
 
     public RpcFuture(long logId) {
-        this.logId = logId;
-        this.latch = new CountDownLatch(1);
+        this.logId     = logId;
+        this.latch     = new CountDownLatch(1);
         this.startTime = System.currentTimeMillis();
     }
 
@@ -68,18 +66,18 @@ public class RpcFuture<T> implements AsyncAwareFuture<T> {
                      RpcCallback<T> callback,
                      ChannelInfo channelInfo,
                      RpcClient rpcClient) {
-        this.timeout = timeout;
+        this.timeout       = timeout;
         this.rpcMethodInfo = rpcMethodInfo;
-        this.callback = callback;
-        this.channelInfo = channelInfo;
-        this.latch = new CountDownLatch(1);
-        this.startTime = System.currentTimeMillis();
-        this.rpcClient = rpcClient;
+        this.callback      = callback;
+        this.channelInfo   = channelInfo;
+        this.latch         = new CountDownLatch(1);
+        this.startTime     = System.currentTimeMillis();
+        this.rpcClient     = rpcClient;
     }
 
     public void handleConnection(Response response) {
         this.response = response;
-        this.endTime = System.currentTimeMillis();
+        this.endTime  = System.currentTimeMillis();
 
         // only long connection need to update channel group
         if (rpcClient.isLongConnection()) {
@@ -181,7 +179,7 @@ public class RpcFuture<T> implements AsyncAwareFuture<T> {
             return;
         }
         if (response.getBinaryAttachment() != null
-                || response.getKvAttachment() != null) {
+            || response.getKvAttachment() != null) {
             RpcContext rpcContext = RpcContext.getContext();
             if (response.getBinaryAttachment() != null) {
                 rpcContext.setResponseBinaryAttachment(response.getBinaryAttachment());

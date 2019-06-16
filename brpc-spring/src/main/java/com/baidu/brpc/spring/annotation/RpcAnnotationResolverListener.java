@@ -15,9 +15,9 @@
  */
 package com.baidu.brpc.spring.annotation;
 
-import java.util.List;
-
 import com.baidu.brpc.spring.RpcProxyFactoryBean;
+
+import java.util.List;
 
 /**
  * Listener class for {@link RpcAnnotationResolver} while doing annotation parser action.

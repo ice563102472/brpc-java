@@ -1,9 +1,9 @@
-syntax="proto2";
-import "options.proto";                // For TalkType
+syntax = "proto2";
+import "options.proto"; // For TalkType
 
 package brpc.policy;
-option java_package="com.baidu.brpc.protocol.hulu";
-option java_outer_classname="HuluRpcProto";
+option java_package = "com.baidu.brpc.protocol.hulu";
+option java_outer_classname = "HuluRpcProto";
 
 enum HuluCompressType {
     HULU_COMPRESS_TYPE_NONE = 0;

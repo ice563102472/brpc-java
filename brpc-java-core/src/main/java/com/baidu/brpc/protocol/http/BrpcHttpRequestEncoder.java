@@ -15,19 +15,18 @@
  */
 package com.baidu.brpc.protocol.http;
 
-import static io.netty.handler.codec.http.HttpConstants.SP;
-
-import java.util.LinkedList;
-import java.util.List;
-
 import com.baidu.brpc.exceptions.RpcException;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpRequestEncoder;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.util.CharsetUtil;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import static io.netty.handler.codec.http.HttpConstants.SP;
 
 /**
  * Migrate from netty {@link HttpRequestEncoder}

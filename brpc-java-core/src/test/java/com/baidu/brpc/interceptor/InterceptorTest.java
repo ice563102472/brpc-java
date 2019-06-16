@@ -17,11 +17,6 @@
 package com.baidu.brpc.interceptor;
 
 import com.baidu.brpc.RpcOptionsUtils;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import com.baidu.brpc.client.BrpcProxy;
 import com.baidu.brpc.client.RpcClient;
 import com.baidu.brpc.protocol.Request;
@@ -30,6 +25,10 @@ import com.baidu.brpc.protocol.standard.Echo;
 import com.baidu.brpc.protocol.standard.EchoService;
 import com.baidu.brpc.protocol.standard.EchoServiceImpl;
 import com.baidu.brpc.server.RpcServer;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 public class InterceptorTest {
 

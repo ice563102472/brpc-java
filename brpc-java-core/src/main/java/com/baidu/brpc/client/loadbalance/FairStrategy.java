@@ -15,25 +15,20 @@
  */
 package com.baidu.brpc.client.loadbalance;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
-import java.util.Random;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.TimeUnit;
-
 import com.baidu.brpc.client.RpcClient;
 import com.baidu.brpc.client.channel.BrpcChannel;
 import com.baidu.brpc.protocol.Request;
 import com.baidu.brpc.utils.CollectionUtils;
 import com.baidu.brpc.utils.CustomThreadFactory;
-
 import io.netty.util.HashedWheelTimer;
 import io.netty.util.Timeout;
 import io.netty.util.Timer;
 import io.netty.util.TimerTask;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Fair load balance strategy aims to more reasonable distribution of traffic.

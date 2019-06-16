@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicReferenceArray;
 /**
  * A lock-free datastructure faster than #{@link java.util.concurrent.ConcurrentHashMap} in certain circumstance.
  * When the underlying array runs out of space, FastFutureStore will downgrade to #{@link ConcurrentHashMap}
- *
+ * <p>
  * Created by wanghongfei on 2018/11/19.
  */
 public class FastFutureStore {
@@ -63,7 +63,7 @@ public class FastFutureStore {
     /**
      * The boundary between array-stored id and map-stored id.
      * Binary format: 0100 0000 0000 0000 ... ... 0000(64 bits).
-     *
+     * <p>
      * Ids less than(01xx xxxx ... xxx) this value should be stored in array.
      * Ids greater than(01xx xxxx ... xxx) this value should be stored in map.
      */
@@ -77,7 +77,7 @@ public class FastFutureStore {
             cap = DEFAULT_ARRAY_CAP;
         }
 
-        this.cap = cap;
+        this.cap      = cap;
         this.futArray = new AtomicReferenceArray<RpcFuture>(cap);
     }
 

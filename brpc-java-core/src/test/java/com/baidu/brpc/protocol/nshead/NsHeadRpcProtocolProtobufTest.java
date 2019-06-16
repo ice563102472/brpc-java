@@ -16,13 +16,6 @@
 
 package com.baidu.brpc.protocol.nshead;
 
-import static org.junit.Assert.assertEquals;
-
-import java.lang.reflect.Method;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import com.baidu.brpc.ProtobufRpcMethodInfo;
 import com.baidu.brpc.RpcMethodInfo;
 import com.baidu.brpc.protocol.Request;
@@ -33,9 +26,14 @@ import com.baidu.brpc.protocol.standard.Echo.EchoRequest;
 import com.baidu.brpc.protocol.standard.EchoService;
 import com.baidu.brpc.protocol.standard.EchoServiceImpl;
 import com.baidu.brpc.server.ServiceManager;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.lang.reflect.Method;
+
+import static org.junit.Assert.assertEquals;
 
 public class NsHeadRpcProtocolProtobufTest {
 

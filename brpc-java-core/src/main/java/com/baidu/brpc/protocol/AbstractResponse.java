@@ -3,15 +3,14 @@
  */
 package com.baidu.brpc.protocol;
 
-import java.util.Map;
-
 import com.baidu.brpc.RpcMethodInfo;
 import com.baidu.brpc.client.RpcFuture;
 import com.baidu.brpc.protocol.nshead.NSHead;
-
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.Map;
 
 @Getter
 @Setter

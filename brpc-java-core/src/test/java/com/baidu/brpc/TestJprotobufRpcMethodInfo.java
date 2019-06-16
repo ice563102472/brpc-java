@@ -16,12 +16,12 @@
 
 package com.baidu.brpc;
 
+import com.baidu.brpc.buffer.DynamicCompositeByteBuf;
 import com.baidu.brpc.protocol.jprotobuf.EchoRequest;
 import com.baidu.brpc.protocol.jprotobuf.EchoResponse;
 import com.baidu.brpc.protocol.jprotobuf.EchoService;
 import com.baidu.brpc.protocol.standard.Echo;
 import com.google.protobuf.CodedOutputStream;
-import com.baidu.brpc.buffer.DynamicCompositeByteBuf;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
@@ -34,7 +34,8 @@ import java.lang.reflect.Method;
 public class TestJprotobufRpcMethodInfo {
     @Test
     public void testProtobufRpcMethodInfo() throws Exception {
-        Method method = EchoService.class.getMethod("echo", EchoRequest.class);
+        Method                 method        = EchoService.class.getMethod("echo",
+                                                                           EchoRequest.class);
         JprotobufRpcMethodInfo rpcMethodInfo = new JprotobufRpcMethodInfo(method);
         Assert.assertTrue(rpcMethodInfo.getInputCodec() != null);
         Assert.assertTrue(rpcMethodInfo.getOutputCodec() != null);
@@ -42,7 +43,8 @@ public class TestJprotobufRpcMethodInfo {
 
     @Test
     public void testInputEncode() throws Exception {
-        Method method = EchoService.class.getMethod("echo", EchoRequest.class);
+        Method                 method        = EchoService.class.getMethod("echo",
+                                                                           EchoRequest.class);
         JprotobufRpcMethodInfo rpcMethodInfo = new JprotobufRpcMethodInfo(method);
 
 
@@ -51,121 +53,142 @@ public class TestJprotobufRpcMethodInfo {
         byte[] bytes = rpcMethodInfo.inputEncode(request);
         Assert.assertTrue(bytes != null);
         Assert.assertTrue(bytes.length
-                == Echo.EchoRequest.newBuilder().setMessage("hello").build().getSerializedSize());
+                          == Echo.EchoRequest.newBuilder().setMessage(
+                "hello").build().getSerializedSize());
     }
 
     @Test
     public void testInputWriteToStream() throws Exception {
-        Method method = EchoService.class.getMethod("echo", EchoRequest.class);
+        Method                 method        = EchoService.class.getMethod("echo",
+                                                                           EchoRequest.class);
         JprotobufRpcMethodInfo rpcMethodInfo = new JprotobufRpcMethodInfo(method);
 
         EchoRequest request = new EchoRequest();
         request.setMessage("hello");
-        ByteBuf buf = Unpooled.buffer(64);
-        OutputStream outputStream = new ByteBufOutputStream(buf);
+        ByteBuf           buf               = Unpooled.buffer(64);
+        OutputStream      outputStream      = new ByteBufOutputStream(buf);
         CodedOutputStream codedOutputStream = CodedOutputStream.newInstance(outputStream);
         rpcMethodInfo.inputWriteToStream(request, codedOutputStream);
         Assert.assertTrue(buf.readableBytes()
-                == Echo.EchoRequest.newBuilder().setMessage("hello").build().getSerializedSize());
+                          == Echo.EchoRequest.newBuilder().setMessage(
+                "hello").build().getSerializedSize());
     }
 
     @Test
     public void testOutputDecodeBytes() throws Exception {
-        Method method = EchoService.class.getMethod("echo", EchoRequest.class);
+        Method                 method        = EchoService.class.getMethod("echo",
+                                                                           EchoRequest.class);
         JprotobufRpcMethodInfo rpcMethodInfo = new JprotobufRpcMethodInfo(method);
-        Echo.EchoResponse response = Echo.EchoResponse.newBuilder().setMessage("hello").build();
-        byte[] bytes = response.toByteArray();
-        EchoResponse response1 = (EchoResponse) rpcMethodInfo.outputDecode(bytes);
+        Echo.EchoResponse      response      = Echo.EchoResponse.newBuilder().setMessage(
+                "hello").build();
+        byte[]                 bytes         = response.toByteArray();
+        EchoResponse           response1     = (EchoResponse) rpcMethodInfo.outputDecode(bytes);
         Assert.assertTrue(response1.getMessage().equals(response.getMessage()));
     }
 
     @Test
     public void testOutputDecodeByteBuf() throws Exception {
-        Method method = EchoService.class.getMethod("echo", EchoRequest.class);
+        Method                 method        = EchoService.class.getMethod("echo",
+                                                                           EchoRequest.class);
         JprotobufRpcMethodInfo rpcMethodInfo = new JprotobufRpcMethodInfo(method);
-        Echo.EchoResponse response = Echo.EchoResponse.newBuilder().setMessage("hello").build();
-        byte[] bytes = response.toByteArray();
-        ByteBuf buf = Unpooled.wrappedBuffer(bytes);
-        EchoResponse response1 = (EchoResponse) rpcMethodInfo.outputDecode(buf);
+        Echo.EchoResponse      response      = Echo.EchoResponse.newBuilder().setMessage(
+                "hello").build();
+        byte[]                 bytes         = response.toByteArray();
+        ByteBuf                buf           = Unpooled.wrappedBuffer(bytes);
+        EchoResponse           response1     = (EchoResponse) rpcMethodInfo.outputDecode(buf);
         Assert.assertTrue(response1.getMessage().equals(response.getMessage()));
     }
 
     @Test
     public void testOutputDecodeDynamicCompositeByteBuf() throws Exception {
-        Method method = EchoService.class.getMethod("echo", EchoRequest.class);
-        JprotobufRpcMethodInfo rpcMethodInfo = new JprotobufRpcMethodInfo(method);
-        Echo.EchoResponse response = Echo.EchoResponse.newBuilder().setMessage("hello").build();
-        byte[] bytes = response.toByteArray();
-        ByteBuf buf = Unpooled.wrappedBuffer(bytes);
+        Method                  method           = EchoService.class.getMethod("echo",
+                                                                               EchoRequest.class);
+        JprotobufRpcMethodInfo  rpcMethodInfo    = new JprotobufRpcMethodInfo(method);
+        Echo.EchoResponse       response         = Echo.EchoResponse.newBuilder().setMessage(
+                "hello").build();
+        byte[]                  bytes            = response.toByteArray();
+        ByteBuf                 buf              = Unpooled.wrappedBuffer(bytes);
         DynamicCompositeByteBuf compositeByteBuf = new DynamicCompositeByteBuf(buf);
-        EchoResponse response1 = (EchoResponse) rpcMethodInfo.outputDecode(compositeByteBuf);
+        EchoResponse            response1        = (EchoResponse) rpcMethodInfo.outputDecode(
+                compositeByteBuf);
         Assert.assertTrue(response1.getMessage().equals(response.getMessage()));
     }
 
     @Test
     public void testInputDecode() throws Exception {
-        Method method = EchoService.class.getMethod("echo", EchoRequest.class);
+        Method                 method        = EchoService.class.getMethod("echo",
+                                                                           EchoRequest.class);
         JprotobufRpcMethodInfo rpcMethodInfo = new JprotobufRpcMethodInfo(method);
 
-        Echo.EchoRequest request = Echo.EchoRequest.newBuilder().setMessage("hello").build();
-        byte[] bytes = request.toByteArray();
-        EchoRequest request1 = (EchoRequest) rpcMethodInfo.inputDecode(bytes);
+        Echo.EchoRequest request  = Echo.EchoRequest.newBuilder().setMessage("hello").build();
+        byte[]           bytes    = request.toByteArray();
+        EchoRequest      request1 = (EchoRequest) rpcMethodInfo.inputDecode(bytes);
         Assert.assertTrue(request1.getMessage().equals(request.getMessage()));
     }
 
     @Test
     public void testInputDecode2() throws Exception {
-        Method method = EchoService.class.getMethod("echo", EchoRequest.class);
+        Method                 method        = EchoService.class.getMethod("echo",
+                                                                           EchoRequest.class);
         JprotobufRpcMethodInfo rpcMethodInfo = new JprotobufRpcMethodInfo(method);
 
-        Echo.EchoRequest request = Echo.EchoRequest.newBuilder().setMessage("hello").build();
-        byte[] bytes = request.toByteArray();
-        ByteBuf byteBuf = Unpooled.wrappedBuffer(bytes);
-        EchoRequest request1 = (EchoRequest) rpcMethodInfo.inputDecode(byteBuf);
+        Echo.EchoRequest request  = Echo.EchoRequest.newBuilder().setMessage("hello").build();
+        byte[]           bytes    = request.toByteArray();
+        ByteBuf          byteBuf  = Unpooled.wrappedBuffer(bytes);
+        EchoRequest      request1 = (EchoRequest) rpcMethodInfo.inputDecode(byteBuf);
         Assert.assertTrue(request1.getMessage().equals(request.getMessage()));
     }
 
     @Test
     public void testInputDecode3() throws Exception {
-        Method method = EchoService.class.getMethod("echo", EchoRequest.class);
+        Method                 method        = EchoService.class.getMethod("echo",
+                                                                           EchoRequest.class);
         JprotobufRpcMethodInfo rpcMethodInfo = new JprotobufRpcMethodInfo(method);
 
-        Echo.EchoRequest request = Echo.EchoRequest.newBuilder().setMessage("hello").build();
-        byte[] bytes = request.toByteArray();
-        ByteBuf byteBuf = Unpooled.wrappedBuffer(bytes);
+        Echo.EchoRequest        request          = Echo.EchoRequest.newBuilder().setMessage(
+                "hello").build();
+        byte[]                  bytes            = request.toByteArray();
+        ByteBuf                 byteBuf          = Unpooled.wrappedBuffer(bytes);
         DynamicCompositeByteBuf compositeByteBuf = new DynamicCompositeByteBuf(byteBuf);
-        EchoRequest request1 = (EchoRequest) rpcMethodInfo.inputDecode(compositeByteBuf);
+        EchoRequest             request1         = (EchoRequest) rpcMethodInfo.inputDecode(
+                compositeByteBuf);
         Assert.assertTrue(request1.getMessage().equals(request.getMessage()));
     }
 
     @Test
     public void testOutputEncode() throws Exception {
-        Method method = EchoService.class.getMethod("echo", EchoRequest.class);
+        Method                 method        = EchoService.class.getMethod("echo",
+                                                                           EchoRequest.class);
         JprotobufRpcMethodInfo rpcMethodInfo = new JprotobufRpcMethodInfo(method);
-        EchoResponse response = new EchoResponse();
+        EchoResponse           response      = new EchoResponse();
         response.setMessage("hello");
         byte[] bytes = rpcMethodInfo.outputEncode(response);
         Assert.assertTrue(bytes.length
-                == Echo.EchoResponse.newBuilder().setMessage("hello").build().toByteArray().length);
+                          == Echo.EchoResponse.newBuilder().setMessage(
+                "hello").build().toByteArray().length);
     }
 
     @Test
     public void testGetInputSerializedSize() throws Exception {
-        Method method = EchoService.class.getMethod("echo", EchoRequest.class);
+        Method                 method        = EchoService.class.getMethod("echo",
+                                                                           EchoRequest.class);
         JprotobufRpcMethodInfo rpcMethodInfo = new JprotobufRpcMethodInfo(method);
-        EchoRequest request = new EchoRequest();
+        EchoRequest            request       = new EchoRequest();
         request.setMessage("hello");
         Assert.assertTrue(rpcMethodInfo.getInputSerializedSize(request)
-                == Echo.EchoRequest.newBuilder().setMessage("hello").build().getSerializedSize());
+                          == Echo.EchoRequest.newBuilder().setMessage(
+                "hello").build().getSerializedSize());
     }
 
     @Test
     public void testGetOutputSerializedSize() throws Exception {
-        Method method = EchoService.class.getMethod("echo", EchoRequest.class);
+        Method                 method        = EchoService.class.getMethod("echo",
+                                                                           EchoRequest.class);
         JprotobufRpcMethodInfo rpcMethodInfo = new JprotobufRpcMethodInfo(method);
-        EchoResponse response = new EchoResponse();
+        EchoResponse           response      = new EchoResponse();
         response.setMessage("hello");
         Assert.assertTrue(rpcMethodInfo.getOutputSerializedSize(response)
-                == Echo.EchoResponse.newBuilder().setMessage("hello").build().getSerializedSize());
+                          == Echo.EchoResponse.newBuilder().setMessage(
+                "hello").build().getSerializedSize());
     }
 }

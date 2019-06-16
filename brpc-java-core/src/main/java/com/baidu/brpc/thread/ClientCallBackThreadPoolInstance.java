@@ -37,7 +37,8 @@ public class ClientCallBackThreadPoolInstance {
             synchronized (ClientCallBackThreadPoolInstance.class) {
                 if (callbackThreadPool == null) {
                     callbackThreadPool = Executors.newFixedThreadPool(threadNum,
-                            new CustomThreadFactory("invalid-channel-callback-thread"));
+                                                                      new CustomThreadFactory(
+                                                                              "invalid-channel-callback-thread"));
                 }
             }
         }

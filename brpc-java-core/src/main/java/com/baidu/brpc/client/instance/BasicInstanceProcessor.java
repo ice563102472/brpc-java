@@ -16,6 +16,10 @@
 
 package com.baidu.brpc.client.instance;
 
+import com.baidu.brpc.client.RpcClient;
+import com.baidu.brpc.client.channel.BrpcChannel;
+import com.baidu.brpc.client.channel.BrpcChannelFactory;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,10 +28,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-
-import com.baidu.brpc.client.channel.BrpcChannel;
-import com.baidu.brpc.client.channel.BrpcChannelFactory;
-import com.baidu.brpc.client.RpcClient;
 
 public class BasicInstanceProcessor implements InstanceProcessor {
     private CopyOnWriteArraySet<ServiceInstance> instances;

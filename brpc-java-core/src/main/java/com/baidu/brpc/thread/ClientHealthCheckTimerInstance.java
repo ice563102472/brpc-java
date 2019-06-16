@@ -34,7 +34,8 @@ public class ClientHealthCheckTimerInstance {
             synchronized (ClientHealthCheckTimerInstance.class) {
                 if (healthCheckTimer == null) {
                     healthCheckTimer =
-                            new HashedWheelTimer(new CustomThreadFactory("health-check-timer-thread"));
+                            new HashedWheelTimer(
+                                    new CustomThreadFactory("health-check-timer-thread"));
                 }
             }
         }

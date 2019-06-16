@@ -15,12 +15,8 @@
  */
 package com.baidu.brpc.client.pool;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-
+import com.baidu.brpc.client.channel.BrpcChannel;
+import io.netty.channel.Channel;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.junit.After;
@@ -29,8 +25,9 @@ import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import com.baidu.brpc.client.channel.BrpcChannel;
-import io.netty.channel.Channel;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.*;
 
 public class ChannelPoolTest {
 

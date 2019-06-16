@@ -15,6 +15,15 @@
  */
 package com.baidu.brpc.naming;
 
+import com.baidu.brpc.client.instance.ServiceInstance;
+import com.baidu.brpc.utils.CustomThreadFactory;
+import io.netty.util.HashedWheelTimer;
+import io.netty.util.Timeout;
+import io.netty.util.Timer;
+import io.netty.util.TimerTask;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.Validate;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -22,25 +31,14 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.Validate;
-
-import com.baidu.brpc.client.instance.ServiceInstance;
-import com.baidu.brpc.utils.CustomThreadFactory;
-
-import io.netty.util.HashedWheelTimer;
-import io.netty.util.Timeout;
-import io.netty.util.Timer;
-import io.netty.util.TimerTask;
-
 public class DnsNamingService implements NamingService {
-    private BrpcURL namingUrl;
-    private String host;
-    private int port;
-    private String hostPort;
+    private BrpcURL               namingUrl;
+    private String                host;
+    private int                   port;
+    private String                hostPort;
     private List<ServiceInstance> lastInstances = new ArrayList<ServiceInstance>();
-    private Timer namingServiceTimer;
-    private int updateInterval;
+    private Timer                 namingServiceTimer;
+    private int                   updateInterval;
 
     public DnsNamingService(BrpcURL namingUrl) {
         Validate.notNull(namingUrl);
@@ -54,10 +52,11 @@ public class DnsNamingService implements NamingService {
         } else {
             this.port = 80;
         }
-        this.hostPort = this.host + ":" + this.port;
+        this.hostPort       = this.host + ":" + this.port;
         this.updateInterval = namingUrl.getIntParameter(
                 Constants.INTERVAL, Constants.DEFAULT_INTERVAL);
-        namingServiceTimer = new HashedWheelTimer(new CustomThreadFactory("namingService-timer-thread"));
+        namingServiceTimer  = new HashedWheelTimer(
+                new CustomThreadFactory("namingService-timer-thread"));
     }
 
     @Override

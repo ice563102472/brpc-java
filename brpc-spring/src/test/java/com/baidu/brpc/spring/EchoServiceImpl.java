@@ -23,8 +23,8 @@ import org.springframework.stereotype.Service;
 
 @Service("echoServiceImpl")
 @RpcExporter(port = "8012",
-        rpcServerOptionsBeanName = "rpcServerOptions",
-        interceptorBeanName = "customInterceptor")
+             rpcServerOptionsBeanName = "rpcServerOptions",
+             interceptorBeanName = "customInterceptor")
 public class EchoServiceImpl implements EchoService {
     private static final Logger LOG = LoggerFactory.getLogger(EchoServiceImpl.class);
 
@@ -42,11 +42,11 @@ public class EchoServiceImpl implements EchoService {
 //            rpcContext.setResponseBinaryAttachment(Unpooled.copiedBuffer(attachment));
 //        }
 
-        String message = request.getMessage();
+        String       message  = request.getMessage();
         EchoResponse response = new EchoResponse();
         response.setMessage(message);
         LOG.debug("EchoService.echo, request={}, response={}",
-                request.getMessage(), response.getMessage());
+                  request.getMessage(), response.getMessage());
         return response;
     }
 }

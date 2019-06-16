@@ -16,49 +16,38 @@
 
 package com.baidu.brpc.server;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import com.baidu.brpc.naming.BrpcURL;
-import com.baidu.brpc.naming.NamingOptions;
-import com.baidu.brpc.naming.NamingService;
-import com.baidu.brpc.naming.NamingServiceFactory;
-import com.baidu.brpc.naming.NamingServiceFactoryManager;
-import com.baidu.brpc.naming.RegisterInfo;
-import com.baidu.brpc.spi.ExtensionLoaderManager;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.baidu.brpc.interceptor.Interceptor;
 import com.baidu.brpc.interceptor.ServerInvokeInterceptor;
+import com.baidu.brpc.naming.*;
 import com.baidu.brpc.protocol.Protocol;
 import com.baidu.brpc.protocol.ProtocolManager;
 import com.baidu.brpc.server.handler.RpcServerChannelIdleHandler;
 import com.baidu.brpc.server.handler.RpcServerHandler;
+import com.baidu.brpc.spi.ExtensionLoaderManager;
 import com.baidu.brpc.thread.ShutDownManager;
 import com.baidu.brpc.utils.CollectionUtils;
 import com.baidu.brpc.utils.CustomThreadFactory;
 import com.baidu.brpc.utils.NetUtils;
 import com.baidu.brpc.utils.ThreadPool;
-
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
-import io.netty.channel.epoll.Epoll;
-import io.netty.channel.epoll.EpollChannelOption;
-import io.netty.channel.epoll.EpollEventLoopGroup;
-import io.netty.channel.epoll.EpollMode;
-import io.netty.channel.epoll.EpollServerSocketChannel;
+import io.netty.channel.epoll.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.timeout.IdleStateHandler;
 import lombok.Getter;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Created by wenweihu86 on 2017/4/24.
@@ -88,18 +77,18 @@ public class RpcServer {
     /**
      * netty io thread pool
      */
-    private EventLoopGroup bossGroup;
+    private EventLoopGroup     bossGroup;
     // netty io thread pool
-    private EventLoopGroup workerGroup;
-    private List<Interceptor> interceptors = new ArrayList<Interceptor>();
-    private Protocol protocol;
-    private ThreadPool threadPool;
-    private List<ThreadPool> customThreadPools = new ArrayList<ThreadPool>();
-    private NamingService namingService;
-    private List<Object> serviceList = new ArrayList<Object>();
-    private List<RegisterInfo> registerInfoList = new ArrayList<RegisterInfo>();
-    private ServerStatus serverStatus;
-    private AtomicBoolean stop = new AtomicBoolean(false);
+    private EventLoopGroup     workerGroup;
+    private List<Interceptor>  interceptors      = new ArrayList<Interceptor>();
+    private Protocol           protocol;
+    private ThreadPool         threadPool;
+    private List<ThreadPool>   customThreadPools = new ArrayList<ThreadPool>();
+    private NamingService      namingService;
+    private List<Object>       serviceList       = new ArrayList<Object>();
+    private List<RegisterInfo> registerInfoList  = new ArrayList<RegisterInfo>();
+    private ServerStatus       serverStatus;
+    private AtomicBoolean      stop              = new AtomicBoolean(false);
 
     public RpcServer(int port) {
         this(null, port, new RpcServerOptions(), null);
@@ -140,22 +129,25 @@ public class RpcServer {
         if (StringUtils.isNotBlank(rpcServerOptions.getNamingServiceUrl())) {
             BrpcURL url = new BrpcURL(rpcServerOptions.getNamingServiceUrl());
             NamingServiceFactory namingServiceFactory = NamingServiceFactoryManager.getInstance()
-                    .getNamingServiceFactory(url.getSchema());
+                                                                                   .getNamingServiceFactory(
+                                                                                           url.getSchema());
             this.namingService = namingServiceFactory.createNamingService(url);
         }
         // find protocol
         if (rpcServerOptions.getProtocolType() != null) {
-            this.protocol = ProtocolManager.getInstance().getProtocol(rpcServerOptions.getProtocolType());
+            this.protocol = ProtocolManager.getInstance().getProtocol(
+                    rpcServerOptions.getProtocolType());
         }
 
         threadPool = new ThreadPool(rpcServerOptions.getWorkThreadNum(),
-                new CustomThreadFactory("server-work-thread"));
-        bootstrap = new ServerBootstrap();
+                                    new CustomThreadFactory("server-work-thread"));
+        bootstrap  = new ServerBootstrap();
         if (Epoll.isAvailable()) {
-            bossGroup = new EpollEventLoopGroup(rpcServerOptions.getAcceptorThreadNum(),
-                    new CustomThreadFactory("server-acceptor-thread"));
+            bossGroup   = new EpollEventLoopGroup(rpcServerOptions.getAcceptorThreadNum(),
+                                                  new CustomThreadFactory(
+                                                          "server-acceptor-thread"));
             workerGroup = new EpollEventLoopGroup(rpcServerOptions.getIoThreadNum(),
-                    new CustomThreadFactory("server-io-thread"));
+                                                  new CustomThreadFactory("server-io-thread"));
             ((EpollEventLoopGroup) bossGroup).setIoRatio(100);
             ((EpollEventLoopGroup) workerGroup).setIoRatio(100);
             bootstrap.channel(EpollServerSocketChannel.class);
@@ -163,10 +155,10 @@ public class RpcServer {
             bootstrap.childOption(EpollChannelOption.EPOLL_MODE, EpollMode.EDGE_TRIGGERED);
             LOG.info("use epoll edge trigger mode");
         } else {
-            bossGroup = new NioEventLoopGroup(rpcServerOptions.getAcceptorThreadNum(),
-                    new CustomThreadFactory("server-acceptor-thread"));
+            bossGroup   = new NioEventLoopGroup(rpcServerOptions.getAcceptorThreadNum(),
+                                                new CustomThreadFactory("server-acceptor-thread"));
             workerGroup = new NioEventLoopGroup(rpcServerOptions.getIoThreadNum(),
-                    new CustomThreadFactory("server-io-thread"));
+                                                new CustomThreadFactory("server-io-thread"));
             ((NioEventLoopGroup) bossGroup).setIoRatio(100);
             ((NioEventLoopGroup) workerGroup).setIoRatio(100);
             bootstrap.channel(NioServerSocketChannel.class);
@@ -226,7 +218,8 @@ public class RpcServer {
 
     /**
      * register service which can be accessed by client
-     * @param service the service object which implement rpc interface.
+     *
+     * @param service       the service object which implement rpc interface.
      * @param namingOptions register center info
      * @param serverOptions service own custom RpcServerOptions
      *                      if not null, the service will not use the shared thread pool.
@@ -243,11 +236,13 @@ public class RpcServer {
             registerInfo.setVersion(namingOptions.getVersion());
             registerInfo.setIgnoreFailOfNamingService(namingOptions.isIgnoreFailOfNamingService());
         }
-        ServiceManager serviceManager = ServiceManager.getInstance();
-        ThreadPool customThreadPool = threadPool;
+        ServiceManager serviceManager   = ServiceManager.getInstance();
+        ThreadPool     customThreadPool = threadPool;
         if (serverOptions != null) {
             customThreadPool = new ThreadPool(serverOptions.getWorkThreadNum(),
-                    new CustomThreadFactory(service.getClass().getSimpleName() + "-work-thread"));
+                                              new CustomThreadFactory(
+                                                      service.getClass().getSimpleName() +
+                                                      "-work-thread"));
             customThreadPools.add(customThreadPool);
         }
         if (targetClass == null) {
@@ -264,7 +259,8 @@ public class RpcServer {
             // 判断是否在jarvis环境，若是jarvis环境则以环境变量port为准，否则以用户自定义的port为准
             if (rpcServerOptions.getJarvisPortName() != null) {
                 if (System.getenv(rpcServerOptions.getJarvisPortName()) != null) {
-                    this.port = Integer.valueOf(System.getenv(rpcServerOptions.getJarvisPortName()));
+                    this.port = Integer.valueOf(
+                            System.getenv(rpcServerOptions.getJarvisPortName()));
                 }
             }
             ChannelFuture channelFuture;

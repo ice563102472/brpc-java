@@ -33,7 +33,8 @@ public class ClientTimeoutTimerInstance {
         if (timeoutTimer == null) {
             synchronized (ClientTimeoutTimerInstance.class) {
                 if (timeoutTimer == null) {
-                    timeoutTimer = new HashedWheelTimer(new CustomThreadFactory("timeout-timer-thread"));
+                    timeoutTimer = new HashedWheelTimer(
+                            new CustomThreadFactory("timeout-timer-thread"));
                 }
             }
         }

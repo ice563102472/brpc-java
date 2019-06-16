@@ -15,31 +15,15 @@
  */
 package com.baidu.brpc.spring.annotation;
 
-import java.beans.PropertyDescriptor;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Vector;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
-
+import com.baidu.brpc.spring.PlaceholderResolver;
+import com.baidu.brpc.spring.PropertyPlaceholderConfigurerTool;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.PropertyValues;
-import org.springframework.beans.factory.BeanCreationException;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.*;
 import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
 import org.springframework.beans.factory.annotation.InjectionMetadata;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -59,8 +43,15 @@ import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ReflectionUtils;
 
-import com.baidu.brpc.spring.PlaceholderResolver;
-import com.baidu.brpc.spring.PropertyPlaceholderConfigurerTool;
+import java.beans.PropertyDescriptor;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Common annotation bean post processor. it uses {@link AnnotationParserCallback}<br>
@@ -117,7 +108,7 @@ public class CommonAnnotationBeanPostProcessor extends InstantiationAwareBeanPos
 
     /**
      * Sets the call back class for {@link AnnotationParserCallback}.
-     *
+     *TODO:注入进去的
      * @param callback the new call back class for {@link AnnotationParserCallback}
      */
     public void setCallback(AnnotationParserCallback callback) {
@@ -138,6 +129,7 @@ public class CommonAnnotationBeanPostProcessor extends InstantiationAwareBeanPos
      * 
      * @see org.springframework.core.Ordered#getOrder()
      */
+    @Override
     public int getOrder() {
         return this.order;
     }
@@ -148,6 +140,7 @@ public class CommonAnnotationBeanPostProcessor extends InstantiationAwareBeanPos
      * @see
      * org.springframework.beans.factory.BeanFactoryAware#setBeanFactory(org.springframework.beans.factory.BeanFactory)
      */
+    @Override
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
         if (!(beanFactory instanceof ConfigurableListableBeanFactory)) {
             throw new IllegalArgumentException(
@@ -171,18 +164,18 @@ public class CommonAnnotationBeanPostProcessor extends InstantiationAwareBeanPos
         }
 
         Class clazz = bean.getClass();
-        Class<? extends Annotation> annotation;
-        annotation = getCallback().getTypeAnnotation();
+        Class<? extends Annotation> annotationClass;
+        annotationClass = getCallback().getTypeAnnotation();
+        if (annotationClass == null) {
+            return bean;
+        }
+        Annotation annotation = clazz.getAnnotation(annotationClass);
         if (annotation == null) {
             return bean;
         }
-        Annotation a = clazz.getAnnotation(annotation);
-        if (a == null) {
-            return bean;
-        }
-        BeanInfo beanInfo = new BeanInfo(beanName, a);
+        BeanInfo beanInfo = new BeanInfo(beanName, annotation);
         typeAnnotationedBeans.add(beanInfo);
-        return getCallback().annotationAtType(a, bean, beanName, beanFactory);
+        return getCallback().annotationAtType(annotation, bean, beanName, beanFactory);
     }
 
     /**
@@ -192,6 +185,7 @@ public class CommonAnnotationBeanPostProcessor extends InstantiationAwareBeanPos
      * @param beanType the actual type of the managed bean instance
      * @param beanName the name of the bean
      */
+    @Override
     public void postProcessMergedBeanDefinition(RootBeanDefinition beanDefinition, Class beanType, String beanName) {
         List<Class<? extends Annotation>> annotations = getCallback().getMethodFieldAnnotation();
         if (beanType != null && getCallback() != null && annotations != null) {
@@ -219,6 +213,7 @@ public class CommonAnnotationBeanPostProcessor extends InstantiationAwareBeanPos
      * @throws org.springframework.beans.BeansException in case of errors
      * @see org.springframework.beans.MutablePropertyValues
      */
+    @Override
     public PropertyValues postProcessPropertyValues(PropertyValues pvs, PropertyDescriptor[] pds, Object bean,
             String beanName) throws BeansException {
         List<Class<? extends Annotation>> annotations = getCallback().getMethodFieldAnnotation();
@@ -274,6 +269,7 @@ public class CommonAnnotationBeanPostProcessor extends InstantiationAwareBeanPos
     protected void parseMethods(final Class<?> clazz, final List<Class<? extends Annotation>> annotions,
             final LinkedList<InjectionMetadata.InjectedElement> elements) {
         ReflectionUtils.doWithMethods(clazz, new ReflectionUtils.MethodCallback() {
+            @Override
             public void doWith(Method method) {
                 for (Class<? extends Annotation> anno : annotions) {
                     Annotation annotation = method.getAnnotation(anno);
@@ -303,6 +299,7 @@ public class CommonAnnotationBeanPostProcessor extends InstantiationAwareBeanPos
     protected void parseFields(final Class<?> clazz, final List<Class<? extends Annotation>> annotations,
             final LinkedList<InjectionMetadata.InjectedElement> elements) {
         ReflectionUtils.doWithFields(clazz, new ReflectionUtils.FieldCallback() {
+            @Override
             public void doWith(Field field) {
                 for (Class<? extends Annotation> anno : annotations) {
                     Annotation annotation = field.getAnnotation(anno);
@@ -430,6 +427,7 @@ public class CommonAnnotationBeanPostProcessor extends InstantiationAwareBeanPos
      *
      * @throws Exception in case of callback do destroy action error
      */
+    @Override
     public void destroy() throws Exception {
         if (getCallback() != null) {
             getCallback().destroy();
@@ -442,6 +440,7 @@ public class CommonAnnotationBeanPostProcessor extends InstantiationAwareBeanPos
      *
      * @throws Exception in case of any error
      */
+    @Override
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(getCallback(), "property 'callback' must be set");
 
@@ -462,6 +461,7 @@ public class CommonAnnotationBeanPostProcessor extends InstantiationAwareBeanPos
      * 
      * @param event spring application event
      */
+    @Override
     public void onApplicationEvent(ApplicationEvent event) {
         if (event instanceof ContextStartedEvent || event instanceof ContextRefreshedEvent) {
 

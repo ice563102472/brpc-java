@@ -16,13 +16,12 @@
 package com.baidu.brpc.client.channel;
 
 
-import java.util.NoSuchElementException;
-
 import com.baidu.brpc.ChannelInfo;
 import com.baidu.brpc.client.RpcClient;
-
 import com.baidu.brpc.client.instance.ServiceInstance;
 import io.netty.channel.Channel;
+
+import java.util.NoSuchElementException;
 
 /**
  * BrpcShortChannel build single & short connection with server

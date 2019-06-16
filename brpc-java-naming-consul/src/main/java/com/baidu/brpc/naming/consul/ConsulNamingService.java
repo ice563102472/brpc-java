@@ -35,18 +35,9 @@ import io.netty.util.TimerTask;
 import io.netty.util.internal.ConcurrentSet;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Collection;
-import java.util.Arrays;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.Executors;
+
+import java.util.*;
+import java.util.concurrent.*;
 
 @Slf4j
 public class ConsulNamingService implements NamingService {

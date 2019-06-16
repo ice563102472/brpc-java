@@ -16,17 +16,16 @@
 
 package com.baidu.brpc.server.currentlimit;
 
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import com.baidu.brpc.protocol.Request;
 import com.baidu.brpc.utils.CustomThreadFactory;
-
 import io.netty.util.HashedWheelTimer;
 import io.netty.util.Timeout;
 import io.netty.util.Timer;
 import io.netty.util.TimerTask;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Token bucket algorithm Advantage: allow certain burst traffic, and flow control is smoother

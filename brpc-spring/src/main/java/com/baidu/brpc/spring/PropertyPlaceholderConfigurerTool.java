@@ -15,13 +15,13 @@
  */
 package com.baidu.brpc.spring;
 
-import java.lang.reflect.Method;
-import java.util.Map;
-import java.util.Properties;
-
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.util.ReflectionUtils;
+
+import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * Utility class for {@link PropertyPlaceholderConfigurer}.
@@ -40,12 +40,12 @@ public final class PropertyPlaceholderConfigurerTool {
     public static Properties getRegisteredPropertyResourceConfigurer(
             ConfigurableListableBeanFactory beanFactory) {
         Class clazz = PropertyPlaceholderConfigurer.class;
-        Map beans = beanFactory.getBeansOfType(clazz);
+        Map   beans = beanFactory.getBeansOfType(clazz);
         if (beans == null || beans.isEmpty()) {
             return null;
         }
-        
-        Object config = ((Map.Entry)beans.entrySet().iterator().next()).getValue();
+
+        Object config = ((Map.Entry) beans.entrySet().iterator().next()).getValue();
         if (clazz.isAssignableFrom(config.getClass())) {
             Method m = ReflectionUtils.findMethod(clazz, "mergeProperties", new Class[0]);
             if (m != null) {
@@ -55,7 +55,7 @@ public final class PropertyPlaceholderConfigurerTool {
         }
         return null;
     }
-    
+
     /**
      * To create placeholder parser.
      *

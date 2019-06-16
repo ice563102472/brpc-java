@@ -17,13 +17,10 @@ package com.baidu.brpc.server;
 
 import com.baidu.brpc.RpcMethodInfo;
 import com.baidu.brpc.utils.ThreadPool;
+
 import java.util.Map;
 
-import static com.baidu.brpc.server.HttpConstants.BOLD_FONT;
-import static com.baidu.brpc.server.HttpConstants.BOLD_FONT_END;
-import static com.baidu.brpc.server.HttpConstants.HTML_HEAD;
-import static com.baidu.brpc.server.HttpConstants.LINE_BREAK;
-import static com.baidu.brpc.server.HttpConstants.PRE_STARTS;
+import static com.baidu.brpc.server.HttpConstants.*;
 
 /**
  * Server status.
@@ -32,16 +29,24 @@ import static com.baidu.brpc.server.HttpConstants.PRE_STARTS;
  * @since 3.1.0
  */
 public class ServerStatus {
-    /** The Constant SECONDS_IN_HOUR. */
+    /**
+     * The Constant SECONDS_IN_HOUR.
+     */
     private static final int SECONDS_IN_HOUR = 3600;
 
-    /** The Constant SECONDS_IN_DAY. */
+    /**
+     * The Constant SECONDS_IN_DAY.
+     */
     private static final int SECONDS_IN_DAY = 86400;
 
-    /** The start time. */
+    /**
+     * The start time.
+     */
     private long startTime;
 
-    /** The rpc server. */
+    /**
+     * The rpc server.
+     */
     private RpcServer rpcServer;
 
     public ServerStatus(RpcServer rpcServer) {
@@ -51,7 +56,7 @@ public class ServerStatus {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#toString()
      */
     @Override
@@ -68,35 +73,41 @@ public class ServerStatus {
         ThreadPool.StatInfo threadPoolInfo = rpcServer.getThreadPool().getStatInfo();
         ret.append("--------------Thread status----------------").append(LINE_BREAK);
         ret.append("Thread count:").append(threadPoolInfo.getThreadNum()).append(LINE_BREAK);
-        ret.append("Queue capacity:").append(threadPoolInfo.getDefaultQueueCapacity()).append(LINE_BREAK);
-        ret.append("Producer queue size:").append(threadPoolInfo.getProducerQueueSize()).append(LINE_BREAK);
-        ret.append("Consumer queue size:").append(threadPoolInfo.getConsumerQueueSize()).append(LINE_BREAK);
+        ret.append("Queue capacity:").append(threadPoolInfo.getDefaultQueueCapacity()).append(
+                LINE_BREAK);
+        ret.append("Producer queue size:").append(threadPoolInfo.getProducerQueueSize()).append(
+                LINE_BREAK);
+        ret.append("Consumer queue size:").append(threadPoolInfo.getConsumerQueueSize()).append(
+                LINE_BREAK);
         ret.append(LINE_BREAK).append(LINE_BREAK);
 
         ret.append(PRE_STARTS);
-        ret.append("--------------properties info(").append(RpcServerOptions.class.getDeclaredFields().length)
-                .append(")----------------").append(LINE_BREAK);
+        ret.append("--------------properties info(").append(
+                RpcServerOptions.class.getDeclaredFields().length)
+           .append(")----------------").append(LINE_BREAK);
         ret.append(rpcServer.getRpcServerOptions());
 
         ret.append(LINE_BREAK).append(LINE_BREAK);
 
-        ServiceManager serviceManager = ServiceManager.getInstance();
-        Map<String, RpcMethodInfo> serviceMap = serviceManager.getServiceMap();
-        ret.append("--------------RPC service list(").append(serviceMap.size()).append(") ----------------")
-                .append(LINE_BREAK);
+        ServiceManager             serviceManager = ServiceManager.getInstance();
+        Map<String, RpcMethodInfo> serviceMap     = serviceManager.getServiceMap();
+        ret.append("--------------RPC service list(").append(serviceMap.size()).append(
+                ") ----------------")
+           .append(LINE_BREAK);
 
         for (Map.Entry<String, RpcMethodInfo> entry : serviceMap.entrySet()) {
             ret.append(BOLD_FONT).append("Service name:").append(entry.getValue().getServiceName())
-                    .append(LINE_BREAK);
-            ret.append("Method name:").append(entry.getValue().getMethodName()).append(BOLD_FONT_END)
-                    .append(LINE_BREAK);
+               .append(LINE_BREAK);
+            ret.append("Method name:").append(entry.getValue().getMethodName()).append(
+                    BOLD_FONT_END)
+               .append(LINE_BREAK);
 
             ret.append("Request IDL:").append(LINE_BREAK).append(
                     ((Class) entry.getValue().getInputClasses()[0]).getName())
-                    .append(LINE_BREAK);
+               .append(LINE_BREAK);
             ret.append("Response IDL:").append(LINE_BREAK).append(
                     ((Class) entry.getValue().getOutputClass()).getName())
-                    .append(LINE_BREAK);
+               .append(LINE_BREAK);
 
             ret.append(LINE_BREAK);
         }
@@ -114,13 +125,14 @@ public class ServerStatus {
      */
     private String getOnlineDuration(long startTime) {
         StringBuilder ret = new StringBuilder();
-        long ms = (System.currentTimeMillis() - startTime) / 1000;
+        long          ms  = (System.currentTimeMillis() - startTime) / 1000;
 
-        long days = ms / SECONDS_IN_DAY;
-        long hours = (ms % SECONDS_IN_DAY) / SECONDS_IN_HOUR;
+        long days    = ms / SECONDS_IN_DAY;
+        long hours   = (ms % SECONDS_IN_DAY) / SECONDS_IN_HOUR;
         long seconds = ((ms % SECONDS_IN_DAY) % SECONDS_IN_HOUR);
 
-        ret.append(days).append(" days ").append(hours).append(" hours ").append(seconds).append(" seconds");
+        ret.append(days).append(" days ").append(hours).append(" hours ").append(seconds).append(
+                " seconds");
 
         return ret.toString();
     }

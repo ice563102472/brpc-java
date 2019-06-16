@@ -15,14 +15,13 @@
  */
 package com.baidu.brpc.naming;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * format is "list://127.0.0.1:8002,127.0.0.1:8003/path?key1=value1&key2=value2"
@@ -31,7 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 @Slf4j
 public class BrpcURL {
-    private String schema;
+    private String              schema;
     /**
      * we do not parse host and port,
      * because different naming url has different formats:
@@ -40,8 +39,8 @@ public class BrpcURL {
      * "brpc.com"
      * "127.0.0.1:8080"
      */
-    private String hostPorts;
-    private String path;
+    private String              hostPorts;
+    private String              path;
     private Map<String, Object> queryMap = new HashMap<String, Object>();
 
     public BrpcURL(String uri) {
@@ -75,7 +74,7 @@ public class BrpcURL {
 
         // query
         if (index3 > 0) {
-            String query = uri.substring(index3 + 1);
+            String   query       = uri.substring(index3 + 1);
             String[] querySplits = query.split("&");
             for (String kv : querySplits) {
                 String[] kvSplit = kv.split("=");

@@ -1,10 +1,10 @@
-syntax="proto2";
+syntax = "proto2";
 import "options.proto";
 import "streaming_rpc_meta.proto";
 
 package brpc.policy;
-option java_package="com.baidu.brpc.protocol.standard";
-option java_outer_classname="BaiduRpcProto";
+option java_package = "com.baidu.brpc.protocol.standard";
+option java_outer_classname = "BaiduRpcProto";
 
 message RpcMeta {
     optional RpcRequestMeta request = 1;

@@ -16,14 +16,6 @@
 
 package com.baidu.brpc.protocol.standard;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.baidu.brpc.ChannelInfo;
 import com.baidu.brpc.RpcMethodInfo;
 import com.baidu.brpc.buffer.DynamicCompositeByteBuf;
@@ -34,18 +26,20 @@ import com.baidu.brpc.exceptions.BadSchemaException;
 import com.baidu.brpc.exceptions.NotEnoughDataException;
 import com.baidu.brpc.exceptions.RpcException;
 import com.baidu.brpc.exceptions.TooBigDataException;
-import com.baidu.brpc.protocol.AbstractProtocol;
-import com.baidu.brpc.protocol.BaiduRpcErrno;
-import com.baidu.brpc.protocol.Request;
-import com.baidu.brpc.protocol.Response;
-import com.baidu.brpc.protocol.RpcResponse;
+import com.baidu.brpc.protocol.*;
 import com.baidu.brpc.server.ServiceManager;
 import com.baidu.brpc.utils.ProtobufUtils;
 import com.google.protobuf.ByteString;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Notes on Baidu RPC Protocol:

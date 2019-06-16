@@ -19,7 +19,7 @@ public class RpcClientTest {
         clientOption.setWriteTimeoutMillis(1000);
         clientOption.setReadTimeoutMillis(5000);
         clientOption.setLoadBalanceType(LoadBalanceStrategy.LOAD_BALANCE_FAIR);
-        clientOption.setEncoding("gbk");
+        clientOption.setEncoding("utf8");
 
         // 高端口，在开发机上测试
         String serviceUrl = "list://localhost:8080";
@@ -30,8 +30,9 @@ public class RpcClientTest {
         EchoService echoService = BrpcProxy.getProxy(rpcClient, EchoService.class);
 
         Echo.EchoRequest request = Echo.EchoRequest.newBuilder().setMessage("hello world").build();
-
+        long start = System.currentTimeMillis();
         EchoResponse response = echoService.echo(request);
+        System.out.println(System.currentTimeMillis() - start);
 
 
         System.out.println("--------nshead protobuf sync call response-----------------");

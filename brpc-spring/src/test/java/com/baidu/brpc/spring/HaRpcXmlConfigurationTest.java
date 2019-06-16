@@ -21,7 +21,7 @@ import org.junit.Test;
 
 /**
  * Test class for {@link RpcServiceExporter} and {@link RpcProxyFactoryBean} by XML configuration.
- * 
+ *
  * @author xiemalin
  * @since 2.17
  */
@@ -34,7 +34,7 @@ public class HaRpcXmlConfigurationTest extends RpcXmlConfigurationTestBase {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.baidu.jprotobuf.pbrpc.spring.RpcXmlConfigurationTestBase#getConfigurationPath()
      */
     @Override
@@ -45,16 +45,19 @@ public class HaRpcXmlConfigurationTest extends RpcXmlConfigurationTestBase {
     @Before
     public void setUp() {
         super.setUp();
-        rpcServiceExporter1 = (RpcServiceExporter) context.getBean("rpcServer1", RpcServiceExporter.class);
-        rpcServiceExporter2 = (RpcServiceExporter) context.getBean("rpcServer2", RpcServiceExporter.class);
-        rpcServiceExporter3 = (RpcServiceExporter) context.getBean("rpcServer3", RpcServiceExporter.class);
+        rpcServiceExporter1 = (RpcServiceExporter) context.getBean("rpcServer1",
+                                                                   RpcServiceExporter.class);
+        rpcServiceExporter2 = (RpcServiceExporter) context.getBean("rpcServer2",
+                                                                   RpcServiceExporter.class);
+        rpcServiceExporter3 = (RpcServiceExporter) context.getBean("rpcServer3",
+                                                                   RpcServiceExporter.class);
     }
 
     @Test
     public void testPartialServerFailed() throws Exception {
-        
+
         EchoService echoService = (EchoService) context.getBean("echoServiceProxy");
-        
+
         // shutdown server1
         if (rpcServiceExporter1 != null) {
             rpcServiceExporter1.destroy();
@@ -67,7 +70,7 @@ public class HaRpcXmlConfigurationTest extends RpcXmlConfigurationTestBase {
             rpcServiceExporter2.destroy();
         }
         super.internalRpcRequestAndResponse(echoService);
-        
+
         // shutdown all servers
         if (rpcServiceExporter3 != null) {
             rpcServiceExporter3.destroy();
@@ -82,7 +85,7 @@ public class HaRpcXmlConfigurationTest extends RpcXmlConfigurationTestBase {
         } catch (Exception e) {
             Assert.assertNotNull(e);
         }
-        
+
         // recover server1
         if (rpcServiceExporter1 != null) {
             rpcServiceExporter1.afterPropertiesSet();
@@ -91,6 +94,6 @@ public class HaRpcXmlConfigurationTest extends RpcXmlConfigurationTestBase {
         Thread.sleep(5000);
         // server1 recover should test ok
         super.internalRpcRequestAndResponse(echoService);
-        
+
     }
 }

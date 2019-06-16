@@ -16,10 +16,10 @@
 
 package com.baidu.brpc;
 
-import com.google.protobuf.CodedOutputStream;
-import com.google.protobuf.Message;
 import com.baidu.brpc.buffer.DynamicCompositeByteBuf;
 import com.baidu.brpc.utils.ProtobufUtils;
+import com.google.protobuf.CodedOutputStream;
+import com.google.protobuf.Message;
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,23 +32,29 @@ import java.lang.reflect.Method;
 @Getter
 public class ProtobufRpcMethodInfo extends RpcMethodInfo {
     private Message inputInstance;
-    private Method inputParseFromMethod;
-    private Method inputGetDefaultInstanceMethod;
+    private Method  inputParseFromMethod;
+    private Method  inputGetDefaultInstanceMethod;
 
     private Message outputInstance;
-    private Method outputParseFromMethod;
-    private Method outputGetDefaultInstanceMethod;
+    private Method  outputParseFromMethod;
+    private Method  outputGetDefaultInstanceMethod;
 
     public ProtobufRpcMethodInfo(Method method) {
         super(method);
         try {
-            this.inputGetDefaultInstanceMethod = ((Class) inputClasses[0]).getMethod("getDefaultInstance");
-            this.inputInstance = (Message) inputGetDefaultInstanceMethod.invoke(null);
-            this.inputParseFromMethod = ((Class) inputClasses[0]).getMethod("parseFrom", byte[].class);
+            this.inputGetDefaultInstanceMethod = ((Class) inputClasses[0]).getMethod(
+                    "getDefaultInstance");
+            this.inputInstance                 = (Message) inputGetDefaultInstanceMethod.invoke(
+                    null);
+            this.inputParseFromMethod          = ((Class) inputClasses[0]).getMethod("parseFrom",
+                                                                                     byte[].class);
 
-            this.outputGetDefaultInstanceMethod = ((Class) outputClass).getMethod("getDefaultInstance");
-            this.outputInstance = (Message) outputGetDefaultInstanceMethod.invoke(null);
-            this.outputParseFromMethod = ((Class) outputClass).getMethod("parseFrom", byte[].class);
+            this.outputGetDefaultInstanceMethod = ((Class) outputClass).getMethod(
+                    "getDefaultInstance");
+            this.outputInstance                 = (Message) outputGetDefaultInstanceMethod.invoke(
+                    null);
+            this.outputParseFromMethod          = ((Class) outputClass).getMethod("parseFrom",
+                                                                                  byte[].class);
 
         } catch (Exception ex) {
             throw new IllegalArgumentException(ex);

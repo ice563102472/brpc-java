@@ -16,26 +16,6 @@
 
 package com.baidu.brpc.client;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.lang.reflect.Method;
-import java.util.Collections;
-import java.util.concurrent.TimeUnit;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mock;
-
 import com.baidu.brpc.ChannelInfo;
 import com.baidu.brpc.RpcMethodInfo;
 import com.baidu.brpc.client.channel.BrpcChannel;
@@ -44,8 +24,24 @@ import com.baidu.brpc.interceptor.Interceptor;
 import com.baidu.brpc.protocol.Response;
 import com.baidu.brpc.protocol.RpcResponse;
 import com.baidu.brpc.test.BaseMockitoTest;
-
 import io.netty.util.Timeout;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.Mock;
+
+import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.concurrent.TimeUnit;
+
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
 public class RpcFutureTest extends BaseMockitoTest {
     @Mock

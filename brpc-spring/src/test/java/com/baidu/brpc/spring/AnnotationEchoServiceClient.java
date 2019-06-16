@@ -15,15 +15,14 @@
  */
 package com.baidu.brpc.spring;
 
+import com.baidu.brpc.spring.annotation.RpcProxy;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Service;
 
-import com.baidu.brpc.spring.annotation.RpcProxy;
-
 /**
  * Test class for {@link RpcProxy}
- * 
+ *
  * @author xiemalin
  * @since 2.17
  */
@@ -33,7 +32,7 @@ import com.baidu.brpc.spring.annotation.RpcProxy;
 public class AnnotationEchoServiceClient {
 
     @RpcProxy(namingServiceUrl = "list://127.0.0.1:8012",
-            rpcClientOptionsBeanName = "rpcClientOptions",
-            interceptorBeanName = "customInterceptor")
+              rpcClientOptionsBeanName = "rpcClientOptions",
+              interceptorBeanName = "customInterceptor")
     private EchoService echoService;
 }

@@ -4,13 +4,12 @@
 
 package com.baidu.brpc.client.channel;
 
-import java.util.NoSuchElementException;
-import java.util.Queue;
-
 import com.baidu.brpc.client.instance.ServiceInstance;
 import com.baidu.brpc.protocol.Protocol;
-
 import io.netty.channel.Channel;
+
+import java.util.NoSuchElementException;
+import java.util.Queue;
 
 public interface BrpcChannel {
     Channel getChannel() throws Exception, NoSuchElementException, IllegalStateException;

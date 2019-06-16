@@ -21,7 +21,7 @@ import lombok.Setter;
 
 /**
  * POJO class of register info.
- * 
+ *
  * @author xiemalin
  */
 @Setter

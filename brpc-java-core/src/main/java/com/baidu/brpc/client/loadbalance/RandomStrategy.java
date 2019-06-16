@@ -15,16 +15,15 @@
  */
 package com.baidu.brpc.client.loadbalance;
 
+import com.baidu.brpc.client.RpcClient;
+import com.baidu.brpc.client.channel.BrpcChannel;
+import com.baidu.brpc.protocol.Request;
+import org.apache.commons.collections4.CollectionUtils;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-
-import org.apache.commons.collections4.CollectionUtils;
-
-import com.baidu.brpc.client.RpcClient;
-import com.baidu.brpc.client.channel.BrpcChannel;
-import com.baidu.brpc.protocol.Request;
 
 /**
  * Simple random select load balance strategy implementation

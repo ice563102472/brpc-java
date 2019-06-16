@@ -16,11 +16,7 @@
 
 package com.baidu.brpc.buffer;
 
-import java.io.InputStream;
-import java.io.IOException;
-import java.io.EOFException;
-import java.io.DataInput;
-import java.io.DataInputStream;
+import java.io.*;
 
 /**
  * An {@link InputStream} which reads data from a {@link DynamicCompositeByteBuf}.
@@ -31,15 +27,15 @@ import java.io.DataInputStream;
  * readable bytes of its underlying buffer.
  * <p>
  * This stream implements {@link DataInput} for your convenience.
- *
  */
 public class DynamicCompositeByteBufInputStream extends InputStream implements DataInput {
     private DynamicCompositeByteBuf buffer;
-    private boolean closed;
-    private boolean releaseOnClose;
+    private boolean                 closed;
+    private boolean                 releaseOnClose;
 
     /**
      * Creates a new stream which reads data from the specified {@code buffer}
+     *
      * @param compositeByteBuf The buffer which provides the content for this {@link InputStream}.
      */
     public DynamicCompositeByteBufInputStream(DynamicCompositeByteBuf compositeByteBuf) {
@@ -48,18 +44,20 @@ public class DynamicCompositeByteBufInputStream extends InputStream implements D
 
     /**
      * Creates a new stream which reads data from the specified {@code buffer}
-     * @param buffer The buffer which provides the content for this {@link InputStream}.
+     *
+     * @param buffer         The buffer which provides the content for this {@link InputStream}.
      * @param releaseOnClose {@code true} means that when {@link #close()} is called
-     *                                   then {@link DynamicCompositeByteBuf#release()}
-     *                                   will be called on {@code buffer}.
+     *                       then {@link DynamicCompositeByteBuf#release()}
+     *                       will be called on {@code buffer}.
      */
-    public DynamicCompositeByteBufInputStream(DynamicCompositeByteBuf buffer, boolean releaseOnClose) {
+    public DynamicCompositeByteBufInputStream(DynamicCompositeByteBuf buffer,
+                                              boolean releaseOnClose) {
         if (buffer == null) {
             throw new NullPointerException("buffer");
         }
 
         this.releaseOnClose = releaseOnClose;
-        this.buffer = buffer;
+        this.buffer         = buffer;
     }
 
     @Override
@@ -172,7 +170,7 @@ public class DynamicCompositeByteBufInputStream extends InputStream implements D
     public String readLine() throws IOException {
         lineBuf.setLength(0);
 
-    loop:
+        loop:
         while (true) {
             if (!buffer.isReadable()) {
                 return lineBuf.length() > 0 ? lineBuf.toString() : null;
@@ -230,7 +228,7 @@ public class DynamicCompositeByteBufInputStream extends InputStream implements D
         }
         if (fieldSize > available()) {
             throw new EOFException("fieldSize is too long! Length is " + fieldSize
-                    + ", but maximum is " + available());
+                                   + ", but maximum is " + available());
         }
     }
 

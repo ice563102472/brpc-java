@@ -33,7 +33,8 @@ public class NoneCompress implements Compress {
     }
 
     @Override
-    public Object uncompressOutput(ByteBuf byteBuf, RpcMethodInfo rpcMethodInfo) throws IOException {
+    public Object uncompressOutput(ByteBuf byteBuf,
+                                   RpcMethodInfo rpcMethodInfo) throws IOException {
         return rpcMethodInfo.outputDecode(byteBuf);
     }
 
@@ -43,7 +44,8 @@ public class NoneCompress implements Compress {
     }
 
     @Override
-    public Object uncompressOutput(DynamicCompositeByteBuf byteBuf, RpcMethodInfo rpcMethodInfo) throws IOException {
+    public Object uncompressOutput(DynamicCompositeByteBuf byteBuf,
+                                   RpcMethodInfo rpcMethodInfo) throws IOException {
         return rpcMethodInfo.outputDecode(byteBuf);
     }
 
@@ -64,7 +66,8 @@ public class NoneCompress implements Compress {
     }
 
     @Override
-    public Object uncompressInput(DynamicCompositeByteBuf byteBuf, RpcMethodInfo rpcMethodInfo) throws IOException {
+    public Object uncompressInput(DynamicCompositeByteBuf byteBuf,
+                                  RpcMethodInfo rpcMethodInfo) throws IOException {
         return rpcMethodInfo.inputDecode(byteBuf);
     }
 }

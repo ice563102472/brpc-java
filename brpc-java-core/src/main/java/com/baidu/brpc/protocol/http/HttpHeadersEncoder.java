@@ -15,14 +15,14 @@
  */
 package com.baidu.brpc.protocol.http;
 
-import static com.baidu.brpc.protocol.http.BrpcHttpObjectEncoder.CRLF_SHORT;
-import static io.netty.handler.codec.http.HttpConstants.COLON;
-import static io.netty.handler.codec.http.HttpConstants.SP;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.util.AsciiString;
 import io.netty.util.CharsetUtil;
+
+import static com.baidu.brpc.protocol.http.BrpcHttpObjectEncoder.CRLF_SHORT;
+import static io.netty.handler.codec.http.HttpConstants.COLON;
+import static io.netty.handler.codec.http.HttpConstants.SP;
 
 public class HttpHeadersEncoder {
 

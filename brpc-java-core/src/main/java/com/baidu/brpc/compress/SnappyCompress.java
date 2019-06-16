@@ -16,12 +16,12 @@
 
 package com.baidu.brpc.compress;
 
-import com.google.protobuf.Message;
 import com.baidu.brpc.ProtobufRpcMethodInfo;
 import com.baidu.brpc.RpcMethodInfo;
 import com.baidu.brpc.buffer.DynamicCompositeByteBuf;
 import com.baidu.brpc.buffer.DynamicCompositeByteBufInputStream;
 import com.baidu.brpc.utils.IOUtils;
+import com.google.protobuf.Message;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.Unpooled;
@@ -37,20 +37,23 @@ import java.io.InputStream;
 public class SnappyCompress implements Compress {
     @Override
     public ByteBuf compressInput(Object proto, RpcMethodInfo rpcMethodInfo) throws IOException {
-        byte[] bytes = rpcMethodInfo.inputEncode(proto);
-        int maxCompressedSize = Snappy.maxCompressedLength(bytes.length);
-        byte[] compressedBytes = new byte[maxCompressedSize];
-        int compressedLen = Snappy.compress(bytes, 0, bytes.length, compressedBytes, 0);
+        byte[] bytes             = rpcMethodInfo.inputEncode(proto);
+        int    maxCompressedSize = Snappy.maxCompressedLength(bytes.length);
+        byte[] compressedBytes   = new byte[maxCompressedSize];
+        int    compressedLen     = Snappy.compress(bytes, 0, bytes.length, compressedBytes, 0);
         return Unpooled.wrappedBuffer(compressedBytes, 0, compressedLen);
     }
 
     @Override
-    public Object uncompressOutput(ByteBuf byteBuf, RpcMethodInfo rpcMethodInfo) throws IOException {
+    public Object uncompressOutput(ByteBuf byteBuf,
+                                   RpcMethodInfo rpcMethodInfo) throws IOException {
         InputStream inputStream = new ByteBufInputStream(byteBuf);
         inputStream = new SnappyInputStream(inputStream);
         if (rpcMethodInfo instanceof ProtobufRpcMethodInfo) {
             ProtobufRpcMethodInfo protobufRpcMethodInfo = (ProtobufRpcMethodInfo) rpcMethodInfo;
-            Message proto = (Message) protobufRpcMethodInfo.outputDecode(inputStream);
+            Message               proto
+                                                        = (Message) protobufRpcMethodInfo.outputDecode(
+                    inputStream);
             return proto;
         } else {
             byte[] uncompressedBytes = IOUtils.readInputStream(inputStream);
@@ -64,7 +67,9 @@ public class SnappyCompress implements Compress {
         inputStream = new SnappyInputStream(inputStream);
         if (rpcMethodInfo instanceof ProtobufRpcMethodInfo) {
             ProtobufRpcMethodInfo protobufRpcMethodInfo = (ProtobufRpcMethodInfo) rpcMethodInfo;
-            Message proto = (Message) protobufRpcMethodInfo.outputDecode(inputStream);
+            Message               proto
+                                                        = (Message) protobufRpcMethodInfo.outputDecode(
+                    inputStream);
             return proto;
         } else {
             byte[] uncompressedBytes = IOUtils.readInputStream(inputStream);
@@ -73,12 +78,15 @@ public class SnappyCompress implements Compress {
     }
 
     @Override
-    public Object uncompressOutput(DynamicCompositeByteBuf byteBuf, RpcMethodInfo rpcMethodInfo) throws IOException {
+    public Object uncompressOutput(DynamicCompositeByteBuf byteBuf,
+                                   RpcMethodInfo rpcMethodInfo) throws IOException {
         InputStream inputStream = new DynamicCompositeByteBufInputStream(byteBuf);
         inputStream = new SnappyInputStream(inputStream);
         if (rpcMethodInfo instanceof ProtobufRpcMethodInfo) {
             ProtobufRpcMethodInfo protobufRpcMethodInfo = (ProtobufRpcMethodInfo) rpcMethodInfo;
-            Message proto = (Message) protobufRpcMethodInfo.outputDecode(inputStream);
+            Message               proto
+                                                        = (Message) protobufRpcMethodInfo.outputDecode(
+                    inputStream);
             return proto;
         } else {
             byte[] uncompressedBytes = IOUtils.readInputStream(inputStream);
@@ -111,7 +119,8 @@ public class SnappyCompress implements Compress {
     }
 
     @Override
-    public Object uncompressInput(DynamicCompositeByteBuf byteBuf, RpcMethodInfo rpcMethodInfo) throws IOException {
+    public Object uncompressInput(DynamicCompositeByteBuf byteBuf,
+                                  RpcMethodInfo rpcMethodInfo) throws IOException {
         InputStream inputStream = new DynamicCompositeByteBufInputStream(byteBuf);
         inputStream = new SnappyInputStream(inputStream);
         if (rpcMethodInfo instanceof ProtobufRpcMethodInfo) {
@@ -124,10 +133,10 @@ public class SnappyCompress implements Compress {
 
     @Override
     public ByteBuf compressOutput(Object proto, RpcMethodInfo rpcMethodInfo) throws IOException {
-        byte[] bytes = rpcMethodInfo.outputEncode(proto);
-        int maxCompressedSize = Snappy.maxCompressedLength(bytes.length);
-        byte[] compressedBytes = new byte[maxCompressedSize];
-        int compressedLen = Snappy.compress(bytes, 0, bytes.length, compressedBytes, 0);
+        byte[] bytes             = rpcMethodInfo.outputEncode(proto);
+        int    maxCompressedSize = Snappy.maxCompressedLength(bytes.length);
+        byte[] compressedBytes   = new byte[maxCompressedSize];
+        int    compressedLen     = Snappy.compress(bytes, 0, bytes.length, compressedBytes, 0);
         return Unpooled.wrappedBuffer(compressedBytes, 0, compressedLen);
     }
 

@@ -21,7 +21,6 @@ import com.baidu.brpc.ProtobufRpcMethodInfo;
 import com.baidu.brpc.RpcMethodInfo;
 import com.baidu.brpc.utils.ProtobufUtils;
 import com.baidu.brpc.utils.ThreadPool;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +33,7 @@ import java.util.Map;
  */
 @SuppressWarnings("unchecked")
 public class ServiceManager {
-    private static final Logger LOG = LoggerFactory.getLogger(ServiceManager.class);
+    private static final    Logger         LOG = LoggerFactory.getLogger(ServiceManager.class);
     private static volatile ServiceManager instance;
 
     private Map<String, RpcMethodInfo> serviceMap;
@@ -60,7 +59,7 @@ public class ServiceManager {
             LOG.error("service must implement one interface only");
             throw new RuntimeException("service must implement one interface only");
         }
-        Class clazz = interfaces[0];
+        Class    clazz   = interfaces[0];
         Method[] methods = clazz.getDeclaredMethods();
         registerService(methods, service, threadPool);
     }
@@ -71,14 +70,14 @@ public class ServiceManager {
             LOG.error("service must implement one interface only");
             throw new RuntimeException("service must implement one interface only");
         }
-        Class clazz = interfaces[0];
+        Class    clazz   = interfaces[0];
         Method[] methods = clazz.getDeclaredMethods();
         registerService(methods, service, threadPool);
     }
 
     protected void registerService(Method[] methods, Object service, ThreadPool threadPool) {
         for (Method method : methods) {
-            RpcMethodInfo methodInfo;
+            RpcMethodInfo             methodInfo;
             ProtobufUtils.MessageType messageType = ProtobufUtils.getMessageType(method);
             if (messageType == ProtobufUtils.MessageType.PROTOBUF) {
                 methodInfo = new ProtobufRpcMethodInfo(method);
@@ -91,7 +90,7 @@ public class ServiceManager {
             methodInfo.setThreadPool(threadPool);
             registerService(methodInfo);
             LOG.info("register service, serviceName={}, methodName={}",
-                    methodInfo.getServiceName(), methodInfo.getMethodName());
+                     methodInfo.getServiceName(), methodInfo.getMethodName());
         }
     }
 

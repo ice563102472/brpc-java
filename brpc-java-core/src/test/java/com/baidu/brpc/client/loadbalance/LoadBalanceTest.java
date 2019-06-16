@@ -16,6 +16,7 @@
 
 package com.baidu.brpc.client.loadbalance;
 
+import com.baidu.brpc.RpcOptionsUtils;
 import com.baidu.brpc.client.BrpcProxy;
 import com.baidu.brpc.client.RpcClient;
 import com.baidu.brpc.client.RpcClientOptions;
@@ -24,7 +25,6 @@ import com.baidu.brpc.protocol.Request;
 import com.baidu.brpc.protocol.Response;
 import com.baidu.brpc.protocol.standard.Echo;
 import com.baidu.brpc.protocol.standard.EchoService;
-import com.baidu.brpc.RpcOptionsUtils;
 import com.baidu.brpc.server.RpcServer;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

@@ -16,22 +16,18 @@
 
 package com.baidu.brpc.client.channel;
 
-import java.util.NoSuchElementException;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
-
+import com.baidu.brpc.client.RpcClient;
+import com.baidu.brpc.client.RpcClientOptions;
 import com.baidu.brpc.client.instance.ServiceInstance;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import com.baidu.brpc.client.pool.ChannelPooledObjectFactory;
+import io.netty.channel.Channel;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 
-import com.baidu.brpc.client.RpcClient;
-import com.baidu.brpc.client.RpcClientOptions;
-import com.baidu.brpc.client.pool.ChannelPooledObjectFactory;
-
-import io.netty.channel.Channel;
-import lombok.extern.slf4j.Slf4j;
+import java.util.NoSuchElementException;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * BrpcPooledChannelGroup class keeps fixed connections with one server

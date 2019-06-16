@@ -16,13 +16,13 @@
 
 package com.baidu.brpc.example.jprotobuf;
 
-import com.baidu.brpc.client.loadbalance.LoadBalanceStrategy;
-import com.baidu.brpc.example.interceptor.CustomInterceptor;
-import com.baidu.brpc.exceptions.RpcException;
+import com.baidu.brpc.client.BrpcProxy;
 import com.baidu.brpc.client.RpcCallback;
 import com.baidu.brpc.client.RpcClient;
 import com.baidu.brpc.client.RpcClientOptions;
-import com.baidu.brpc.client.BrpcProxy;
+import com.baidu.brpc.client.loadbalance.LoadBalanceStrategy;
+import com.baidu.brpc.example.interceptor.CustomInterceptor;
+import com.baidu.brpc.exceptions.RpcException;
 import com.baidu.brpc.interceptor.Interceptor;
 import com.baidu.brpc.protocol.Options;
 import io.netty.channel.Channel;

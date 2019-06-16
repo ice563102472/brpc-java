@@ -16,19 +16,18 @@
 
 package com.baidu.brpc;
 
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
-
 import com.baidu.brpc.buffer.DynamicCompositeByteBuf;
 import com.baidu.brpc.protocol.nshead.NSHeadMeta;
 import com.baidu.brpc.utils.RpcMetaUtils;
 import com.baidu.brpc.utils.ThreadPool;
 import com.google.protobuf.CodedOutputStream;
-
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 
 /**
  * rpc method info is parsed when application initialized.
@@ -37,28 +36,28 @@ import lombok.Setter;
 @Setter
 @Getter
 public class RpcMethodInfo {
-    protected Method method;
-    protected String serviceName;
-    protected String methodName;
-    protected Type[] inputClasses;
-    protected Type outputClass;
+    protected Method     method;
+    protected String     serviceName;
+    protected String     methodName;
+    protected Type[]     inputClasses;
+    protected Type       outputClass;
     protected NSHeadMeta nsHeadMeta;
     // instance of interface which method belongs to
-    protected Object target;
+    protected Object     target;
     protected ThreadPool threadPool;
 
     public RpcMethodInfo(Method method) {
         RpcMetaUtils.RpcMetaInfo metaInfo = RpcMetaUtils.parseRpcMeta(method);
         this.serviceName = metaInfo.getServiceName();
-        this.methodName = metaInfo.getMethodName();
-        this.method = method;
+        this.methodName  = metaInfo.getMethodName();
+        this.method      = method;
         Type[] inputClasses = method.getGenericParameterTypes();
         if (inputClasses.length <= 0) {
             throw new IllegalArgumentException("invalid params");
         }
         this.inputClasses = inputClasses;
-        this.outputClass = method.getGenericReturnType();
-        this.nsHeadMeta = method.getAnnotation(NSHeadMeta.class);
+        this.outputClass  = method.getGenericReturnType();
+        this.nsHeadMeta   = method.getAnnotation(NSHeadMeta.class);
     }
 
     /**
@@ -74,7 +73,8 @@ public class RpcMethodInfo {
 
     /**
      * encode request at client inside
-     * @param input request
+     *
+     * @param input  request
      * @param stream out buffer stream
      * @throws IOException io exception
      */
@@ -94,6 +94,7 @@ public class RpcMethodInfo {
 
     /**
      * decode response at client side
+     *
      * @param output response netty ByteBuf
      * @return response proto object
      * @throws IOException
@@ -108,6 +109,7 @@ public class RpcMethodInfo {
 
     /**
      * decode request at server side
+     *
      * @param input request byte array
      * @return request proto instance
      * @throws IOException
@@ -118,6 +120,7 @@ public class RpcMethodInfo {
 
     /**
      * decode request at server side
+     *
      * @param input request netty {@link ByteBuf}
      * @return request proto instance
      * @throws IOException
@@ -132,6 +135,7 @@ public class RpcMethodInfo {
 
     /**
      * encode response proto instance at server side
+     *
      * @param output response proto instance
      * @return encoded byte array
      * @throws IOException
@@ -142,6 +146,7 @@ public class RpcMethodInfo {
 
     /**
      * encode response to stream at server side
+     *
      * @param output response object
      * @param stream output stream
      * @throws IOException
@@ -151,6 +156,7 @@ public class RpcMethodInfo {
 
     /**
      * get serialized size of request proto instance
+     *
      * @param input proto instance
      * @return serialized size
      * @throws IOException
@@ -161,6 +167,7 @@ public class RpcMethodInfo {
 
     /**
      * get serialized size of response proto instance
+     *
      * @param output response object
      * @return serialized size
      * @throws IOException

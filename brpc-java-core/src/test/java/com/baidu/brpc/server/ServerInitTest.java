@@ -1,19 +1,17 @@
 package com.baidu.brpc.server;
 
-import java.util.Map;
-
-import org.junit.Assert;
-import org.junit.Test;
-
+import com.baidu.brpc.RpcOptionsUtils;
 import com.baidu.brpc.client.BrpcProxy;
 import com.baidu.brpc.client.RpcClient;
 import com.baidu.brpc.protocol.standard.Echo;
 import com.baidu.brpc.protocol.standard.Echo.EchoRequest;
 import com.baidu.brpc.protocol.standard.EchoService;
 import com.baidu.brpc.protocol.standard.EchoServiceImpl;
-import com.baidu.brpc.RpcOptionsUtils;
-
 import lombok.extern.slf4j.Slf4j;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.util.Map;
 
 @Slf4j
 public class ServerInitTest {

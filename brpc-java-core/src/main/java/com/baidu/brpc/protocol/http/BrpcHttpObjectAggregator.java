@@ -15,12 +15,12 @@
  */
 package com.baidu.brpc.protocol.http;
 
-import java.util.List;
-
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.util.ReferenceCountUtil;
+
+import java.util.List;
 
 /**
  * Migrate from netty {@link HttpObjectAggregator}

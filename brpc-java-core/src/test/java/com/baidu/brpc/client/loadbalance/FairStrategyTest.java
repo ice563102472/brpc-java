@@ -15,11 +15,11 @@
  */
 package com.baidu.brpc.client.loadbalance;
 
-import java.util.LinkedList;
-import java.util.Queue;
-
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class FairStrategyTest extends FairStrategy {
 

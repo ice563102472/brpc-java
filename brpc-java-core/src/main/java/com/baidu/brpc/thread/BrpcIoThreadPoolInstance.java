@@ -44,10 +44,12 @@ public class BrpcIoThreadPoolInstance {
                 if (ioThreadPool == null) {
                     if (Epoll.isAvailable()) {
                         ioThreadPool = new EpollEventLoopGroup(threadNum,
-                                new CustomThreadFactory("brpc-io-thread"));
+                                                               new CustomThreadFactory(
+                                                                       "brpc-io-thread"));
                     } else {
                         ioThreadPool = new NioEventLoopGroup(threadNum,
-                                new CustomThreadFactory("brpc-io-thread"));
+                                                             new CustomThreadFactory(
+                                                                     "brpc-io-thread"));
                     }
                 }
             }

@@ -16,9 +16,6 @@
 
 package com.baidu.brpc.server.handler;
 
-import java.io.IOException;
-import java.util.List;
-
 import com.baidu.brpc.ChannelInfo;
 import com.baidu.brpc.buffer.DynamicCompositeByteBuf;
 import com.baidu.brpc.exceptions.BadSchemaException;
@@ -28,13 +25,15 @@ import com.baidu.brpc.exceptions.TooBigDataException;
 import com.baidu.brpc.protocol.Protocol;
 import com.baidu.brpc.protocol.ProtocolManager;
 import com.baidu.brpc.server.RpcServer;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.unix.Errors;
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by huwenwei on 2017/4/25.
@@ -66,6 +65,7 @@ public class RpcServerHandler extends SimpleChannelInboundHandler<Object> {
             int i = 0;
             while (channelInfo.getRecvBuf().readableBytes() > 0) {
                 try {
+                    //TODO:为什么这里会有个循环
                     Object packet = decodeHeader(ctx, channelInfo, channelInfo.getRecvBuf());
                     DecodeWorkTask task = new DecodeWorkTask(rpcServer, packet, channelInfo.getProtocol(), ctx);
                     tasks[i++] = task;

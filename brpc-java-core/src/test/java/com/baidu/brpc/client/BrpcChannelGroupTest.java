@@ -15,22 +15,20 @@
  */
 package com.baidu.brpc.client;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-
-import java.util.Queue;
-
+import com.baidu.brpc.RpcOptionsUtils;
+import com.baidu.brpc.client.channel.BrpcChannel;
+import com.baidu.brpc.client.channel.BrpcPooledChannel;
+import com.baidu.brpc.client.instance.ServiceInstance;
+import com.baidu.brpc.server.RpcServer;
+import io.netty.channel.Channel;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.baidu.brpc.client.channel.BrpcChannel;
-import com.baidu.brpc.client.channel.BrpcPooledChannel;
-import com.baidu.brpc.client.instance.ServiceInstance;
-import com.baidu.brpc.RpcOptionsUtils;
-import com.baidu.brpc.server.RpcServer;
+import java.util.Queue;
 
-import io.netty.channel.Channel;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 public class BrpcChannelGroupTest {
 

@@ -4,9 +4,6 @@
 
 package com.baidu.brpc.interceptor;
 
-import java.util.HashSet;
-import java.util.concurrent.TimeUnit;
-
 import com.baidu.brpc.ChannelInfo;
 import com.baidu.brpc.client.AsyncAwareFuture;
 import com.baidu.brpc.client.RpcClient;
@@ -15,9 +12,11 @@ import com.baidu.brpc.client.channel.BrpcChannel;
 import com.baidu.brpc.exceptions.RpcException;
 import com.baidu.brpc.protocol.Request;
 import com.baidu.brpc.protocol.Response;
-
 import io.netty.channel.Channel;
 import lombok.Setter;
+
+import java.util.HashSet;
+import java.util.concurrent.TimeUnit;
 
 /**
  * retry + load balance + rpc.

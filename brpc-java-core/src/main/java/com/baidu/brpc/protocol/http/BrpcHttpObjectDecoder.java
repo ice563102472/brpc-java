@@ -15,23 +15,15 @@
  */
 package com.baidu.brpc.protocol.http;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.DecoderException;
-import io.netty.handler.codec.http.DefaultFullHttpRequest;
-import io.netty.handler.codec.http.DefaultFullHttpResponse;
-import io.netty.handler.codec.http.DefaultHttpRequest;
-import io.netty.handler.codec.http.DefaultHttpResponse;
-import io.netty.handler.codec.http.HttpMessage;
-import io.netty.handler.codec.http.HttpMethod;
-import io.netty.handler.codec.http.HttpObjectDecoder;
-import io.netty.handler.codec.http.HttpResponseStatus;
-import io.netty.handler.codec.http.HttpVersion;
+import io.netty.handler.codec.http.*;
 import io.netty.util.concurrent.FastThreadLocal;
 import io.netty.util.internal.StringUtil;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Migrate from netty {@link HttpObjectDecoder}

@@ -16,32 +16,26 @@
 
 package com.baidu.brpc.protocol.http;
 
-import static org.junit.Assert.assertEquals;
-
-import java.lang.reflect.Method;
-
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.baidu.brpc.RpcMethodInfo;
-import com.baidu.brpc.protocol.Options.ProtocolType;
-import com.baidu.brpc.protocol.http.json.HelloWorldService;
-import com.baidu.brpc.protocol.http.json.HelloWorldServiceImpl;
 import com.baidu.brpc.protocol.HttpRequest;
 import com.baidu.brpc.protocol.HttpResponse;
+import com.baidu.brpc.protocol.Options.ProtocolType;
 import com.baidu.brpc.protocol.Request;
 import com.baidu.brpc.protocol.Response;
+import com.baidu.brpc.protocol.http.json.HelloWorldService;
+import com.baidu.brpc.protocol.http.json.HelloWorldServiceImpl;
 import com.baidu.brpc.server.ServiceManager;
 import com.baidu.brpc.utils.ByteBufUtils;
 import com.google.gson.Gson;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import io.netty.handler.codec.http.DefaultFullHttpRequest;
-import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.HttpHeaderNames;
-import io.netty.handler.codec.http.HttpMethod;
-import io.netty.handler.codec.http.HttpVersion;
+import io.netty.handler.codec.http.*;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.lang.reflect.Method;
+
+import static org.junit.Assert.assertEquals;
 
 public class HttpJsonProtocolTest {
 

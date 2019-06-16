@@ -4,8 +4,6 @@
 
 package com.baidu.brpc.server.handler;
 
-import java.lang.reflect.InvocationTargetException;
-
 import com.baidu.brpc.RpcContext;
 import com.baidu.brpc.interceptor.DefaultInterceptorChain;
 import com.baidu.brpc.interceptor.InterceptorChain;
@@ -13,7 +11,6 @@ import com.baidu.brpc.protocol.Protocol;
 import com.baidu.brpc.protocol.Request;
 import com.baidu.brpc.protocol.Response;
 import com.baidu.brpc.server.RpcServer;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
@@ -21,6 +18,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+
+import java.lang.reflect.InvocationTargetException;
 
 @Slf4j
 @Setter

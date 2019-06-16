@@ -18,8 +18,8 @@ package com.baidu.brpc;
 
 import com.baidu.bjf.remoting.protobuf.Codec;
 import com.baidu.bjf.remoting.protobuf.ProtobufProxy;
-import com.google.protobuf.CodedOutputStream;
 import com.baidu.brpc.buffer.DynamicCompositeByteBuf;
+import com.google.protobuf.CodedOutputStream;
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 import lombok.Setter;
@@ -39,7 +39,7 @@ public class JprotobufRpcMethodInfo extends RpcMethodInfo {
 
     public JprotobufRpcMethodInfo(Method method) {
         super(method);
-        inputCodec = ProtobufProxy.create((Class) (inputClasses[0]));
+        inputCodec  = ProtobufProxy.create((Class) (inputClasses[0]));
         outputCodec = ProtobufProxy.create((Class) outputClass);
     }
 
@@ -69,7 +69,7 @@ public class JprotobufRpcMethodInfo extends RpcMethodInfo {
     @Override
     public Object outputDecode(ByteBuf output) throws IOException {
         if (outputCodec != null) {
-            int len = output.readableBytes();
+            int    len   = output.readableBytes();
             byte[] bytes = new byte[len];
             output.readBytes(bytes);
             return outputCodec.decode(bytes);
@@ -80,7 +80,7 @@ public class JprotobufRpcMethodInfo extends RpcMethodInfo {
     @Override
     public Object outputDecode(DynamicCompositeByteBuf output) throws IOException {
         if (outputCodec != null) {
-            int len = output.readableBytes();
+            int    len   = output.readableBytes();
             byte[] bytes = new byte[len];
             output.readBytes(bytes);
             return outputCodec.decode(bytes);
@@ -99,7 +99,7 @@ public class JprotobufRpcMethodInfo extends RpcMethodInfo {
     @Override
     public Object inputDecode(ByteBuf input) throws IOException {
         if (inputCodec != null) {
-            int len = input.readableBytes();
+            int    len   = input.readableBytes();
             byte[] bytes = new byte[len];
             input.readBytes(bytes);
             return inputCodec.decode(bytes);
@@ -110,7 +110,7 @@ public class JprotobufRpcMethodInfo extends RpcMethodInfo {
     @Override
     public Object inputDecode(DynamicCompositeByteBuf input) throws IOException {
         if (inputCodec != null) {
-            int len = input.readableBytes();
+            int    len   = input.readableBytes();
             byte[] bytes = new byte[len];
             input.readBytes(bytes);
             return inputCodec.decode(bytes);

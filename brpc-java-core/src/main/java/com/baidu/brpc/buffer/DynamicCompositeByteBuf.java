@@ -16,14 +16,14 @@
 
 package com.baidu.brpc.buffer;
 
-import java.nio.ByteOrder;
-import java.util.ArrayDeque;
-import java.util.Iterator;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.CompositeByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.buffer.UnpooledByteBufAllocator;
+
+import java.nio.ByteOrder;
+import java.util.ArrayDeque;
+import java.util.Iterator;
 
 /**
  * dynamically composite multi {@link ByteBuf}, and it can be read just like a normal {@link ByteBuf}.
@@ -37,20 +37,21 @@ import io.netty.buffer.UnpooledByteBufAllocator;
  */
 public class DynamicCompositeByteBuf {
     private ArrayDeque<ByteBuf> buffers;
-    private int readableBytes;
+    private int                 readableBytes;
 
     public DynamicCompositeByteBuf() {
-        this.buffers = new ArrayDeque<ByteBuf>(1);
+        this.buffers       = new ArrayDeque<ByteBuf>(1);
         this.readableBytes = 0;
     }
 
     public DynamicCompositeByteBuf(int capacity) {
-        this.buffers = new ArrayDeque<ByteBuf>(capacity);
+        this.buffers       = new ArrayDeque<ByteBuf>(capacity);
         this.readableBytes = 0;
     }
 
     /**
      * construct a new {@link DynamicCompositeByteBuf} with netty {@link ByteBuf}.
+     *
      * @param buf input buf, readable size should be greater than zero.
      */
     public DynamicCompositeByteBuf(ByteBuf buf) {
@@ -61,12 +62,13 @@ public class DynamicCompositeByteBuf {
 
     /**
      * construct a new {@link DynamicCompositeByteBuf} with netty {@link ByteBuf} array.
-     * @param bufs byte buffer array, readable size of each element should be greater than zero.
+     *
+     * @param bufs   byte buffer array, readable size of each element should be greater than zero.
      * @param offset offset at array
-     * @param len length for create the new {@link DynamicCompositeByteBuf}
+     * @param len    length for create the new {@link DynamicCompositeByteBuf}
      */
     public DynamicCompositeByteBuf(ByteBuf[] bufs, int offset, int len) {
-        buffers = new ArrayDeque<ByteBuf>(len);
+        buffers       = new ArrayDeque<ByteBuf>(len);
         readableBytes = 0;
         for (int i = offset; i < offset + len; i++) {
             buffers.addLast(bufs[i]);
@@ -91,6 +93,7 @@ public class DynamicCompositeByteBuf {
 
     /**
      * it not check hasArray for performance
+     *
      * @return the backing array if it exists. {@code null} otherwise.
      */
     public byte[] array() throws UnsupportedOperationException {
@@ -102,8 +105,9 @@ public class DynamicCompositeByteBuf {
 
     /**
      * it not check hasArray for performance
+     *
      * @return The offset within this buffer's array of the first element
-     *          of the buffer
+     * of the buffer
      */
     public int arrayOffset() throws UnsupportedOperationException {
         if (hasArray()) {
@@ -126,6 +130,7 @@ public class DynamicCompositeByteBuf {
     /**
      * convert {@link DynamicCompositeByteBuf} to netty {@link ByteBuf},
      * the reference count of its underlying buffers are not increased.
+     *
      * @return netty ByteBuf
      */
     public ByteBuf nettyByteBuf() {
@@ -137,12 +142,13 @@ public class DynamicCompositeByteBuf {
             return buffers.pop();
         }
         return new CompositeByteBuf(UnpooledByteBufAllocator.DEFAULT, false,
-                size, buffers.toArray(new ByteBuf[0]));
+                                    size, buffers.toArray(new ByteBuf[0]));
     }
 
     /**
      * add netty {@link ByteBuf} to {@link DynamicCompositeByteBuf}.
      * the reference count of netty byte buffer will be managed by {@link DynamicCompositeByteBuf}.
+     *
      * @param buffer netty byte buffer
      */
     public void addBuffer(ByteBuf buffer) {
@@ -161,11 +167,8 @@ public class DynamicCompositeByteBuf {
      * of the new slice (= {@code length}).
      *
      * @param length the size of the new composite byte buffer
-     *
      * @return the newly created composite byte buffer
-     *
-     * @throws IndexOutOfBoundsException
-     *         if {@code length} is greater than {@code this.readableBytes}
+     * @throws IndexOutOfBoundsException if {@code length} is greater than {@code this.readableBytes}
      */
     public ByteBuf readRetainedSlice(int length) {
         if (length > readableBytes) {
@@ -175,8 +178,8 @@ public class DynamicCompositeByteBuf {
             return Unpooled.buffer(0);
         }
 
-        ByteBuf first = buffers.peek();
-        int firstLen = first.readableBytes();
+        ByteBuf first    = buffers.peek();
+        int     firstLen = first.readableBytes();
         if (length == firstLen) {
             readableBytes -= length;
             return buffers.removeFirst();
@@ -185,9 +188,9 @@ public class DynamicCompositeByteBuf {
             readableBytes -= length;
             return newBuf;
         } else {
-            int capacity = 2;
+            int       capacity = 2;
             ByteBuf[] byteBufs = new ByteBuf[capacity];
-            int i = 0;
+            int       i        = 0;
             while (length > 0 && readableBytes > 0) {
                 ByteBuf newBuf;
                 if (firstLen > length) {
@@ -201,14 +204,14 @@ public class DynamicCompositeByteBuf {
                     buffers.pop();
                 }
                 if (i == capacity) {
-                    int newCapacity = capacity * 2;
+                    int       newCapacity = capacity * 2;
                     ByteBuf[] newByteBufs = new ByteBuf[newCapacity];
                     System.arraycopy(byteBufs, 0, newByteBufs, 0, capacity);
                     byteBufs = newByteBufs;
                     capacity = newCapacity;
                 }
                 byteBufs[i++] = newBuf;
-                first = buffers.peek();
+                                first = buffers.peek();
                 if (first == null) {
                     break;
                 }
@@ -216,12 +219,14 @@ public class DynamicCompositeByteBuf {
             }
             if (i == capacity) {
                 int maxComponentNum = (i > 2) ? i : 2;
-                return new CompositeByteBuf(UnpooledByteBufAllocator.DEFAULT, true, maxComponentNum, byteBufs);
+                return new CompositeByteBuf(UnpooledByteBufAllocator.DEFAULT, true, maxComponentNum,
+                                            byteBufs);
             } else {
                 ByteBuf[] outBufs = new ByteBuf[i];
                 System.arraycopy(byteBufs, 0, outBufs, 0, i);
                 int maxComponentNum = (i > 2) ? i : 2;
-                return new CompositeByteBuf(UnpooledByteBufAllocator.DEFAULT, true, maxComponentNum, outBufs);
+                return new CompositeByteBuf(UnpooledByteBufAllocator.DEFAULT, true, maxComponentNum,
+                                            outBufs);
             }
         }
     }
@@ -232,11 +237,8 @@ public class DynamicCompositeByteBuf {
      * This method does not modify {@code readerIndex} or {@code writerIndex} of this buffer.
      *
      * @param length the size of the new composite byte buffer
-     *
      * @return the newly created composite byte buffer
-     *
-     * @throws IndexOutOfBoundsException
-     *         if {@code length} is greater than {@code this.readableBytes}
+     * @throws IndexOutOfBoundsException if {@code length} is greater than {@code this.readableBytes}
      */
     public ByteBuf retainedSlice(int length) {
         if (length > readableBytes) {
@@ -246,21 +248,21 @@ public class DynamicCompositeByteBuf {
             return Unpooled.buffer(0);
         }
 
-        ByteBuf first = buffers.peek();
-        int firstLen = first.readableBytes();
+        ByteBuf first    = buffers.peek();
+        int     firstLen = first.readableBytes();
         if (length <= firstLen) {
             ByteBuf newBuf = first.retainedSlice(first.readerIndex(), length);
             return newBuf;
         } else {
-            int capacity = 2;
-            ByteBuf[] byteBufs = new ByteBuf[capacity];
-            int i = 0;
-            int offset = 0;
-            ByteBuf newBuf;
+            int               capacity = 2;
+            ByteBuf[]         byteBufs = new ByteBuf[capacity];
+            int               i        = 0;
+            int               offset   = 0;
+            ByteBuf           newBuf;
             Iterator<ByteBuf> iterator = buffers.iterator();
             while (offset < length && iterator.hasNext()) {
-                ByteBuf next = iterator.next();
-                int nextLen = next.readableBytes();
+                ByteBuf next    = iterator.next();
+                int     nextLen = next.readableBytes();
                 if (nextLen <= length - offset) {
                     newBuf = next.retainedSlice();
                     offset += nextLen;
@@ -269,7 +271,7 @@ public class DynamicCompositeByteBuf {
                     offset = length;
                 }
                 if (i == capacity) {
-                    int newCapacity = capacity * 2;
+                    int       newCapacity = capacity * 2;
                     ByteBuf[] newByteBufs = new ByteBuf[newCapacity];
                     System.arraycopy(byteBufs, 0, newByteBufs, 0, i);
                     byteBufs = newByteBufs;
@@ -279,12 +281,14 @@ public class DynamicCompositeByteBuf {
             }
             if (i == capacity) {
                 int maxComponentNum = (i > 2) ? i : 2;
-                return new CompositeByteBuf(UnpooledByteBufAllocator.DEFAULT, true, maxComponentNum, byteBufs);
+                return new CompositeByteBuf(UnpooledByteBufAllocator.DEFAULT, true, maxComponentNum,
+                                            byteBufs);
             } else {
                 ByteBuf[] outBufs = new ByteBuf[i];
                 System.arraycopy(byteBufs, 0, outBufs, 0, i);
                 int maxComponentNum = (i > 2) ? i : 2;
-                return new CompositeByteBuf(UnpooledByteBufAllocator.DEFAULT, true, maxComponentNum, outBufs);
+                return new CompositeByteBuf(UnpooledByteBufAllocator.DEFAULT, true, maxComponentNum,
+                                            outBufs);
             }
         }
     }
@@ -297,8 +301,8 @@ public class DynamicCompositeByteBuf {
             return;
         }
         while (length > 0 && readableBytes > 0) {
-            ByteBuf first = buffers.peek();
-            int firstLen = first.readableBytes();
+            ByteBuf first    = buffers.peek();
+            int     firstLen = first.readableBytes();
             if (firstLen > length) {
                 first.skipBytes(length);
                 readableBytes -= length;
@@ -323,24 +327,22 @@ public class DynamicCompositeByteBuf {
      *
      * @param dstIndex the first index of the destination
      * @param length   the number of bytes to transfer
-     *
-     * @throws IndexOutOfBoundsException
-     *         if the specified {@code dstIndex} is less than {@code 0},
-     *         if {@code length} is greater than {@code this.readableBytes}, or
-     *         if {@code dstIndex + length} is greater than {@code dst.length}
+     * @throws IndexOutOfBoundsException if the specified {@code dstIndex} is less than {@code 0},
+     *                                   if {@code length} is greater than {@code this.readableBytes}, or
+     *                                   if {@code dstIndex + length} is greater than {@code dst.length}
      */
     public DynamicCompositeByteBuf readBytes(byte[] dst, int dstIndex, int length) {
         if (dst == null) {
             throw new NullPointerException();
         }
         if (dstIndex < 0 || dstIndex >= dst.length
-                || dstIndex + length > dst.length || dstIndex + length < 0) {
+            || dstIndex + length > dst.length || dstIndex + length < 0) {
             throw new IndexOutOfBoundsException();
         }
 
         while (length > 0) {
-            ByteBuf first = buffers.peek();
-            int firstLen = first.readableBytes();
+            ByteBuf first    = buffers.peek();
+            int     firstLen = first.readableBytes();
             if (firstLen > length) {
                 first.readBytes(dst, dstIndex, length);
                 readableBytes -= length;
@@ -360,13 +362,12 @@ public class DynamicCompositeByteBuf {
      * Gets a byte at the current {@code readerIndex} and increases
      * the {@code readerIndex} by {@code 1} in this buffer.
      *
-     * @throws IndexOutOfBoundsException
-     *         if {@code this.readableBytes} is less than {@code 1}
+     * @throws IndexOutOfBoundsException if {@code this.readableBytes} is less than {@code 1}
      */
     public byte readByte() {
         checkReadableBytes0(1);
         ByteBuf buf = buffers.peek();
-        byte res = buf.readByte();
+        byte    res = buf.readByte();
         readableBytes -= 1;
         if (buf.readableBytes() <= 0) {
             buffers.removeFirst().release();
@@ -378,8 +379,7 @@ public class DynamicCompositeByteBuf {
      * Gets an unsigned byte at the current {@code readerIndex} and increases
      * the {@code readerIndex} by {@code 1} in this buffer.
      *
-     * @throws IndexOutOfBoundsException
-     *         if {@code this.readableBytes} is less than {@code 1}
+     * @throws IndexOutOfBoundsException if {@code this.readableBytes} is less than {@code 1}
      */
     public short readUnsignedByte() {
         return (short) (readByte() & 0xFF);
@@ -389,14 +389,13 @@ public class DynamicCompositeByteBuf {
      * Gets a 16-bit short integer at the current {@code readerIndex}
      * and increases the {@code readerIndex} by {@code 2} in this buffer.
      *
-     * @throws IndexOutOfBoundsException
-     *         if {@code this.readableBytes} is less than {@code 2}
+     * @throws IndexOutOfBoundsException if {@code this.readableBytes} is less than {@code 2}
      */
     public short readShort() {
         checkReadableBytes0(2);
-        short res;
-        ByteBuf first = buffers.peek();
-        int firstLen = first.readableBytes();
+        short   res;
+        ByteBuf first    = buffers.peek();
+        int     firstLen = first.readableBytes();
         if (firstLen >= 2) {
             res = first.readShort();
             readableBytes -= 2;
@@ -416,13 +415,12 @@ public class DynamicCompositeByteBuf {
      * in the Little Endian Byte Order and increases the {@code readerIndex}
      * by {@code 2} in this buffer.
      *
-     * @throws IndexOutOfBoundsException
-     *         if {@code this.readableBytes} is less than {@code 2}
+     * @throws IndexOutOfBoundsException if {@code this.readableBytes} is less than {@code 2}
      */
     public short readShortLE() {
         checkReadableBytes0(2);
-        ByteBuf first = buffers.peek();
-        int firstLen = first.readableBytes();
+        ByteBuf first    = buffers.peek();
+        int     firstLen = first.readableBytes();
         if (firstLen >= 2) {
             short res = first.readShortLE();
             readableBytes -= 2;
@@ -441,8 +439,7 @@ public class DynamicCompositeByteBuf {
      * Gets an unsigned 16-bit short integer at the current {@code readerIndex}
      * and increases the {@code readerIndex} by {@code 2} in this buffer.
      *
-     * @throws IndexOutOfBoundsException
-     *         if {@code this.readableBytes} is less than {@code 2}
+     * @throws IndexOutOfBoundsException if {@code this.readableBytes} is less than {@code 2}
      */
     public int readUnsignedShort() {
         return readShort() & 0xFFFF;
@@ -453,8 +450,7 @@ public class DynamicCompositeByteBuf {
      * in the Little Endian Byte Order and increases the {@code readerIndex}
      * by {@code 2} in this buffer.
      *
-     * @throws IndexOutOfBoundsException
-     *         if {@code this.readableBytes} is less than {@code 2}
+     * @throws IndexOutOfBoundsException if {@code this.readableBytes} is less than {@code 2}
      */
     public int readUnsignedShortLE() {
         return readShortLE() & 0xFFFF;
@@ -464,13 +460,12 @@ public class DynamicCompositeByteBuf {
      * Gets a 32-bit integer at the current {@code readerIndex}
      * and increases the {@code readerIndex} by {@code 4} in this buffer.
      *
-     * @throws IndexOutOfBoundsException
-     *         if {@code this.readableBytes} is less than {@code 4}
+     * @throws IndexOutOfBoundsException if {@code this.readableBytes} is less than {@code 4}
      */
     public int readInt() {
         checkReadableBytes0(4);
-        ByteBuf first = buffers.peek();
-        int firstLen = first.readableBytes();
+        ByteBuf first    = buffers.peek();
+        int     firstLen = first.readableBytes();
         if (firstLen >= 4) {
             int res = first.readInt();
             readableBytes -= 4;
@@ -490,13 +485,12 @@ public class DynamicCompositeByteBuf {
      * in the Little Endian Byte Order and increases the {@code readerIndex}
      * by {@code 4} in this buffer.
      *
-     * @throws IndexOutOfBoundsException
-     *         if {@code this.readableBytes} is less than {@code 4}
+     * @throws IndexOutOfBoundsException if {@code this.readableBytes} is less than {@code 4}
      */
     public int readIntLE() {
         checkReadableBytes0(4);
-        ByteBuf first = buffers.peek();
-        int firstLen = first.readableBytes();
+        ByteBuf first    = buffers.peek();
+        int     firstLen = first.readableBytes();
         if (firstLen >= 4) {
             int res = first.readIntLE();
             readableBytes -= 4;
@@ -515,13 +509,12 @@ public class DynamicCompositeByteBuf {
      * Gets a 64-bit integer at the current {@code readerIndex}
      * and increases the {@code readerIndex} by {@code 8} in this buffer.
      *
-     * @throws IndexOutOfBoundsException
-     *         if {@code this.readableBytes} is less than {@code 8}
+     * @throws IndexOutOfBoundsException if {@code this.readableBytes} is less than {@code 8}
      */
     public long readLong() {
         checkReadableBytes0(8);
-        ByteBuf first = buffers.peek();
-        int firstLen = first.readableBytes();
+        ByteBuf first    = buffers.peek();
+        int     firstLen = first.readableBytes();
         if (firstLen >= 8) {
             long res = first.readLong();
             readableBytes -= 8;
@@ -541,13 +534,12 @@ public class DynamicCompositeByteBuf {
      * in the Little Endian Byte Order and increases the {@code readerIndex}
      * by {@code 8} in this buffer.
      *
-     * @throws IndexOutOfBoundsException
-     *         if {@code this.readableBytes} is less than {@code 8}
+     * @throws IndexOutOfBoundsException if {@code this.readableBytes} is less than {@code 8}
      */
     public long readLongLE() {
         checkReadableBytes0(8);
-        ByteBuf first = buffers.peek();
-        int firstLen = first.readableBytes();
+        ByteBuf first    = buffers.peek();
+        int     firstLen = first.readableBytes();
         if (firstLen >= 8) {
             long res = first.readLongLE();
             readableBytes -= 8;
@@ -566,8 +558,7 @@ public class DynamicCompositeByteBuf {
      * Gets a 2-byte UTF-16 character at the current {@code readerIndex}
      * and increases the {@code readerIndex} by {@code 2} in this buffer.
      *
-     * @throws IndexOutOfBoundsException
-     *         if {@code this.readableBytes} is less than {@code 2}
+     * @throws IndexOutOfBoundsException if {@code this.readableBytes} is less than {@code 2}
      */
     public char readChar() {
         return (char) readShort();
@@ -577,8 +568,7 @@ public class DynamicCompositeByteBuf {
      * Gets a 32-bit floating point number at the current {@code readerIndex}
      * and increases the {@code readerIndex} by {@code 4} in this buffer.
      *
-     * @throws IndexOutOfBoundsException
-     *         if {@code this.readableBytes} is less than {@code 4}
+     * @throws IndexOutOfBoundsException if {@code this.readableBytes} is less than {@code 4}
      */
     public float readFloat() {
         return Float.intBitsToFloat(readInt());
@@ -589,8 +579,7 @@ public class DynamicCompositeByteBuf {
      * in Little Endian Byte Order and increases the {@code readerIndex}
      * by {@code 4} in this buffer.
      *
-     * @throws IndexOutOfBoundsException
-     *         if {@code this.readableBytes} is less than {@code 4}
+     * @throws IndexOutOfBoundsException if {@code this.readableBytes} is less than {@code 4}
      */
     public float readFloatLE() {
         return Float.intBitsToFloat(readIntLE());
@@ -600,8 +589,7 @@ public class DynamicCompositeByteBuf {
      * Gets a 64-bit floating point number at the current {@code readerIndex}
      * and increases the {@code readerIndex} by {@code 8} in this buffer.
      *
-     * @throws IndexOutOfBoundsException
-     *         if {@code this.readableBytes} is less than {@code 8}
+     * @throws IndexOutOfBoundsException if {@code this.readableBytes} is less than {@code 8}
      */
     public double readDouble() {
         return Double.longBitsToDouble(readLong());
@@ -612,8 +600,7 @@ public class DynamicCompositeByteBuf {
      * in Little Endian Byte Order and increases the {@code readerIndex}
      * by {@code 8} in this buffer.
      *
-     * @throws IndexOutOfBoundsException
-     *         if {@code this.readableBytes} is less than {@code 8}
+     * @throws IndexOutOfBoundsException if {@code this.readableBytes} is less than {@code 8}
      */
     public double readDoubleLE() {
         return Double.longBitsToDouble(readLongLE());

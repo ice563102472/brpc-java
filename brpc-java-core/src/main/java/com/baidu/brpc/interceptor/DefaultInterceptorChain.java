@@ -16,12 +16,12 @@
 
 package com.baidu.brpc.interceptor;
 
-import java.util.Iterator;
-import java.util.List;
-
 import com.baidu.brpc.exceptions.RpcException;
 import com.baidu.brpc.protocol.Request;
 import com.baidu.brpc.protocol.Response;
+
+import java.util.Iterator;
+import java.util.List;
 
 public class DefaultInterceptorChain implements InterceptorChain {
     private List<Interceptor> interceptors;

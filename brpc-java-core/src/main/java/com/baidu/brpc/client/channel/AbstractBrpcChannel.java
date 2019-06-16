@@ -3,21 +3,19 @@
  */
 package com.baidu.brpc.client.channel;
 
-import java.net.InetSocketAddress;
-import java.util.Queue;
-
 import com.baidu.brpc.client.instance.ServiceInstance;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-
 import com.baidu.brpc.exceptions.RpcException;
 import com.baidu.brpc.protocol.Protocol;
-
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import java.net.InetSocketAddress;
+import java.util.Queue;
 
 @Slf4j
 public abstract class AbstractBrpcChannel implements BrpcChannel {

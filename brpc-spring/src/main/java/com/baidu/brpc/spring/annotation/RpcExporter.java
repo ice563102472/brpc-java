@@ -15,14 +15,9 @@
  */
 package com.baidu.brpc.spring.annotation;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
 import com.baidu.brpc.spring.RpcServiceExporter;
+
+import java.lang.annotation.*;
 
 /**
  * Annotation publish for {@link RpcServiceExporter}.

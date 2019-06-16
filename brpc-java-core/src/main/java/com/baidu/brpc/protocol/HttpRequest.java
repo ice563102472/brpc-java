@@ -16,11 +16,7 @@
 package com.baidu.brpc.protocol;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.handler.codec.http.DefaultFullHttpRequest;
-import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.HttpHeaders;
-import io.netty.handler.codec.http.HttpMethod;
-import io.netty.handler.codec.http.HttpVersion;
+import io.netty.handler.codec.http.*;
 import io.netty.util.concurrent.FastThreadLocal;
 import lombok.Getter;
 import lombok.Setter;

@@ -16,18 +16,17 @@
 
 package com.baidu.brpc.utils;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-
 import com.baidu.bjf.remoting.protobuf.annotation.Protobuf;
 import com.baidu.bjf.remoting.protobuf.annotation.ProtobufClass;
 import com.baidu.brpc.buffer.DynamicCompositeByteBuf;
 import com.google.protobuf.Message;
-
 import io.netty.buffer.ByteBuf;
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 @Slf4j
 public class ProtobufUtils {
@@ -38,8 +37,8 @@ public class ProtobufUtils {
     }
 
     public static MessageType getMessageType(Method method) {
-        Class<?>[] types = method.getParameterTypes();
-        Class returnType = method.getReturnType();
+        Class<?>[] types      = method.getParameterTypes();
+        Class      returnType = method.getReturnType();
         if (types.length <= 0) {
             throw new IllegalArgumentException("invalid rpc method params");
         }
@@ -50,7 +49,7 @@ public class ProtobufUtils {
 
         Class<?> inputType = types[0];
         if (Message.class.isAssignableFrom(inputType)
-                && Message.class.isAssignableFrom(returnType)) {
+            && Message.class.isAssignableFrom(returnType)) {
             return MessageType.PROTOBUF;
         }
 
@@ -72,8 +71,8 @@ public class ProtobufUtils {
 
     public static Message parseFrom(InputStream inputStream, Class clazz) {
         try {
-            Method method = clazz.getMethod("getDefaultInstance");
-            Message proto = (Message) method.invoke(null);
+            Method  method = clazz.getMethod("getDefaultInstance");
+            Message proto  = (Message) method.invoke(null);
             proto = proto.newBuilderForType().mergeFrom(inputStream).build();
             return proto;
         } catch (Exception ex) {
@@ -85,8 +84,8 @@ public class ProtobufUtils {
 
     public static Message parseFrom(byte[] inputBytes, Class clazz) {
         try {
-            Method method = clazz.getMethod("parseFrom", byte[].class);
-            Message proto = (Message) method.invoke(null, inputBytes);
+            Method  method = clazz.getMethod("parseFrom", byte[].class);
+            Message proto  = (Message) method.invoke(null, inputBytes);
             return proto;
         } catch (Exception ex) {
             String errorMsg = String.format("parse proto failed, msg=%s", ex.getMessage());
@@ -97,14 +96,15 @@ public class ProtobufUtils {
 
     /**
      * parse proto from netty {@link ByteBuf}
-     * @param input netty ByteBuf
+     *
+     * @param input           netty ByteBuf
      * @param defaultInstance default instance for proto
      * @return proto message
      * @throws IOException read io exception
      */
     public static Message parseFrom(ByteBuf input, Message defaultInstance) throws IOException {
         final int length = input.readableBytes();
-        byte[] array = new byte[length];
+        byte[]    array  = new byte[length];
         input.readBytes(array, 0, length);
         return defaultInstance.getParserForType().parseFrom(array);
     }
@@ -113,10 +113,11 @@ public class ProtobufUtils {
         return defaultInstance.getParserForType().parseFrom(input);
     }
 
-    public static Message parseFrom(DynamicCompositeByteBuf input, Message defaultInstance) throws IOException {
+    public static Message parseFrom(DynamicCompositeByteBuf input,
+                                    Message defaultInstance) throws IOException {
         final byte[] array;
-        final int offset;
-        final int length = input.readableBytes();
+        final int    offset;
+        final int    length = input.readableBytes();
         array = new byte[length];
         input.readBytes(array, 0, length);
         offset = 0;

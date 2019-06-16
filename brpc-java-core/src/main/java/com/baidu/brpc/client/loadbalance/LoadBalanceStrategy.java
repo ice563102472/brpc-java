@@ -15,12 +15,12 @@
  */
 package com.baidu.brpc.client.loadbalance;
 
-import java.util.List;
-import java.util.Set;
-
 import com.baidu.brpc.client.RpcClient;
 import com.baidu.brpc.client.channel.BrpcChannel;
 import com.baidu.brpc.protocol.Request;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * load balance strategy interface

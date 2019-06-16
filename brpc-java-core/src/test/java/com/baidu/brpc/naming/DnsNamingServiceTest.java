@@ -16,16 +16,15 @@
 
 package com.baidu.brpc.naming;
 
-import static org.hamcrest.CoreMatchers.hasItems;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import com.baidu.brpc.client.instance.ServiceInstance;
+import com.baidu.brpc.test.BaseMockitoTest;
+import org.junit.Test;
 
 import java.util.List;
 
-import org.junit.Test;
-
-import com.baidu.brpc.client.instance.ServiceInstance;
-import com.baidu.brpc.test.BaseMockitoTest;
+import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 public class DnsNamingServiceTest extends BaseMockitoTest {
 

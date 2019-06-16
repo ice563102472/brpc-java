@@ -15,17 +15,16 @@
  */
 package com.baidu.brpc.spring.annotation;
 
+import com.baidu.brpc.spring.PlaceholderResolver;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.PropertyValues;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
-
-import org.springframework.beans.BeansException;
-import org.springframework.beans.PropertyValues;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-
-import com.baidu.brpc.spring.PlaceholderResolver;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
 /**
  * Annotation parser call back interface.

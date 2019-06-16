@@ -40,7 +40,7 @@ public class BrpcWorkThreadPoolInstance {
             synchronized (BrpcWorkThreadPoolInstance.class) {
                 if (workThreadPool == null) {
                     workThreadPool = new ThreadPool(threadNum,
-                            new CustomThreadFactory("brpc-work-thread"));
+                                                    new CustomThreadFactory("brpc-work-thread"));
                 }
             }
         }

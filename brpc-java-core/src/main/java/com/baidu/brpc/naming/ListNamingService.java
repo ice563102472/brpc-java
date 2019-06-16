@@ -15,12 +15,11 @@
  */
 package com.baidu.brpc.naming;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.baidu.brpc.client.instance.ServiceInstance;
 import org.apache.commons.lang3.Validate;
 
-import com.baidu.brpc.client.instance.ServiceInstance;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Fetch service list from List Naming Service
@@ -32,13 +31,13 @@ public class ListNamingService implements NamingService {
         Validate.notNull(namingUrl);
         Validate.notEmpty(namingUrl.getHostPorts());
 
-        String hostPorts = namingUrl.getHostPorts();
+        String   hostPorts      = namingUrl.getHostPorts();
         String[] hostPortSplits = hostPorts.split(",");
         this.instances = new ArrayList<ServiceInstance>(hostPortSplits.length);
         for (String hostPort : hostPortSplits) {
             String[] hostPortSplit = hostPort.split(":");
-            String host = hostPortSplit[0];
-            int port;
+            String   host          = hostPortSplit[0];
+            int      port;
             if (hostPortSplit.length == 2) {
                 port = Integer.valueOf(hostPortSplit[1]);
             } else {

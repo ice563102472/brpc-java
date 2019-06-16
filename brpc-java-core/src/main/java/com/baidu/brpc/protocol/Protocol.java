@@ -22,7 +22,6 @@ import com.baidu.brpc.client.channel.BrpcChannel;
 import com.baidu.brpc.exceptions.BadSchemaException;
 import com.baidu.brpc.exceptions.NotEnoughDataException;
 import com.baidu.brpc.exceptions.TooBigDataException;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;

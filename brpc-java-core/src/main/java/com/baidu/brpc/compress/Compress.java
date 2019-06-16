@@ -25,7 +25,8 @@ import java.io.IOException;
 public interface Compress {
     /**
      * client端encode request并压缩
-     * @param proto request
+     *
+     * @param proto         request
      * @param rpcMethodInfo rpc method信息
      * @return 序列化后buf
      * @throws IOException 序列化失败
@@ -34,7 +35,8 @@ public interface Compress {
 
     /**
      * client端解压缩并反序列化response
-     * @param byteBuf response buffer
+     *
+     * @param byteBuf       response buffer
      * @param rpcMethodInfo rpc method信息
      * @return response对象
      * @throws IOException 反序列化失败
@@ -43,11 +45,13 @@ public interface Compress {
 
     Object uncompressOutput(byte[] bytes, RpcMethodInfo rpcMethodInfo) throws IOException;
 
-    Object uncompressOutput(DynamicCompositeByteBuf byteBuf, RpcMethodInfo rpcMethodInfo) throws IOException;
+    Object uncompressOutput(DynamicCompositeByteBuf byteBuf,
+                            RpcMethodInfo rpcMethodInfo) throws IOException;
 
     /**
      * server序列化response并压缩
-     * @param proto response对象
+     *
+     * @param proto         response对象
      * @param rpcMethodInfo rpc method信息
      * @return 序列化buffer
      * @throws IOException 序列化异常
@@ -56,7 +60,8 @@ public interface Compress {
 
     /**
      * server端解压缩并decode request
-     * @param byteBuf request buffer
+     *
+     * @param byteBuf       request buffer
      * @param rpcMethodInfo rpc method信息
      * @return 请求对象
      * @throws IOException 反序列化失败
@@ -65,5 +70,6 @@ public interface Compress {
 
     Object uncompressInput(byte[] bytes, RpcMethodInfo rpcMethodInfo) throws IOException;
 
-    Object uncompressInput(DynamicCompositeByteBuf byteBuf, RpcMethodInfo rpcMethodInfo) throws IOException;
+    Object uncompressInput(DynamicCompositeByteBuf byteBuf,
+                           RpcMethodInfo rpcMethodInfo) throws IOException;
 }

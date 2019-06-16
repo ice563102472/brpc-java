@@ -19,7 +19,6 @@ package com.baidu.brpc.protocol;
 import com.baidu.brpc.client.RpcClient;
 import com.baidu.brpc.client.channel.BrpcChannel;
 import com.baidu.brpc.exceptions.NotEnoughDataException;
-
 import io.netty.channel.ChannelFuture;
 
 /**

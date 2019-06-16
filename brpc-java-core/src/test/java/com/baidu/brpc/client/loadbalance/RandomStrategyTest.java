@@ -16,21 +16,20 @@
 
 package com.baidu.brpc.client.loadbalance;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
-
+import com.baidu.brpc.RpcOptionsUtils;
+import com.baidu.brpc.client.RpcClient;
+import com.baidu.brpc.client.channel.BrpcChannel;
+import com.baidu.brpc.client.channel.BrpcChannelFactory;
+import com.baidu.brpc.client.instance.ServiceInstance;
+import com.baidu.brpc.server.RpcServer;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.baidu.brpc.client.RpcClient;
-import com.baidu.brpc.client.channel.BrpcChannel;
-import com.baidu.brpc.client.channel.BrpcChannelFactory;
-import com.baidu.brpc.client.instance.ServiceInstance;
-import com.baidu.brpc.RpcOptionsUtils;
-import com.baidu.brpc.server.RpcServer;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class RandomStrategyTest {
     private static RpcServer rpcServer1;

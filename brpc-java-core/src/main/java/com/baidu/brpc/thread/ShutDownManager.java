@@ -36,11 +36,13 @@ public class ShutDownManager {
             public void run() {
                 log.info("Brpc do clean work...");
 
-                EventLoopGroup ioThread = BrpcIoThreadPoolInstance.getInstance();
-                ThreadPool workThread = BrpcWorkThreadPoolInstance.getInstance();
-                ExecutorService clientCallBackThread = ClientCallBackThreadPoolInstance.getInstance();
-                Timer clientHealthCheckerTimer = ClientHealthCheckTimerInstance.getInstance();
-                Timer clientTimeOutTimer = ClientTimeoutTimerInstance.getInstance();
+                EventLoopGroup  ioThread                 = BrpcIoThreadPoolInstance.getInstance();
+                ThreadPool      workThread               = BrpcWorkThreadPoolInstance.getInstance();
+                ExecutorService clientCallBackThread
+                                                         = ClientCallBackThreadPoolInstance.getInstance();
+                Timer           clientHealthCheckerTimer
+                                                         = ClientHealthCheckTimerInstance.getInstance();
+                Timer           clientTimeOutTimer       = ClientTimeoutTimerInstance.getInstance();
 
                 if (clientCallBackThread != null) {
                     clientCallBackThread.shutdownNow();

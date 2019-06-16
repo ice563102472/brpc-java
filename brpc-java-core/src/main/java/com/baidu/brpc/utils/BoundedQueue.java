@@ -21,14 +21,14 @@ import java.util.Iterator;
 import java.util.Queue;
 
 public class BoundedQueue<E> implements Queue<E> {
-    private int capacity;
-    private int size;
+    private int           capacity;
+    private int           size;
     private ArrayDeque<E> queue;
 
     public BoundedQueue(int capacity) {
         this.capacity = capacity;
-        this.size = 0;
-        queue = new ArrayDeque<E>(capacity);
+        this.size     = 0;
+        queue         = new ArrayDeque<E>(capacity);
     }
 
     @Override
@@ -86,7 +86,8 @@ public class BoundedQueue<E> implements Queue<E> {
         int inputSize = c.size();
         if (inputSize > capacity) {
             throw new IllegalArgumentException(
-                    "Size of added which is " + inputSize  + " is larger " + "than capacity=" + capacity);
+                    "Size of added which is " + inputSize + " is larger " + "than capacity=" +
+                    capacity);
         }
         int toPop = Math.max(0, inputSize - remainingCapacity());
         for (int i = 0; i < toPop; ++i) {
@@ -103,7 +104,7 @@ public class BoundedQueue<E> implements Queue<E> {
     public boolean addAll(E[] c, int offset, int len) {
         if (len > capacity) {
             throw new IllegalArgumentException(
-                    "Size of added which is " + len  + " is larger " + "than capacity=" + capacity);
+                    "Size of added which is " + len + " is larger " + "than capacity=" + capacity);
         }
         int toPop = Math.max(0, len - remainingCapacity());
         for (int i = 0; i < toPop; ++i) {

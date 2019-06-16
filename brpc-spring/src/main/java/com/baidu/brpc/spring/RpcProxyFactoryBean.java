@@ -38,11 +38,15 @@ import java.util.List;
 @Getter
 public class RpcProxyFactoryBean extends RpcClientOptions
         implements FactoryBean, InitializingBean, DisposableBean {
-    
-    /** The service interface. */
+
+    /**
+     * The service interface.
+     */
     private Class serviceInterface;
 
-    /** naming service url */
+    /**
+     * naming service url
+     */
     private String namingServiceUrl;
 
     /**
@@ -64,14 +68,20 @@ public class RpcProxyFactoryBean extends RpcClientOptions
      * use serviceId to identify all instances for this service.
      */
     private String serviceId;
-    
-	/** The interceptors. */
-	private List<Interceptor> interceptors;
 
-    /** The service proxy. */
+    /**
+     * The interceptors.
+     */
+    private List<Interceptor> interceptors;
+
+    /**
+     * The service proxy.
+     */
     private Object serviceProxy;
 
-    /** The rpc client. */
+    /**
+     * The rpc client.
+     */
     private RpcClient rpcClient;
 
     /**
@@ -97,7 +107,7 @@ public class RpcProxyFactoryBean extends RpcClientOptions
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.springframework.beans.factory.FactoryBean#getObject()
      */
     @Override
@@ -107,7 +117,7 @@ public class RpcProxyFactoryBean extends RpcClientOptions
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.springframework.beans.factory.FactoryBean#getObjectType()
      */
     @Override
@@ -117,7 +127,7 @@ public class RpcProxyFactoryBean extends RpcClientOptions
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.springframework.beans.factory.FactoryBean#isSingleton()
      */
     @Override

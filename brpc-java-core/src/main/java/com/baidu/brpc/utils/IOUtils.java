@@ -24,9 +24,9 @@ public class IOUtils {
     private static final int BUFFER_SIZE = 256;
 
     public static byte[] readInputStream(InputStream inputStream) throws IOException {
-        byte[] buf = new byte[BUFFER_SIZE];
+        byte[]                buf = new byte[BUFFER_SIZE];
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        int n;
+        int                   n;
         while ((n = inputStream.read(buf)) >= 0) {
             out.write(buf, 0, n);
         }

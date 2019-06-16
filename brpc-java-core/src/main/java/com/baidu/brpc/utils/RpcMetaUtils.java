@@ -33,15 +33,15 @@ public class RpcMetaUtils {
     }
 
     public static RpcMetaInfo parseRpcMeta(Method targetMethod) {
-        String serviceName;
-        String methodName;
+        String   serviceName;
+        String   methodName;
         BrpcMeta rpcMeta = targetMethod.getAnnotation(BrpcMeta.class);
         if (rpcMeta != null) {
             serviceName = rpcMeta.serviceName();
-            methodName = rpcMeta.methodName();
+            methodName  = rpcMeta.methodName();
         } else {
             serviceName = targetMethod.getDeclaringClass().getName();
-            methodName = targetMethod.getName();
+            methodName  = targetMethod.getName();
         }
         log.debug("serviceName={}, methodName={}", serviceName, methodName);
         RpcMetaInfo rpcMetaInfo = new RpcMetaInfo();

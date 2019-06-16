@@ -1,5 +1,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   com.baidu.brpc.spring.cloud.BrpcServiceRegistrationAutoConfiguration
-
 org.springframework.cloud.bootstrap.BootstrapConfiguration=\
   com.baidu.brpc.spring.cloud.BrpcBootstrapConfiguration

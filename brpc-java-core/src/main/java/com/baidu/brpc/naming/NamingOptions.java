@@ -46,9 +46,9 @@ public class NamingOptions {
     }
 
     public NamingOptions(NamingOptions rhs) {
-        this.group = rhs.getGroup();
-        this.version = rhs.getVersion();
+        this.group                     = rhs.getGroup();
+        this.version                   = rhs.getVersion();
         this.ignoreFailOfNamingService = rhs.isIgnoreFailOfNamingService();
-        this.serviceId = rhs.getServiceId();
+        this.serviceId                 = rhs.getServiceId();
     }
 }

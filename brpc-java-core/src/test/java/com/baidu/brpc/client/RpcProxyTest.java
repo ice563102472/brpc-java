@@ -16,9 +16,9 @@
 
 package com.baidu.brpc.client;
 
-import com.baidu.brpc.protocol.standard.EchoService;
 import com.baidu.brpc.RpcMethodInfo;
 import com.baidu.brpc.RpcOptionsUtils;
+import com.baidu.brpc.protocol.standard.EchoService;
 import org.junit.Assert;
 import org.junit.Test;
 

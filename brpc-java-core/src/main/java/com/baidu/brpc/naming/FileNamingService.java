@@ -15,6 +15,17 @@
  */
 package com.baidu.brpc.naming;
 
+import com.baidu.brpc.client.instance.ServiceInstance;
+import com.baidu.brpc.utils.CustomThreadFactory;
+import io.netty.util.HashedWheelTimer;
+import io.netty.util.Timeout;
+import io.netty.util.Timer;
+import io.netty.util.TimerTask;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -24,48 +35,37 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.baidu.brpc.client.instance.ServiceInstance;
-import com.baidu.brpc.utils.CustomThreadFactory;
-
-import io.netty.util.HashedWheelTimer;
-import io.netty.util.Timeout;
-import io.netty.util.Timer;
-import io.netty.util.TimerTask;
-
 /**
  * Fetch service list from File Naming Service
  */
 public class FileNamingService implements NamingService {
-    private static final Logger LOG = LoggerFactory.getLogger(FileNamingService.class);
-    private BrpcURL namingUrl;
-    private String filePath;
-    private List<ServiceInstance> lastInstances = new ArrayList<ServiceInstance>();
-    private Timer namingServiceTimer;
-    private long lastModified;
-    private int updateInterval;
-    
+    private static final Logger                LOG           = LoggerFactory.getLogger(
+            FileNamingService.class);
+    private              BrpcURL               namingUrl;
+    private              String                filePath;
+    private              List<ServiceInstance> lastInstances = new ArrayList<ServiceInstance>();
+    private              Timer                 namingServiceTimer;
+    private              long                  lastModified;
+    private              int                   updateInterval;
+
     public FileNamingService(BrpcURL namingUrl) {
         Validate.notNull(namingUrl);
         Validate.notNull(namingUrl.getPath());
-        this.namingUrl = namingUrl;
-        this.filePath = namingUrl.getPath();
+        this.namingUrl      = namingUrl;
+        this.filePath       = namingUrl.getPath();
         this.updateInterval = namingUrl.getIntParameter(
                 Constants.INTERVAL, Constants.DEFAULT_INTERVAL);
-        namingServiceTimer = new HashedWheelTimer(new CustomThreadFactory("namingService-timer-thread"));
+        namingServiceTimer  = new HashedWheelTimer(
+                new CustomThreadFactory("namingService-timer-thread"));
     }
 
     @Override
     public List<ServiceInstance> lookup(SubscribeInfo subscribeInfo) {
-        List<ServiceInstance> list = new ArrayList<ServiceInstance>();
-        int lineNum = 0;
-        BufferedReader reader = null;
+        List<ServiceInstance> list    = new ArrayList<ServiceInstance>();
+        int                   lineNum = 0;
+        BufferedReader        reader  = null;
         try {
-            File file = new File(filePath);
+            File file         = new File(filePath);
             long lastModified = file.lastModified();
             reader = new BufferedReader(new FileReader(file));
             String line;
@@ -78,11 +78,11 @@ public class FileNamingService implements NamingService {
                     continue;
                 }
                 ServiceInstance instance = new ServiceInstance(ipPort[0].trim(),
-                        Integer.valueOf(ipPort[1].trim()));
+                                                               Integer.valueOf(ipPort[1].trim()));
                 list.add(instance);
             }
             LOG.debug("Got " + list.size() + " servers (out of " + lineNum + ')'
-                    + " from " + filePath);
+                      + " from " + filePath);
             this.lastModified = lastModified;
             return list;
         } catch (IOException ex) {
@@ -106,7 +106,7 @@ public class FileNamingService implements NamingService {
                     @Override
                     public void run(Timeout timeout) throws Exception {
                         try {
-                            File file = new File(filePath);
+                            File file            = new File(filePath);
                             long currentModified = file.lastModified();
                             if (currentModified > lastModified) {
                                 List<ServiceInstance> currentInstances = lookup(null);

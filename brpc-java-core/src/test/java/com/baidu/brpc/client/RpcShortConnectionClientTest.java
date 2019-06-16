@@ -16,12 +16,7 @@
 
 package com.baidu.brpc.client;
 
-import static org.junit.Assert.assertEquals;
-
-
-import org.junit.Before;
-import org.junit.Test;
-
+import com.baidu.brpc.RpcOptionsUtils;
 import com.baidu.brpc.client.channel.ChannelType;
 import com.baidu.brpc.client.instance.Endpoint;
 import com.baidu.brpc.client.loadbalance.LoadBalanceStrategy;
@@ -29,10 +24,13 @@ import com.baidu.brpc.protocol.Options;
 import com.baidu.brpc.protocol.standard.Echo;
 import com.baidu.brpc.protocol.standard.EchoService;
 import com.baidu.brpc.protocol.standard.EchoServiceImpl;
-import com.baidu.brpc.RpcOptionsUtils;
 import com.baidu.brpc.server.RpcServer;
 import com.baidu.brpc.server.RpcServerOptions;
 import com.baidu.brpc.server.ServiceManager;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class RpcShortConnectionClientTest {
 
