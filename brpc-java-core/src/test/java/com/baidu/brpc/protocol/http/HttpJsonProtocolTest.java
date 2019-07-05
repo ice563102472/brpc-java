@@ -24,13 +24,13 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.baidu.brpc.RpcMethodInfo;
-import com.baidu.brpc.protocol.Options.ProtocolType;
-import com.baidu.brpc.protocol.http.json.HelloWorldService;
-import com.baidu.brpc.protocol.http.json.HelloWorldServiceImpl;
 import com.baidu.brpc.protocol.HttpRequest;
 import com.baidu.brpc.protocol.HttpResponse;
+import com.baidu.brpc.protocol.Options.ProtocolType;
 import com.baidu.brpc.protocol.Request;
 import com.baidu.brpc.protocol.Response;
+import com.baidu.brpc.protocol.http.json.HelloWorldService;
+import com.baidu.brpc.protocol.http.json.HelloWorldServiceImpl;
 import com.baidu.brpc.server.ServiceManager;
 import com.baidu.brpc.utils.ByteBufUtils;
 import com.google.gson.Gson;
@@ -67,9 +67,8 @@ public class HttpJsonProtocolTest {
         ByteBuf content = Unpooled.wrappedBuffer(new Gson().toJson("hello").getBytes());
 
         FullHttpRequest fullHttpRequest = new DefaultFullHttpRequest(HttpVersion.HTTP_1_0, HttpMethod.GET,
-                "/HelloWorldService/hello", content);
+                "/HelloWorldService/hello?k=v", content);
         fullHttpRequest.headers().set("log-id", 1);
-        fullHttpRequest.setUri("/HelloWorldService/hello");
         fullHttpRequest.headers().set(HttpHeaderNames.CONTENT_TYPE, "application/json; charset=utf-8");
 
         Request request = protocol.decodeRequest(fullHttpRequest);

@@ -15,6 +15,13 @@
  */
 package com.baidu.brpc.protocol.stargate;
 
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+
 import com.baidu.brpc.ChannelInfo;
 import com.baidu.brpc.RpcMethodInfo;
 import com.baidu.brpc.buffer.DynamicCompositeByteBuf;
@@ -33,13 +40,11 @@ import com.dyuproject.protostuff.LinkedBuffer;
 import com.dyuproject.protostuff.ProtobufIOUtil;
 import com.dyuproject.protostuff.Schema;
 import com.dyuproject.protostuff.runtime.RuntimeSchema;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.extern.slf4j.Slf4j;
-
-import java.lang.reflect.Method;
-import java.util.UUID;
 
 /**
  * Stargate Byte format
@@ -55,14 +60,30 @@ public class StargateRpcProtocol extends AbstractProtocol {
     private static final int FIXED_HEAD_LEN = 4;
 
     private static final NotEnoughDataException notEnoughDataException
-            = new NotEnoughDataException("StarGate not enough data");
+            = new NotEnoughDataException("Stargate not enough data");
 
     private static final String SERIALIZATION_EXCEPTION = "decode error,this problem is usually caused by"
             + "\n 1: difference of api.jar between server and client."
-            + "\n 2: the version of stargate in brpc is 1.2.18 be care for."
-            + "\n 3: server do not catch Exception."
-            + "\n 4: API contains a type that Stargate does not support. eg:HashMap.keySet()"
-            + "\n see http://wiki.baidu.com/display/STARGATE/FAQ";
+            + "\n 2: server do not catch Exception."
+            + "\n 3: API contains a type that Stargate does not support. eg:HashMap.keySet()";
+
+    private static Set<String> redundantAttachments = new HashSet<String>() {
+        {
+            add("parameterTypes");
+            add("localPort");
+            add("remoteHost");
+            add("parmeters");
+            add("remotePort");
+            add("methodName");
+            add("consumer.start");
+            add("uri");
+            add("c.e.i.id");
+            add("stargate.sid");
+            add("stargate.rid");
+            add("localHost");
+            add("c.app.name");
+        }
+    };
 
     private ServiceManager serviceManager = ServiceManager.getInstance();
     private boolean init = false;
@@ -196,7 +217,16 @@ public class StargateRpcProtocol extends AbstractProtocol {
             request.setTarget(rpcMethodInfo.getTarget());
             request.setTargetMethod(rpcMethodInfo.getMethod());
             request.setMsg(requestPacket);
-            request.setKvAttachment(requestPacket.getAttachments());
+            if (requestPacket.getAttachments() != null && requestPacket.getAttachments().size() > 0) {
+                for (Map.Entry<String, Object> entry : requestPacket.getAttachments().entrySet()) {
+                    if (!redundantAttachments.contains(entry.getKey())) {
+                        if (request.getKvAttachment() == null) {
+                            request.setKvAttachment(new HashMap<String, Object>());
+                        }
+                        request.getKvAttachment().put(entry.getKey(), entry.getValue());
+                    }
+                }
+            }
             return request;
         } catch (Exception e) {
             log.error(" stargate decodeRequest error at {} ", e.getMessage(), e);

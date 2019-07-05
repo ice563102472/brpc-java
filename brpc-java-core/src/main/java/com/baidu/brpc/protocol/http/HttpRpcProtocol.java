@@ -16,6 +16,19 @@
 
 package com.baidu.brpc.protocol.http;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.baidu.brpc.ChannelInfo;
 import com.baidu.brpc.ProtobufRpcMethodInfo;
 import com.baidu.brpc.RpcMethodInfo;
@@ -29,28 +42,41 @@ import com.baidu.brpc.exceptions.RpcException;
 import com.baidu.brpc.exceptions.TooBigDataException;
 import com.baidu.brpc.naming.DnsNamingService;
 import com.baidu.brpc.naming.NamingService;
+import com.baidu.brpc.protocol.AbstractProtocol;
+import com.baidu.brpc.protocol.BrpcMeta;
 import com.baidu.brpc.protocol.HttpRequest;
 import com.baidu.brpc.protocol.HttpResponse;
-import com.baidu.brpc.protocol.*;
+import com.baidu.brpc.protocol.Options;
+import com.baidu.brpc.protocol.Request;
+import com.baidu.brpc.protocol.Response;
 import com.baidu.brpc.server.ServiceManager;
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.protobuf.Descriptors;
 import com.google.protobuf.ExtensionRegistry;
 import com.google.protobuf.Message;
 import com.googlecode.protobuf.format.JsonFormat;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.http.*;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.*;
+import io.netty.handler.codec.http.DefaultFullHttpRequest;
+import io.netty.handler.codec.http.DefaultFullHttpResponse;
+import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpHeaderNames;
+import io.netty.handler.codec.http.HttpHeaderValues;
+import io.netty.handler.codec.http.HttpHeaders;
+import io.netty.handler.codec.http.HttpMessage;
+import io.netty.handler.codec.http.HttpMethod;
+import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.handler.codec.http.HttpUtil;
+import io.netty.handler.codec.http.HttpVersion;
+import io.netty.handler.codec.http.QueryStringDecoder;
 
 /**
  * 处理http rpc协议，包括四种序列化格式：
@@ -177,7 +203,7 @@ public class HttpRpcProtocol extends AbstractProtocol {
     @Override
     public ByteBuf encodeRequest(Request request) throws Exception {
         HttpRequest httpRequest = (HttpRequest) request;
-        String serviceName = httpRequest.getTargetMethod().getDeclaringClass().getSimpleName();
+        String serviceName = httpRequest.getTargetMethod().getDeclaringClass().getName();
         String methodName = httpRequest.getTargetMethod().getName();
         BrpcMeta rpcMeta = httpRequest.getTargetMethod().getAnnotation(BrpcMeta.class);
         if (rpcMeta != null) {
@@ -311,7 +337,6 @@ public class HttpRpcProtocol extends AbstractProtocol {
             long logId = parseLogId(httpRequest.headers().get(LOG_ID), null);
             httpRequest.setLogId(logId);
 
-            String uri = httpRequest.uri();
             String contentTypeAndEncoding = httpRequest.headers().get(HttpHeaderNames.CONTENT_TYPE).toLowerCase();
             String[] splits = StringUtils.split(contentTypeAndEncoding, ";");
             int protocolType = HttpRpcProtocol.parseProtocolType(splits[0]);
@@ -325,10 +350,11 @@ public class HttpRpcProtocol extends AbstractProtocol {
             httpRequest.headers().set(PROTOCOL_TYPE, protocolType);
             httpRequest.headers().set(HttpHeaderNames.CONTENT_ENCODING, encoding);
 
+
             ByteBuf byteBuf = httpRequest.content();
             int bodyLen = byteBuf.readableBytes();
             if (bodyLen == 0) {
-                String errMsg = String.format("body should not be null, uri:%s", uri);
+                String errMsg = String.format("body should not be null, uri:%s", httpRequest.uri());
                 LOG.warn(errMsg);
                 httpRequest.setException(new RpcException(RpcException.SERVICE_EXCEPTION, errMsg));
                 return httpRequest;
@@ -339,13 +365,15 @@ public class HttpRpcProtocol extends AbstractProtocol {
             Object body = decodeBody(protocolType, encoding, requestBytes);
             httpRequest.setLogId(logId);
 
+            QueryStringDecoder queryStringDecoder = new QueryStringDecoder(httpRequest.uri());
+            String path = queryStringDecoder.path();
             String serviceName = null;
             String methodName = null;
             if (protocolType == Options.ProtocolType.PROTOCOL_HTTP_PROTOBUF_VALUE
                     || protocolType == Options.ProtocolType.PROTOCOL_HTTP_JSON_VALUE) {
-                String[] uriSplit = uri.split("/");
+                String[] uriSplit = path.split("/");
                 if (uriSplit.length < 3) {
-                    String errMsg = String.format("url format is error, uri:%s", uri);
+                    String errMsg = String.format("url format is error, path:%s", path);
                     LOG.warn(errMsg);
                     httpRequest.setException(new RpcException(RpcException.SERVICE_EXCEPTION, errMsg));
                     return httpRequest;
@@ -355,13 +383,12 @@ public class HttpRpcProtocol extends AbstractProtocol {
             } else {
                 JsonObject bodyObject = (JsonObject) body;
                 methodName = bodyObject.get("method").getAsString();
-                serviceName = uri;
-
+                serviceName = path;
             }
             ServiceManager serviceManager = ServiceManager.getInstance();
             RpcMethodInfo rpcMethodInfo = serviceManager.getService(serviceName, methodName);
             if (rpcMethodInfo == null) {
-                String errMsg = String.format("Fail to find path=%s", uri);
+                String errMsg = String.format("Fail to find path=%s", path);
                 LOG.warn(errMsg);
                 httpRequest.setException(new RpcException(RpcException.SERVICE_EXCEPTION, errMsg));
                 return httpRequest;

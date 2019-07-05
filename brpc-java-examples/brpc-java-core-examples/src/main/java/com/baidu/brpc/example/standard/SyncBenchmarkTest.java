@@ -16,6 +16,9 @@
 
 package com.baidu.brpc.example.standard;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import com.baidu.brpc.RpcContext;
 import com.baidu.brpc.client.BrpcProxy;
 import com.baidu.brpc.client.RpcClient;
@@ -24,11 +27,9 @@ import com.baidu.brpc.client.channel.ChannelType;
 import com.baidu.brpc.client.loadbalance.LoadBalanceStrategy;
 import com.baidu.brpc.exceptions.RpcException;
 import com.baidu.brpc.protocol.Options;
+
 import io.netty.util.ReferenceCountUtil;
 import lombok.extern.slf4j.Slf4j;
-
-import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * Created by huwenwei on 2017/5/1.
@@ -54,10 +55,11 @@ public class SyncBenchmarkTest {
         options.setLoadBalanceType(LoadBalanceStrategy.LOAD_BALANCE_FAIR);
         options.setMaxTotalConnections(1000000);
         options.setMinIdleConnections(10);
-        options.setConnectTimeoutMillis(1000);
-        options.setWriteTimeoutMillis(1000);
-        options.setReadTimeoutMillis(1000);
+        options.setConnectTimeoutMillis(100);
+        options.setWriteTimeoutMillis(100);
+        options.setReadTimeoutMillis(100);
         options.setTcpNoDelay(false);
+        options.setMaxTryTimes(1);
         options.setChannelType(ChannelType.SINGLE_CONNECTION);
         RpcClient rpcClient = new RpcClient(args[0], options, null);
         int threadNum = Integer.parseInt(args[1]);
@@ -137,8 +139,8 @@ public class SyncBenchmarkTest {
 
             while (!stop) {
                 try {
-                    RpcContext controller = new RpcContext();
-                    controller.setRequestBinaryAttachment(messageBytes);
+                    RpcContext rpcContext = RpcContext.getContext();
+                    rpcContext.setRequestBinaryAttachment(messageBytes);
                     long beginTime = System.nanoTime();
                     Echo.EchoResponse response = echoService.echo(request);
                     if (!response.getMessage().equals(request.getMessage())) {
@@ -146,8 +148,9 @@ public class SyncBenchmarkTest {
                     }
                     sendInfo.elapsedNs += (System.nanoTime() - beginTime);
                     sendInfo.successRequestNum++;
-                    if (controller.getResponseBinaryAttachment() != null) {
-                        ReferenceCountUtil.release(controller.getResponseBinaryAttachment());
+                    rpcContext = RpcContext.getContext();
+                    if (rpcContext.getResponseBinaryAttachment() != null) {
+                        ReferenceCountUtil.release(rpcContext.getResponseBinaryAttachment());
                     }
                 } catch (RpcException ex) {
                     log.info("send exception:" + ex.getMessage());
