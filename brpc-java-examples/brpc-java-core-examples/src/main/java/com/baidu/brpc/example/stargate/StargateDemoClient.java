@@ -20,8 +20,6 @@ import com.baidu.brpc.client.BrpcProxy;
 import com.baidu.brpc.client.RpcClient;
 import com.baidu.brpc.client.RpcClientOptions;
 import com.baidu.brpc.naming.NamingOptions;
-import com.baidu.brpc.naming.zookeeper.StargateNamingFactory;
-import com.baidu.brpc.protocol.Options;
 import com.baidu.brpc.utils.GsonUtils;
 
 public class StargateDemoClient {

@@ -9,7 +9,6 @@ import com.baidu.brpc.example.standard.Echo;
 import com.baidu.brpc.example.standard.Echo.EchoRequest;
 import com.baidu.brpc.example.standard.Echo.EchoResponse;
 import com.baidu.brpc.example.standard.EchoServiceAsync;
-import com.baidu.brpc.protocol.Options.ProtocolType;
 
 public class BenchmarkTest {
 

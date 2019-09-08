@@ -24,7 +24,6 @@ import com.baidu.brpc.client.RpcClient;
 import com.baidu.brpc.client.RpcClientOptions;
 import com.baidu.brpc.client.BrpcProxy;
 import com.baidu.brpc.interceptor.Interceptor;
-import com.baidu.brpc.protocol.Options;
 import io.netty.channel.Channel;
 
 import java.util.ArrayList;

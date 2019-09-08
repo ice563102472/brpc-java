@@ -12,7 +12,6 @@ import com.baidu.brpc.client.loadbalance.LoadBalanceStrategy;
 import com.baidu.brpc.example.interceptor.CustomInterceptor;
 import com.baidu.brpc.exceptions.RpcException;
 import com.baidu.brpc.interceptor.Interceptor;
-import com.baidu.brpc.protocol.Options.ProtocolType;
 import com.google.gson.Gson;
 
 public class RpcClientTest {

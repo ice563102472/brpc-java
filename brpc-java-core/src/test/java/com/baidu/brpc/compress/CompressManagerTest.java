@@ -16,7 +16,6 @@
 
 package com.baidu.brpc.compress;
 
-import com.baidu.brpc.protocol.Options;
 import org.junit.Assert;
 import org.junit.Test;
 

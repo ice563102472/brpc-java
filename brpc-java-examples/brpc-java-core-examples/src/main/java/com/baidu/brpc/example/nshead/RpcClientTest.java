@@ -8,7 +8,6 @@ import com.baidu.brpc.client.loadbalance.LoadBalanceStrategy;
 import com.baidu.brpc.example.standard.Echo;
 import com.baidu.brpc.example.standard.Echo.EchoResponse;
 import com.baidu.brpc.example.standard.EchoService;
-import com.baidu.brpc.protocol.Options.ProtocolType;
 
 public class RpcClientTest {
 

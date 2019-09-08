@@ -25,7 +25,6 @@ import com.baidu.brpc.example.push.normal.EchoResponse;
 import com.baidu.brpc.example.push.normal.EchoService;
 import com.baidu.brpc.example.push.normal.EchoService2;
 import com.baidu.brpc.example.push.push.UserPushApiImpl;
-import com.baidu.brpc.protocol.Options;
 
 import com.baidu.brpc.utils.GsonUtils;
 import lombok.extern.slf4j.Slf4j;

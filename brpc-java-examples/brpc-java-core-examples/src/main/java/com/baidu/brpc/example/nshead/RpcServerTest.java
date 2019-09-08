@@ -1,7 +1,6 @@
 package com.baidu.brpc.example.nshead;
 
 import com.baidu.brpc.example.standard.EchoServiceImpl;
-import com.baidu.brpc.protocol.Options;
 import com.baidu.brpc.server.RpcServer;
 import com.baidu.brpc.server.RpcServerOptions;
 

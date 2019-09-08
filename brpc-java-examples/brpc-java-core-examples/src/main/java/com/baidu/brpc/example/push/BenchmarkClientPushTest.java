@@ -11,7 +11,6 @@ import com.baidu.brpc.example.push.normal.EchoResponse;
 import com.baidu.brpc.example.push.normal.EchoServiceAsync;
 import com.baidu.brpc.example.push.push.UserPushApiImpl;
 import com.baidu.brpc.interceptor.Interceptor;
-import com.baidu.brpc.protocol.Options;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;

@@ -4,7 +4,6 @@ import com.baidu.brpc.example.push.normal.EchoServiceImpl;
 import com.baidu.brpc.example.push.push.PushData;
 import com.baidu.brpc.example.push.push.PushResult;
 import com.baidu.brpc.example.push.push.ServerSideUserPushApi;
-import com.baidu.brpc.protocol.Options;
 import com.baidu.brpc.server.BrpcPushProxy;
 import com.baidu.brpc.server.RpcServer;
 import com.baidu.brpc.server.RpcServerOptions;

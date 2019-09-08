@@ -18,7 +18,6 @@ import com.baidu.brpc.client.channel.ChannelType;
 import com.baidu.brpc.client.loadbalance.LoadBalanceType;
 import com.baidu.brpc.exceptions.RpcException;
 import com.baidu.brpc.interceptor.Interceptor;
-import com.baidu.brpc.protocol.Options;
 import com.google.common.collect.Lists;
 
 import io.netty.util.ReferenceCountUtil;

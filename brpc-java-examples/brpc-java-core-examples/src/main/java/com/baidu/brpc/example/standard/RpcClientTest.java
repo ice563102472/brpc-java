@@ -25,7 +25,6 @@ import com.baidu.brpc.client.loadbalance.LoadBalanceStrategy;
 import com.baidu.brpc.example.interceptor.CustomInterceptor;
 import com.baidu.brpc.exceptions.RpcException;
 import com.baidu.brpc.interceptor.Interceptor;
-import com.baidu.brpc.protocol.Options;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;

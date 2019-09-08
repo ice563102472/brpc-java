@@ -17,7 +17,6 @@ import com.baidu.brpc.example.standard.EchoService;
 import com.baidu.brpc.example.standard.EchoServiceAsync;
 import com.baidu.brpc.exceptions.RpcException;
 import com.baidu.brpc.interceptor.Interceptor;
-import com.baidu.brpc.protocol.Options.ProtocolType;
 
 public class RpcClientTest {
 

@@ -26,7 +26,6 @@ import com.baidu.brpc.client.RpcClient;
 import com.baidu.brpc.client.RpcClientOptions;
 import com.baidu.brpc.client.channel.ChannelType;
 import com.baidu.brpc.client.loadbalance.LoadBalanceStrategy;
-import com.baidu.brpc.protocol.Options;
 
 import io.netty.util.ReferenceCountUtil;
 import lombok.extern.slf4j.Slf4j;

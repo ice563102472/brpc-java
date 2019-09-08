@@ -1,6 +1,5 @@
 package com.baidu.brpc.protocol.standard;
 
-import com.baidu.brpc.protocol.Options;
 import com.baidu.brpc.protocol.Protocol;
 import com.baidu.brpc.protocol.ProtocolFactory;
 

@@ -39,7 +39,6 @@ import com.baidu.brpc.interceptor.DefaultInterceptorChain;
 import com.baidu.brpc.interceptor.Interceptor;
 import com.baidu.brpc.interceptor.InterceptorChain;
 import com.baidu.brpc.interceptor.ServerPushInterceptor;
-import com.baidu.brpc.protocol.Options;
 import com.baidu.brpc.protocol.Request;
 import com.baidu.brpc.protocol.Response;
 import com.baidu.brpc.protocol.nshead.NSHead;
