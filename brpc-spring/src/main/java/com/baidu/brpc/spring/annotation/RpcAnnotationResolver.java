@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Baidu, Inc. All Rights Reserved.
+ * Copyright (c) 2019 Baidu, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,16 +15,16 @@
  */
 package com.baidu.brpc.spring.annotation;
 
-import com.baidu.bjf.remoting.protobuf.utils.JDKCompilerHelper;
-import com.baidu.bjf.remoting.protobuf.utils.compiler.Compiler;
-import com.baidu.brpc.client.RpcClientOptions;
-import com.baidu.brpc.interceptor.Interceptor;
-import com.baidu.brpc.naming.NamingServiceFactory;
-import com.baidu.brpc.server.RpcServerOptions;
-import com.baidu.brpc.spring.RpcProxyFactoryBean;
-import com.baidu.brpc.spring.RpcServiceExporter;
-import lombok.Getter;
-import lombok.Setter;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,11 +37,18 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
+import com.baidu.bjf.remoting.protobuf.utils.JDKCompilerHelper;
+import com.baidu.bjf.remoting.protobuf.utils.compiler.Compiler;
+import com.baidu.brpc.client.RpcClientOptions;
+import com.baidu.brpc.interceptor.Interceptor;
+import com.baidu.brpc.naming.NamingOptions;
+import com.baidu.brpc.naming.NamingServiceFactory;
+import com.baidu.brpc.server.RpcServerOptions;
+import com.baidu.brpc.spring.RpcProxyFactoryBean;
+import com.baidu.brpc.spring.RpcServiceExporter;
+
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Supports annotation resolver for {@link RpcProxy} and {@link RpcExporter}.
@@ -121,7 +128,7 @@ public class RpcAnnotationResolver extends AbstractAnnotationParserCallback impl
 
         String port = parsePlaceholder(rpcExporter.port());
         // convert to integer and throw exception on error
-        int intPort = Integer.valueOf(port);
+        int intPort = Integer.parseInt(port);
 
         // if there are multi service on one port, the first service configs effect only.
         RpcServiceExporter rpcServiceExporter = portMappingExporters.get(intPort);
@@ -146,7 +153,7 @@ public class RpcAnnotationResolver extends AbstractAnnotationParserCallback impl
             rpcServiceExporter.setNamingServiceUrl(namingServiceUrl);
         }
 
-        if (rpcExporter.useSharedThreadPool()) {
+        if (rpcExporter.useServiceSharedThreadPool()) {
             try {
                 rpcServiceExporter.copyFrom(rpcServerOptions);
             } catch (Exception ex) {
@@ -169,13 +176,27 @@ public class RpcAnnotationResolver extends AbstractAnnotationParserCallback impl
             }
         }
 
-        // naming service group/version
-        rpcServiceExporter.setGroup(rpcExporter.group());
-        rpcServiceExporter.setVersion(rpcExporter.version());
-        rpcServiceExporter.setIgnoreFailOfNamingService(rpcExporter.ignoreFailOfNamingService());
+        // naming options
+        NamingOptions namingOptions = new NamingOptions();
+        // Populate NamingOptions from the annotation
+        if (!rpcExporter.group().isEmpty()) {
+            namingOptions.setGroup(parsePlaceholder(rpcExporter.group()));
+        }
+        if (!rpcExporter.version().isEmpty()) {
+            namingOptions.setVersion(parsePlaceholder(rpcExporter.version()));
+        }
+        if (rpcExporter.extraOptions().length > 0) {
+            namingOptions.setExtra(new HashMap<String, String>());
+            for (int i = 0; i < rpcExporter.extraOptions().length; i++) {
+                NamingOption opt = rpcExporter.extraOptions()[i];
+                namingOptions.getExtra().put(opt.key(), parsePlaceholder(opt.value()));
+            }
+        }
+        namingOptions.setIgnoreFailOfNamingService(rpcExporter.ignoreFailOfNamingService());
+        rpcServiceExporter.getServiceNamingOptions().put(bean, namingOptions);
 
         // do register service
-        if (rpcExporter.useSharedThreadPool()) {
+        if (rpcExporter.useServiceSharedThreadPool()) {
             rpcServiceExporter.getRegisterServices().add(bean);
         } else {
             rpcServiceExporter.getCustomOptionsServiceMap().put(rpcServerOptions, bean);

@@ -4,18 +4,32 @@
 
 package com.baidu.brpc.protocol;
 
+import java.util.Map;
+
 import com.baidu.brpc.RpcMethodInfo;
 import com.baidu.brpc.client.RpcFuture;
 import com.baidu.brpc.protocol.nshead.NSHead;
-import io.netty.buffer.ByteBuf;
+import com.baidu.brpc.protocol.push.SPHead;
 
-import java.util.Map;
+import io.netty.buffer.ByteBuf;
 
 public interface Response {
     Object getResult();
 
     void setResult(Object result);
 
+    /**
+     * used to find RpcFuture, application can not set it.
+     * @return rpc future id
+     */
+    long getCorrelationId();
+
+    void setCorrelationId(long correlationId);
+
+    /**
+     * used to identify request for application, application can set it.
+     * @return application request id
+     */
     long getLogId();
 
     void setLogId(long logId);
@@ -23,6 +37,8 @@ public interface Response {
     Throwable getException();
 
     NSHead getNsHead();
+
+    SPHead getSpHead();
 
     void setNsHead(NSHead nsHead);
 

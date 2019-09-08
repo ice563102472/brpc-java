@@ -15,19 +15,22 @@
  */
 package com.baidu.brpc.protocol;
 
+import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.Set;
+
 import com.baidu.brpc.RpcMethodInfo;
 import com.baidu.brpc.client.RpcCallback;
+import com.baidu.brpc.client.RpcFuture;
 import com.baidu.brpc.client.channel.BrpcChannel;
 import com.baidu.brpc.exceptions.RpcException;
 import com.baidu.brpc.naming.SubscribeInfo;
 import com.baidu.brpc.protocol.nshead.NSHead;
+import com.baidu.brpc.protocol.push.SPHead;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.FullHttpRequest;
-
-import java.lang.reflect.Method;
-import java.util.Map;
-import java.util.Set;
 
 public interface Request {
 
@@ -43,6 +46,18 @@ public interface Request {
 
     void setMsg(Object o);
 
+    /**
+     * used to find RpcFuture, application can not set it.
+     * @return rpc future id
+     */
+    long getCorrelationId();
+
+    void setCorrelationId(long correlationId);
+
+    /**
+     * used to identify request for application, application can set it.
+     * @return application request id
+     */
     long getLogId();
 
     void setLogId(long logId);
@@ -99,6 +114,10 @@ public interface Request {
 
     void setNsHead(NSHead nsHead);
 
+    SPHead getSpHead();
+
+    void setSpHead(SPHead spHead);
+
     Request retain();
 
     void release();
@@ -140,4 +159,20 @@ public interface Request {
     Integer getWriteTimeoutMillis();
 
     void setWriteTimeoutMillis(Integer writeTimeoutMillis);
+
+    void setClientName(String clientName);
+
+    String getClientName();
+
+    boolean isOneWay();
+
+    void setOneWay(boolean oneWay);
+
+    RpcFuture getRpcFuture();
+
+    void setRpcFuture(RpcFuture rpcFuture);
+
+    ByteBuf getSendBuf();
+
+    void setSendBuf(ByteBuf sendBuf);
 }

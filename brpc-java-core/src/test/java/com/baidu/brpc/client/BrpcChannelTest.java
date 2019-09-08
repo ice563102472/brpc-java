@@ -15,20 +15,23 @@
  */
 package com.baidu.brpc.client;
 
-import com.baidu.brpc.RpcOptionsUtils;
-import com.baidu.brpc.client.channel.BrpcChannel;
-import com.baidu.brpc.client.channel.BrpcPooledChannel;
-import com.baidu.brpc.client.instance.ServiceInstance;
-import com.baidu.brpc.server.RpcServer;
-import io.netty.channel.Channel;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
+import java.util.Queue;
+
+import com.baidu.brpc.server.RpcServerOptions;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Queue;
+import com.baidu.brpc.client.channel.BrpcChannel;
+import com.baidu.brpc.client.channel.BrpcPooledChannel;
+import com.baidu.brpc.client.instance.ServiceInstance;
+import com.baidu.brpc.RpcOptionsUtils;
+import com.baidu.brpc.server.RpcServer;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import io.netty.channel.Channel;
 
 public class BrpcChannelTest {
 
@@ -42,7 +45,7 @@ public class BrpcChannelTest {
 
     @Before
     public void before() {
-        rpcServer = new RpcServer(8000);
+        rpcServer = new RpcServer(8000, RpcOptionsUtils.getRpcServerOptions());
         rpcServer.start();
         options = RpcOptionsUtils.getRpcClientOptions();
         options.setLatencyWindowSizeOfFairLoadBalance(2);

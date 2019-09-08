@@ -61,9 +61,8 @@ public class HttpJsonProtocolTest {
         ByteBuf content = Unpooled.wrappedBuffer(new Gson().toJson("hello").getBytes());
 
         FullHttpRequest fullHttpRequest = new DefaultFullHttpRequest(HttpVersion.HTTP_1_0, HttpMethod.GET,
-                "/HelloWorldService/hello", content);
+                "/HelloWorldService/hello?k=v", content);
         fullHttpRequest.headers().set("log-id", 1);
-        fullHttpRequest.setUri("/HelloWorldService/hello");
         fullHttpRequest.headers().set(HttpHeaderNames.CONTENT_TYPE, "application/json; charset=utf-8");
 
         Request request = protocol.decodeRequest(fullHttpRequest);
@@ -76,18 +75,14 @@ public class HttpJsonProtocolTest {
 
     @Test
     public void testEncodeHttpResponse() throws Exception {
-
         HttpRequest request = new HttpRequest();
         String contentType = "application/json; charset=utf-8";
         request.headers().set(HttpHeaderNames.CONTENT_TYPE, contentType);
         request.headers().set(HttpHeaderNames.CONTENT_ENCODING, "utf-8");
+        request.headers().set("protocol-type", "30");
         Response response = new HttpResponse();
         response.setResult("hello world");
         protocol.encodeResponse(request, response);
-//        FullHttpResponse fullHttpResponse = (FullHttpResponse) response.getMsg();
-//
-//        assertEquals(contentType, fullHttpResponse.headers().get(HttpHeaderNames.CONTENT_TYPE));
-//        assertEquals(encodeBody(response.getResult()).length, fullHttpResponse.content().readableBytes());
     }
 
     public byte[] encodeBody(Object body) throws Exception {

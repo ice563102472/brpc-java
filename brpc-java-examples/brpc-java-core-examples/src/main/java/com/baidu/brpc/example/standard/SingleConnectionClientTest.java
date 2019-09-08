@@ -1,5 +1,15 @@
 package com.baidu.brpc.example.standard;
 
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.baidu.brpc.RpcContext;
 import com.baidu.brpc.client.BrpcProxy;
 import com.baidu.brpc.client.RpcClient;
@@ -10,16 +20,8 @@ import com.baidu.brpc.exceptions.RpcException;
 import com.baidu.brpc.interceptor.Interceptor;
 import com.baidu.brpc.protocol.Options;
 import com.google.common.collect.Lists;
-import io.netty.util.ReferenceCountUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
+import io.netty.util.ReferenceCountUtil;
 
 @SuppressWarnings("unchecked")
 public class SingleConnectionClientTest {
@@ -54,20 +56,20 @@ public class SingleConnectionClientTest {
                     if (((index / countInHalfMinute) & 1) == 1) {
                         return;
                     }
-                    RpcContext controller = new RpcContext();
-                    controller.setRequestBinaryAttachment("example attachment".getBytes());
+                    RpcContext rpcContext = RpcContext.getContext();
+                    rpcContext.setRequestBinaryAttachment("example attachment".getBytes());
                     Echo.EchoResponse response = echoService.echo(request);
                     // sample log
                     if (random.nextInt(10000) < 30) {
                         LOG.info("sync call service=EchoService.echo success, "
                                         + "request={},response={}",
                                 request.getMessage(), response.getMessage());
-
-                        if (controller.getResponseBinaryAttachment() != null) {
-                            LOG.info("attachment="
-                                    + new String(controller.getResponseBinaryAttachment().array()));
-                            ReferenceCountUtil.release(controller.getResponseBinaryAttachment());
-                        }
+                    }
+                    rpcContext = RpcContext.getContext();
+                    if (rpcContext.getResponseBinaryAttachment() != null) {
+                        LOG.info("attachment="
+                                + new String(rpcContext.getResponseBinaryAttachment().array()));
+                        ReferenceCountUtil.release(rpcContext.getResponseBinaryAttachment());
                     }
                 } catch (RpcException ex) {
                     if (random.nextInt(10000) < 30) {

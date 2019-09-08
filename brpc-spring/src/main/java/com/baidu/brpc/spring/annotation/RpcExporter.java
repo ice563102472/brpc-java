@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Baidu, Inc. All Rights Reserved.
+ * Copyright (c) 2019 Baidu, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,14 +37,14 @@ public @interface RpcExporter {
      * @return the string
      */
     String port() default "8080";
-    
+
     /**
      * bean name of RPC server options bean type must be {@link com.baidu.brpc.server.RpcServerOptions}.
      *
      * @return the string
      */
     String rpcServerOptionsBeanName() default "";
-    
+
     /**
      * bean name of RPC interceptor bean type must be {@link com.baidu.brpc.interceptor.Interceptor}.
      *
@@ -53,14 +53,12 @@ public @interface RpcExporter {
     String interceptorBeanName() default "";
 
     /**
-     * group for naming service
-     *
+     * Group for naming service
      */
     String group() default "normal";
 
     /**
-     * version for naming service
-     *
+     * Version for naming service
      */
     String version() default "1.0.0";
 
@@ -74,6 +72,16 @@ public @interface RpcExporter {
     /**
      * true: use the shared thread pool
      * false: create individual thread pool for register service
+     * attention here - it is not global share thread pool between multi RpcClient/RpcServer , if you want to use
+     * global thread pool , see rpc options.
      */
-    boolean useSharedThreadPool() default true;
+    boolean useServiceSharedThreadPool() default true;
+
+    /**
+     * Extra naming options. This option is effective on service-scope.
+     * <p>
+     * This config may have different behavior depending on which NamingService is used,
+     * consult documentation of the specific {@link com.baidu.brpc.naming.NamingService} for detailed usage.
+     */
+    NamingOption[] extraOptions() default {};
 }

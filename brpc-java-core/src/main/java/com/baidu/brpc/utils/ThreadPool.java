@@ -16,14 +16,14 @@
 
 package com.baidu.brpc.utils;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import java.util.ArrayList;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Since {@linkplain java.util.concurrent.ExecutorService ExecutorService} is a
@@ -31,7 +31,6 @@ import java.util.concurrent.locks.ReentrantLock;
  * <p>
  * NOT implement the {@linkplain java.util.concurrent.Executor Executor}
  * interface unless we see the necessity
- *
  * @author Zhangyi Chen (chenzhangyi01@baidu.com)
  * @update Wenwei hu (huwenwei@baidu.com)
  */
@@ -39,14 +38,15 @@ public final class ThreadPool {
     private static final int DEFAULT_QUEUE_SIZE = 1024;
 
     // Stand alone lock
-    private          BoundedQueue<Runnable> produced;
-    private          BoundedQueue<Runnable> toConsume;
-    private          Lock                   consumerLock;
-    private          Lock                   producerLock;
-    private          Condition              isProducerNotFullCondition;
-    private          Condition              isProducerNotEmptyCondition;
-    private          ArrayList<Thread>      threads;
-    private volatile boolean                stopped;
+    private BoundedQueue<Runnable> produced;
+    private BoundedQueue<Runnable> toConsume;
+    private Lock consumerLock;
+    private Lock producerLock;
+    private Condition isProducerNotFullCondition;
+    private Condition isProducerNotEmptyCondition;
+    private ArrayList<Thread> threads;
+
+    private volatile boolean stopped;
 
     public ThreadPool(int initialThreadNum, ThreadFactory threadFactory) {
         this(initialThreadNum, threadFactory, 0);
@@ -56,7 +56,7 @@ public final class ThreadPool {
         if (initialThreadNum <= 0) {
             throw new IllegalArgumentException(
                     "initialThreadNum=" + initialThreadNum
-                    + " should be positive");
+                     + " should be positive" );
         }
         threads = new ArrayList<Thread>(initialThreadNum);
         stopped = false;
@@ -64,12 +64,12 @@ public final class ThreadPool {
         if (queueSize <= 0) {
             queueSize = DEFAULT_QUEUE_SIZE;
         }
-        produced                    = new BoundedQueue<Runnable>(queueSize);
-        toConsume                   = new BoundedQueue<Runnable>(queueSize);
-        consumerLock                = new ReentrantLock();
-        producerLock                = new ReentrantLock();
+        produced = new BoundedQueue<Runnable>(queueSize);
+        toConsume = new BoundedQueue<Runnable>(queueSize);
+        consumerLock = new ReentrantLock();
+        producerLock = new ReentrantLock();
         isProducerNotEmptyCondition = producerLock.newCondition();
-        isProducerNotFullCondition  = producerLock.newCondition();
+        isProducerNotFullCondition = producerLock.newCondition();
         // Start working threads at last, don't put any code after, or there
         // will be race condition
         for (int i = 0; i < initialThreadNum; ++i) {
@@ -114,7 +114,7 @@ public final class ThreadPool {
                         consumerLock.lock();
                         try {
                             BoundedQueue<Runnable> tmp = produced;
-                            produced  = toConsume;
+                            produced = toConsume;
                             toConsume = tmp;
                         } finally {
                             consumerLock.unlock();
@@ -161,11 +161,11 @@ public final class ThreadPool {
     }
 
     public boolean submit(Runnable task) {
-        Runnable[] tasks = {task};
+        Runnable[] tasks = { task };
         return submit(tasks, 0, 1) == 1;
     }
 
-    public long submit(Runnable[] tasks, int offset, int len) {
+    public long submit(Runnable []tasks, int offset, int len) {
         int cur = offset;
         int end = offset + len;
         while (!stopped && cur < end) {
@@ -179,7 +179,7 @@ public final class ThreadPool {
                     }
                 }
                 int toProduce = Math.min(produced.remainingCapacity(),
-                                         end - cur);
+                        end - cur);
                 if (toProduce > 0) {
                     boolean wasEmpty = produced.isEmpty();
                     produced.addAll(tasks, cur, toProduce);
@@ -212,5 +212,10 @@ public final class ThreadPool {
         private int producerQueueSize;
         private int consumerQueueSize;
     }
+
+    public boolean isStopped() {
+        return stopped;
+    }
+
 }
 

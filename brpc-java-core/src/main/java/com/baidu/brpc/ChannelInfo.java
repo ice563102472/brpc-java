@@ -24,6 +24,7 @@ import com.baidu.brpc.client.channel.ChannelType;
 import com.baidu.brpc.exceptions.RpcException;
 import com.baidu.brpc.protocol.Protocol;
 import com.baidu.brpc.protocol.Response;
+
 import io.netty.channel.Channel;
 import io.netty.util.Attribute;
 import io.netty.util.AttributeKey;
@@ -35,16 +36,14 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 @Slf4j
 public class ChannelInfo {
-    private static final AttributeKey<ChannelInfo> CLIENT_CHANNEL_KEY = AttributeKey.valueOf(
-            "client_key");
-    private static final AttributeKey<ChannelInfo> SERVER_CHANNEL_KEY = AttributeKey.valueOf(
-            "server_key");
+    private static final AttributeKey<ChannelInfo> CLIENT_CHANNEL_KEY = AttributeKey.valueOf("client_key");
+    private static final AttributeKey<ChannelInfo> SERVER_CHANNEL_KEY = AttributeKey.valueOf("server_key");
 
-    private Channel                 channel;
-    private BrpcChannel             channelGroup;
-    private Protocol                protocol;
-    private long                    logId;
-    private FastFutureStore         pendingRpc;
+    private Channel channel;
+    private BrpcChannel channelGroup;
+    private Protocol protocol;
+    private long correlationId;
+    private FastFutureStore pendingRpc;
     private DynamicCompositeByteBuf recvBuf = new DynamicCompositeByteBuf(16);
 
     public void setProtocol(Protocol protocol) {
@@ -52,8 +51,8 @@ public class ChannelInfo {
     }
 
     public static ChannelInfo getOrCreateClientChannelInfo(Channel channel) {
-        Attribute<ChannelInfo> attribute   = channel.attr(ChannelInfo.CLIENT_CHANNEL_KEY);
-        ChannelInfo            channelInfo = attribute.get();
+        Attribute<ChannelInfo> attribute = channel.attr(ChannelInfo.CLIENT_CHANNEL_KEY);
+        ChannelInfo channelInfo = attribute.get();
         if (channelInfo == null) {
             channelInfo = new ChannelInfo();
             // 此时FastFutureStore单例对象已经在RpcClient创建时初始化过了
@@ -70,8 +69,8 @@ public class ChannelInfo {
     }
 
     public static ChannelInfo getOrCreateServerChannelInfo(Channel channel) {
-        Attribute<ChannelInfo> attribute   = channel.attr(ChannelInfo.SERVER_CHANNEL_KEY);
-        ChannelInfo            channelInfo = attribute.get();
+        Attribute<ChannelInfo> attribute = channel.attr(ChannelInfo.SERVER_CHANNEL_KEY);
+        ChannelInfo channelInfo = attribute.get();
         if (channelInfo == null) {
             channelInfo = new ChannelInfo();
             channelInfo.setChannel(channel);
@@ -82,7 +81,7 @@ public class ChannelInfo {
 
     public static ChannelInfo getServerChannelInfo(Channel channel) {
         Attribute<ChannelInfo> attribute = channel.attr(ChannelInfo.SERVER_CHANNEL_KEY);
-        return attribute.get();
+        return  attribute.get();
     }
 
     public long addRpcFuture(RpcFuture future) {
@@ -90,12 +89,12 @@ public class ChannelInfo {
         return pendingRpc.put(future);
     }
 
-    public RpcFuture getRpcFuture(long logId) {
-        return pendingRpc.get(logId);
+    public RpcFuture getRpcFuture(long correlationId) {
+        return pendingRpc.get(correlationId);
     }
 
-    public RpcFuture removeRpcFuture(long logId) {
-        return pendingRpc.getAndRemove(logId);
+    public RpcFuture removeRpcFuture(long correlationId) {
+        return pendingRpc.getAndRemove(correlationId);
     }
 
     /**
@@ -103,14 +102,14 @@ public class ChannelInfo {
      *
      * @param channelType
      */
-    public void handleRequestFail(ChannelType channelType) {
+    public void handleRequestFail(ChannelType channelType, long correlationId) {
+        removeRpcFuture(correlationId);
         if (channelType != ChannelType.SHORT_CONNECTION) {
             channelGroup.incFailedNum();
             returnChannelAfterRequest();
         } else {
             channelGroup.close();
         }
-
     }
 
     /**
@@ -165,12 +164,12 @@ public class ChannelInfo {
      * 用于遍历FutureStore元素的实现类
      */
     private static class ChannelErrorStoreWalker implements FastFutureStore.StoreWalker {
-        private Channel      currentChannel;
+        private Channel currentChannel;
         private RpcException exception;
 
         public ChannelErrorStoreWalker(Channel currentChannel, RpcException exception) {
             this.currentChannel = currentChannel;
-            this.exception      = exception;
+            this.exception = exception;
         }
 
         @Override
@@ -189,6 +188,7 @@ public class ChannelInfo {
         public void actionAfterDelete(RpcFuture fut) {
             Response response = fut.getRpcClient().getProtocol().createResponse();
             response.setException(exception);
+            response.setRpcFuture(fut);
             fut.handleResponse(response);
         }
     }

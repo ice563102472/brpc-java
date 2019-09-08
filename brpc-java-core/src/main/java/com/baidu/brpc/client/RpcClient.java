@@ -21,33 +21,56 @@ import com.baidu.brpc.client.channel.BrpcChannel;
 import com.baidu.brpc.client.channel.ChannelType;
 import com.baidu.brpc.client.handler.IdleChannelHandler;
 import com.baidu.brpc.client.handler.RpcClientHandler;
-import com.baidu.brpc.client.instance.*;
+import com.baidu.brpc.client.instance.BasicInstanceProcessor;
+import com.baidu.brpc.client.instance.Endpoint;
+import com.baidu.brpc.client.instance.EnhancedInstanceProcessor;
+import com.baidu.brpc.client.instance.InstanceProcessor;
+import com.baidu.brpc.client.instance.ServiceInstance;
 import com.baidu.brpc.client.loadbalance.LoadBalanceManager;
 import com.baidu.brpc.client.loadbalance.LoadBalanceStrategy;
 import com.baidu.brpc.client.loadbalance.RandomStrategy;
 import com.baidu.brpc.exceptions.RpcException;
+import com.baidu.brpc.interceptor.ClientTraceInterceptor;
 import com.baidu.brpc.interceptor.Interceptor;
 import com.baidu.brpc.interceptor.LoadBalanceInterceptor;
-import com.baidu.brpc.naming.*;
+import com.baidu.brpc.naming.BrpcURL;
+import com.baidu.brpc.naming.ListNamingService;
+import com.baidu.brpc.naming.NamingOptions;
+import com.baidu.brpc.naming.NamingService;
+import com.baidu.brpc.naming.NamingServiceFactory;
+import com.baidu.brpc.naming.NamingServiceFactoryManager;
+import com.baidu.brpc.naming.NotifyListener;
+import com.baidu.brpc.naming.SubscribeInfo;
 import com.baidu.brpc.protocol.Protocol;
 import com.baidu.brpc.protocol.ProtocolManager;
 import com.baidu.brpc.protocol.Request;
+import com.baidu.brpc.server.ServiceManager;
 import com.baidu.brpc.spi.ExtensionLoaderManager;
+import com.baidu.brpc.thread.BrpcIoThreadPoolInstance;
+import com.baidu.brpc.thread.BrpcWorkClientThreadPoolInstance;
 import com.baidu.brpc.thread.ClientCallBackThreadPoolInstance;
 import com.baidu.brpc.thread.ClientTimeoutTimerInstance;
 import com.baidu.brpc.thread.ShutDownManager;
+import com.baidu.brpc.utils.BrpcConstants;
 import com.baidu.brpc.utils.CustomThreadFactory;
 import com.baidu.brpc.utils.ThreadPool;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.*;
-import io.netty.channel.epoll.*;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.epoll.EpollChannelOption;
+import io.netty.channel.epoll.EpollEventLoopGroup;
+import io.netty.channel.epoll.EpollMode;
+import io.netty.channel.epoll.EpollSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.Timeout;
 import io.netty.util.Timer;
+import lombok.Getter;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,27 +89,29 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Created by huwenwei on 2017/4/25.
  */
 @SuppressWarnings("unchecked")
+@Getter
 public class RpcClient {
     private static final Logger LOG = LoggerFactory.getLogger(RpcClient.class);
 
-    private RpcClientOptions       rpcClientOptions       = new RpcClientOptions();
-    private Bootstrap              bootstrap;
-    private Timer                  timeoutTimer;
-    private Protocol               protocol;
-    private LoadBalanceStrategy    loadBalanceStrategy;
-    private List<Interceptor>      interceptors           = new ArrayList<Interceptor>();
+    private RpcClientOptions rpcClientOptions = new RpcClientOptions();
+    private Bootstrap bootstrap;
+    private Timer timeoutTimer;
+    private Protocol protocol;
+    private LoadBalanceStrategy loadBalanceStrategy;
+    private List<Interceptor> interceptors = new ArrayList<Interceptor>();
     private LoadBalanceInterceptor loadBalanceInterceptor = new LoadBalanceInterceptor();
-    private NamingService          namingService;
-    private ThreadPool             workThreadPool;
-    private EventLoopGroup         ioThreadPool;
-    private Class                  serviceInterface;
-    private SubscribeInfo          subscribeInfo;
-    private AtomicBoolean          stop                   = new AtomicBoolean(false);
-    private InstanceProcessor      instanceProcessor;
+    private NamingService namingService;
+    private ThreadPool workThreadPool;
+    private EventLoopGroup ioThreadPool;
+    private Class serviceInterface;
+    private SubscribeInfo subscribeInfo;
+    private AtomicBoolean stop = new AtomicBoolean(false);
+    private InstanceProcessor instanceProcessor;
+
     /**
      * callBack thread when method invoke fail
      */
-    private ExecutorService        callbackThread;
+    private ExecutorService callbackThread;
 
     /**
      * 保存单例的引用
@@ -117,8 +142,7 @@ public class RpcClient {
         // parse naming
         BrpcURL url = new BrpcURL(serviceUrl);
         NamingServiceFactory namingServiceFactory
-                = NamingServiceFactoryManager.getInstance().getNamingServiceFactory(
-                url.getSchema());
+                = NamingServiceFactoryManager.getInstance().getNamingServiceFactory(url.getSchema());
         this.namingService = namingServiceFactory.createNamingService(url);
         boolean singleServer = false;
         if (namingService instanceof ListNamingService) {
@@ -150,8 +174,7 @@ public class RpcClient {
         this(endPoints, new RpcClientOptions(), null);
     }
 
-    public RpcClient(List<Endpoint> endPoints, RpcClientOptions options,
-                     List<Interceptor> interceptors) {
+    public RpcClient(List<Endpoint> endPoints, RpcClientOptions options, List<Interceptor> interceptors) {
         ExtensionLoaderManager.getInstance().loadAllExtensions(options.getEncoding());
         this.init(options, interceptors, endPoints.size() == 1);
         for (Endpoint endpoint : endPoints) {
@@ -165,6 +188,19 @@ public class RpcClient {
 
     public static <T> T getProxy(RpcClient rpcClient, Class clazz) {
         return BrpcProxy.getProxy(rpcClient, clazz, null);
+    }
+
+    /**
+     * @param service
+     */
+    public void registerPushService(Object service) {
+        ServiceManager.getInstance().registerPushService(service);
+
+        // 如果只注册了pushService，没有注册一个普通的服务的话， 报错
+        if (instanceProcessor.getInstances().size() == 0) {
+            LOG.error("there should be have normal servcies before register push service.");
+            throw new RpcException("there should be have normal services before register push service");
+        }
     }
 
     public <T> T getProxy(Class clazz, NamingOptions namingOptions) {
@@ -181,8 +217,7 @@ public class RpcClient {
 
     public void setServiceInterface(Class clazz, NamingOptions namingOptions) {
         if (this.serviceInterface != null) {
-            throw new RpcException(
-                    "serviceInterface must not be set repeatedly, please use another RpcClient");
+            throw new RpcException("serviceInterface must not be set repeatedly, please use another RpcClient");
         }
         if (clazz.getInterfaces().length == 0) {
             this.serviceInterface = clazz;
@@ -192,15 +227,12 @@ public class RpcClient {
         }
 
         if (namingService != null) {
-            subscribeInfo = new SubscribeInfo();
-            subscribeInfo.setInterfaceName(serviceInterface.getName());
             if (namingOptions != null) {
-                subscribeInfo.setGroup(namingOptions.getGroup());
-                subscribeInfo.setVersion(namingOptions.getVersion());
-                subscribeInfo.setIgnoreFailOfNamingService(
-                        namingOptions.isIgnoreFailOfNamingService());
-                subscribeInfo.setServiceId(namingOptions.getServiceId());
+                subscribeInfo = new SubscribeInfo(namingOptions);
+            } else {
+                subscribeInfo = new SubscribeInfo();
             }
+            subscribeInfo.setInterfaceName(serviceInterface.getName());
             List<ServiceInstance> instances = this.namingService.lookup(subscribeInfo);
             instanceProcessor.addInstances(instances);
             this.namingService.subscribe(subscribeInfo, new NotifyListener() {
@@ -230,13 +262,17 @@ public class RpcClient {
             if (loadBalanceStrategy != null) {
                 loadBalanceStrategy.destroy();
             }
-            if (ioThreadPool != null) {
+            if (ioThreadPool != null && !rpcClientOptions.isGlobalThreadPoolSharing()) {
                 ioThreadPool.shutdownGracefully().syncUninterruptibly();
             }
-            if (workThreadPool != null) {
+            if (workThreadPool != null && !rpcClientOptions.isGlobalThreadPoolSharing()) {
                 workThreadPool.stop();
             }
         }
+    }
+
+    public boolean isShutdown() {
+        return stop.get();
     }
 
     /**
@@ -268,28 +304,25 @@ public class RpcClient {
         } catch (NoSuchElementException full) {
             int maxConnections = brpcChannel.getCurrentMaxConnection() * 2;
             brpcChannel.updateMaxConnection(maxConnections);
-            String errMsg = String.format(
-                    "channel pool is exhausted, and double maxTotalConnection,server=%s:%d",
-                    brpcChannel.getServiceInstance().getIp(),
-                    brpcChannel.getServiceInstance().getPort());
+            String errMsg = String.format("channel pool is exhausted, and double maxTotalConnection,server=%s:%d",
+                    brpcChannel.getServiceInstance().getIp(), brpcChannel.getServiceInstance().getPort());
             LOG.debug(errMsg);
-            throw new RpcException(RpcException.NETWORK_EXCEPTION, errMsg);
+            throw new RpcException(RpcException.NETWORK_EXCEPTION, errMsg, full);
         } catch (IllegalStateException illegalState) {
             String errMsg = String.format("channel pool is closed, server=%s:%d",
-                                          brpcChannel.getServiceInstance().getIp(),
-                                          brpcChannel.getServiceInstance().getPort());
+                    brpcChannel.getServiceInstance().getIp(), brpcChannel.getServiceInstance().getPort());
             LOG.debug(errMsg);
-            throw new RpcException(RpcException.UNKNOWN_EXCEPTION, errMsg);
+            throw new RpcException(RpcException.UNKNOWN_EXCEPTION, errMsg, illegalState);
         } catch (Exception connectedFailed) {
             String errMsg = String.format("channel pool make new object failed, "
-                                          + "active=%d,idle=%d,server=%s:%d, ex=%s",
-                                          brpcChannel.getActiveConnectionNum(),
-                                          brpcChannel.getIdleConnectionNum(),
-                                          brpcChannel.getServiceInstance().getIp(),
-                                          brpcChannel.getServiceInstance().getPort(),
-                                          connectedFailed.getMessage());
+                            + "active=%d,idle=%d,server=%s:%d, ex=%s",
+                    brpcChannel.getActiveConnectionNum(),
+                    brpcChannel.getIdleConnectionNum(),
+                    brpcChannel.getServiceInstance().getIp(),
+                    brpcChannel.getServiceInstance().getPort(),
+                    connectedFailed.getMessage());
             LOG.debug(errMsg);
-            throw new RpcException(RpcException.UNKNOWN_EXCEPTION, errMsg);
+            throw new RpcException(RpcException.UNKNOWN_EXCEPTION, errMsg, connectedFailed);
         }
 
         if (channel == null) {
@@ -317,15 +350,13 @@ public class RpcClient {
         BrpcChannel brpcChannel = instanceProcessor.getInstanceChannelMap().get(endpoint);
         if (brpcChannel == null) {
             LOG.warn("instance:{} not found, may be it is removed from naming service.", endpoint);
-            throw new RpcException(RpcException.SERVICE_EXCEPTION,
-                                   "instance not found:" + endpoint);
+            throw new RpcException(RpcException.SERVICE_EXCEPTION, "instance not found:" + endpoint);
         }
         Channel channel;
         try {
             channel = brpcChannel.getChannel();
         } catch (Exception ex) {
-            throw new RpcException(RpcException.NETWORK_EXCEPTION,
-                                   "select channel failed from " + endpoint);
+            throw new RpcException(RpcException.NETWORK_EXCEPTION, "select channel failed from " + endpoint, ex);
         }
         if (!channel.isActive()) {
             brpcChannel.incFailedNum();
@@ -347,64 +378,61 @@ public class RpcClient {
         channelInfo.getChannelGroup().removeChannel(channel);
     }
 
+    public void encodeAndLoadBalance(Request request) {
+        // encode request
+        RpcFuture rpcFuture = RpcFuture.createRpcFuture(request, this);
+        request.setRpcFuture(rpcFuture);
+        request.setCorrelationId(rpcFuture.getCorrelationId());
+        try {
+            request.setSendBuf(protocol.encodeRequest(request));
+        } catch (Throwable t) {
+            throw new RpcException(RpcException.SERIALIZATION_EXCEPTION, t.getMessage(), t);
+        }
+
+        // select instance by load balance, and select channel from instance.
+        Channel channel = selectChannel(request);
+        request.setChannel(channel);
+    }
+
     public <T> AsyncAwareFuture<T> sendRequest(Request request) {
-        Channel     channel     = request.getChannel();
-        ChannelInfo channelInfo = ChannelInfo.getClientChannelInfo(channel);
+        ChannelInfo channelInfo = ChannelInfo.getClientChannelInfo(request.getChannel());
+        channelInfo.setCorrelationId(request.getCorrelationId());
+        request.getRpcFuture().setChannelInfo(channelInfo);
         BrpcChannel brpcChannel = channelInfo.getChannelGroup();
         protocol.beforeRequestSent(request, this, brpcChannel);
 
-        // create RpcFuture object
-        RpcFuture rpcFuture = new RpcFuture();
-        rpcFuture.setRpcMethodInfo(request.getRpcMethodInfo());
-        rpcFuture.setCallback(request.getCallback());
-        rpcFuture.setRpcClient(this);
-        rpcFuture.setChannelInfo(channelInfo);
-        // generate logId
-        long logId = FastFutureStore.getInstance(0).put(rpcFuture);
-        rpcFuture.setChannelInfo(channelInfo);
-        request.setLogId(logId);
-
-        // read write timeout
-        final long readTimeout  = request.getReadTimeoutMillis();
-        final long writeTimeout = request.getWriteTimeoutMillis();
         // register timeout timer
-        RpcTimeoutTimer timeoutTask = new RpcTimeoutTimer(channelInfo, request.getLogId(), this);
-        Timeout         timeout     = timeoutTimer.newTimeout(timeoutTask, readTimeout,
-                                                              TimeUnit.MILLISECONDS);
-
-        // set the missing parameters
-        rpcFuture.setTimeout(timeout);
-        channelInfo.setLogId(rpcFuture.getLogId());
+        RpcTimeoutTimer timeoutTask = new RpcTimeoutTimer(channelInfo, request.getCorrelationId(), this);
+        Timeout timeout = timeoutTimer.newTimeout(timeoutTask, request.getReadTimeoutMillis(), TimeUnit.MILLISECONDS);
+        request.getRpcFuture().setTimeout(timeout);
         try {
             // netty will release the send buffer after sent.
             // we retain here, so it can be used when rpc retry.
             request.retain();
-            ByteBuf       byteBuf    = protocol.encodeRequest(request);
-            ChannelFuture sendFuture = channel.writeAndFlush(byteBuf);
-            // set RpcContext writeTimeout
-            sendFuture.awaitUninterruptibly(writeTimeout);
+            ChannelFuture sendFuture = request.getChannel().writeAndFlush(request.getSendBuf());
+            sendFuture.awaitUninterruptibly(request.getWriteTimeoutMillis());
             if (!sendFuture.isSuccess()) {
                 if (!(sendFuture.cause() instanceof ClosedChannelException)) {
                     LOG.warn("send request failed, channelActive={}, ex=",
-                             channel.isActive(), sendFuture.cause());
+                            request.getChannel().isActive(), sendFuture.cause());
                 }
-                String errMsg = String.format("send request failed, channelActive=%b, ex=%s",
-                                              channel.isActive(), sendFuture.cause().getMessage());
+                String errMsg = String.format("send request failed, channelActive=%b",
+                        request.getChannel().isActive());
                 throw new RpcException(RpcException.NETWORK_EXCEPTION, errMsg);
             }
         } catch (Exception ex) {
-            channelInfo.handleRequestFail(rpcClientOptions.getChannelType());
+            channelInfo.handleRequestFail(rpcClientOptions.getChannelType(), request.getCorrelationId());
             timeout.cancel();
             if (ex instanceof RpcException) {
                 throw (RpcException) ex;
             } else {
-                throw new RpcException(RpcException.SERIALIZATION_EXCEPTION, ex.getMessage());
+                throw new RpcException(RpcException.SERIALIZATION_EXCEPTION, ex.getMessage(), ex);
             }
         }
 
         // return channel
         channelInfo.handleRequestSuccess();
-        return rpcFuture;
+        return request.getRpcFuture();
     }
 
     public void triggerCallback(Runnable runnable) {
@@ -413,8 +441,7 @@ public class RpcClient {
         }
     }
 
-    private void init(final RpcClientOptions options, List<Interceptor> interceptors,
-                      boolean singleServer) {
+    private void init(final RpcClientOptions options, List<Interceptor> interceptors, boolean singleServer) {
         Validate.notNull(options);
         try {
             this.rpcClientOptions.copyFrom(options);
@@ -424,9 +451,10 @@ public class RpcClient {
         if (interceptors != null) {
             this.interceptors.addAll(interceptors);
         }
-        this.protocol   = ProtocolManager.getInstance().getProtocol(options.getProtocolType());
+        this.interceptors.add(new ClientTraceInterceptor());
+        this.protocol = ProtocolManager.getInstance().getProtocol(options.getProtocolType());
         fastFutureStore = FastFutureStore.getInstance(options.getFutureBufferSize());
-        timeoutTimer    = ClientTimeoutTimerInstance.getOrCreateInstance();
+        timeoutTimer = ClientTimeoutTimerInstance.getOrCreateInstance();
 
         // singleServer or isShortConnection do not need healthChecker
         if (singleServer || rpcClientOptions.getChannelType() == ChannelType.SHORT_CONNECTION) {
@@ -442,48 +470,56 @@ public class RpcClient {
 
         // init once
         ShutDownManager.getInstance();
+        boolean threadPoolSharing = rpcClientOptions.isGlobalThreadPoolSharing();
+        if (threadPoolSharing) {
+            this.workThreadPool =
+                    BrpcWorkClientThreadPoolInstance.getOrCreateInstance(rpcClientOptions.getWorkThreadNum());
+            if (rpcClientOptions.getIoEventType() == BrpcConstants.IO_EVENT_NETTY_EPOLL) {
+                ioThreadPool = BrpcIoThreadPoolInstance.getOrCreateEpollInstance(options.getIoThreadNum());
+            } else {
+                ioThreadPool = BrpcIoThreadPoolInstance.getOrCreateNioInstance(options.getIoThreadNum());
+            }
+        } else {
+            this.workThreadPool = new ThreadPool(rpcClientOptions.getWorkThreadNum(),
+                    new CustomThreadFactory("client-work-thread"));
+            if (rpcClientOptions.getIoEventType() == BrpcConstants.IO_EVENT_NETTY_EPOLL) {
+                ioThreadPool = new EpollEventLoopGroup(options.getIoThreadNum(),
+                        new CustomThreadFactory("client-io-thread"));
+            } else {
+                ioThreadPool = new NioEventLoopGroup(options.getIoThreadNum(),
+                        new CustomThreadFactory("client-io-thread"));
+            }
+        }
 
-        this.workThreadPool = new ThreadPool(rpcClientOptions.getWorkThreadNum(),
-                                             new CustomThreadFactory("client-work-thread"));
         this.callbackThread = ClientCallBackThreadPoolInstance.getOrCreateInstance(1);
 
         // init netty bootstrap
         bootstrap = new Bootstrap();
-        if (Epoll.isAvailable()) {
+        if (rpcClientOptions.getIoEventType() == BrpcConstants.IO_EVENT_NETTY_EPOLL) {
             bootstrap.channel(EpollSocketChannel.class);
             bootstrap.option(EpollChannelOption.EPOLL_MODE, EpollMode.EDGE_TRIGGERED);
         } else {
             bootstrap.channel(NioSocketChannel.class);
         }
 
-        bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS,
-                         rpcClientOptions.getConnectTimeoutMillis());
+        bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, rpcClientOptions.getConnectTimeoutMillis());
         bootstrap.option(ChannelOption.SO_KEEPALIVE, rpcClientOptions.isKeepAlive());
         bootstrap.option(ChannelOption.SO_REUSEADDR, rpcClientOptions.isReuseAddr());
         bootstrap.option(ChannelOption.TCP_NODELAY, rpcClientOptions.isTcpNoDelay());
         bootstrap.option(ChannelOption.SO_RCVBUF, rpcClientOptions.getReceiveBufferSize());
         bootstrap.option(ChannelOption.SO_SNDBUF, rpcClientOptions.getSendBufferSize());
         final RpcClientHandler rpcClientHandler = new RpcClientHandler(RpcClient.this);
-        final ChannelInitializer<SocketChannel> initializer
-                = new ChannelInitializer<SocketChannel>() {
+        final ChannelInitializer<SocketChannel> initializer = new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
                 if (rpcClientOptions.getChannelType() == ChannelType.SINGLE_CONNECTION) {
-                    ch.pipeline().addLast(
-                            new IdleStateHandler(0, 0, rpcClientOptions.getKeepAliveTime()));
+                    ch.pipeline().addLast(new IdleStateHandler(0, 0, rpcClientOptions.getKeepAliveTime()));
                     ch.pipeline().addLast(new IdleChannelHandler());
                 }
                 ch.pipeline().addLast(rpcClientHandler);
             }
         };
 
-        if (Epoll.isAvailable()) {
-            ioThreadPool = new EpollEventLoopGroup(options.getIoThreadNum(),
-                                                   new CustomThreadFactory("client-io-thread"));
-        } else {
-            ioThreadPool = new NioEventLoopGroup(options.getIoThreadNum(),
-                                                 new CustomThreadFactory("client-io-thread"));
-        }
         bootstrap.group(ioThreadPool).handler(initializer);
     }
 
@@ -531,10 +567,6 @@ public class RpcClient {
         return timeoutTimer;
     }
 
-    public InstanceProcessor getEndPointProcessor() {
-        return instanceProcessor;
-    }
-
     public LoadBalanceInterceptor getLoadBalanceInterceptor() {
         return loadBalanceInterceptor;
     }
@@ -546,4 +578,13 @@ public class RpcClient {
     public SubscribeInfo getSubscribeInfo() {
         return subscribeInfo;
     }
+
+    public InstanceProcessor getInstanceProcessor() {
+        return instanceProcessor;
+    }
+
+    public void setInstanceProcessor(InstanceProcessor instanceProcessor) {
+        this.instanceProcessor = instanceProcessor;
+    }
+
 }

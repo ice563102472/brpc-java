@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Baidu, Inc. All Rights Reserved.
+ * Copyright (c) 2019 Baidu, Inc. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,22 +15,25 @@
  */
 package com.baidu.brpc.spring;
 
-import com.baidu.brpc.interceptor.Interceptor;
-import com.baidu.brpc.naming.NamingOptions;
-import com.baidu.brpc.server.RpcServer;
-import com.baidu.brpc.server.RpcServerOptions;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.aop.support.AopUtils;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.util.Assert;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.baidu.brpc.interceptor.Interceptor;
+import com.baidu.brpc.naming.NamingOptions;
+import com.baidu.brpc.naming.NamingServiceFactory;
+import com.baidu.brpc.server.RpcServer;
+import com.baidu.brpc.server.RpcServerOptions;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.aop.support.AopUtils;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.util.Assert;
 
 /**
  * PBRPC exporter for standard PROTOBUF RPC implementation from jprotobuf-rpc-socket.
@@ -42,7 +45,6 @@ import java.util.Map;
 @Getter
 @Slf4j
 public class RpcServiceExporter extends RpcServerOptions implements InitializingBean, DisposableBean {
-
     /**
      * The pr rpc server.
      */
@@ -54,21 +56,6 @@ public class RpcServiceExporter extends RpcServerOptions implements Initializing
     private int servicePort;
 
     /**
-     * identify different service implementation for the same interface.
-     */
-    private String group = "normal";
-
-    /**
-     * identify service version.
-     */
-    private String version = "1.0.0";
-
-    /**
-     * if true, naming service will throw exception when register/subscribe exceptions.
-     */
-    private boolean ignoreFailOfNamingService = false;
-
-    /**
      * the register services which use default thread pool
      */
     private List<Object> registerServices = new ArrayList<Object>();
@@ -76,8 +63,12 @@ public class RpcServiceExporter extends RpcServerOptions implements Initializing
     /**
      * the register services which use individual thread pool
      */
-    private Map<RpcServerOptions, Object> customOptionsServiceMap
-            = new HashMap<RpcServerOptions, Object>();
+    private Map<RpcServerOptions, Object> customOptionsServiceMap = new HashMap<RpcServerOptions, Object>();
+
+    /**
+     * {@link NamingOptions} for services
+     */
+    private Map<Object, NamingOptions> serviceNamingOptions = new HashMap<Object, NamingOptions>();
 
     /**
      * The interceptor.
@@ -105,18 +96,16 @@ public class RpcServiceExporter extends RpcServerOptions implements Initializing
         }
 
         prRpcServer = new RpcServer(servicePort, this, interceptors);
-        NamingOptions namingOptions = new NamingOptions();
-        namingOptions.setGroup(group);
-        namingOptions.setVersion(version);
-        namingOptions.setIgnoreFailOfNamingService(ignoreFailOfNamingService);
 
         for (Object service : registerServices) {
-            prRpcServer.registerService(service, AopUtils.getTargetClass(service), namingOptions,
-                                        null);
+            NamingOptions namingOptions = serviceNamingOptions.get(service);
+            prRpcServer.registerService(service, AopUtils.getTargetClass(service), namingOptions, null);
         }
+
         for (Map.Entry<RpcServerOptions, Object> entry : customOptionsServiceMap.entrySet()) {
+            NamingOptions namingOptions = serviceNamingOptions.get(entry.getValue());
             prRpcServer.registerService(entry.getValue(), AopUtils.getTargetClass(entry.getValue()), namingOptions,
-                                        entry.getKey());
+                    entry.getKey());
         }
 
         prRpcServer.start();

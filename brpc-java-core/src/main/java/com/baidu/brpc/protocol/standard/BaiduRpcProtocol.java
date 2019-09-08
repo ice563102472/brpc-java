@@ -74,7 +74,7 @@ public class BaiduRpcProtocol extends AbstractProtocol {
     public ByteBuf encodeRequest(Request request) throws Exception {
         BaiduRpcEncodePacket packet = new BaiduRpcEncodePacket();
         BaiduRpcProto.RpcMeta.Builder metaBuilder = BaiduRpcProto.RpcMeta.newBuilder();
-        metaBuilder.setCorrelationId(request.getLogId());
+        metaBuilder.setCorrelationId(request.getCorrelationId());
         int compressType = request.getCompressType();
         metaBuilder.setCompressType(request.getCompressType());
 
@@ -126,11 +126,11 @@ public class BaiduRpcProtocol extends AbstractProtocol {
             BaiduRpcProto.RpcMeta rpcMeta = (BaiduRpcProto.RpcMeta) ProtobufUtils.parseFrom(
                     metaBuf, defaultRpcMetaInstance);
             RpcResponse rpcResponse = new RpcResponse();
-            long logId = rpcMeta.getCorrelationId();
-            rpcResponse.setLogId(logId);
+            long correlationId = rpcMeta.getCorrelationId();
+            rpcResponse.setCorrelationId(correlationId);
 
             ChannelInfo channelInfo = ChannelInfo.getClientChannelInfo(ctx.channel());
-            RpcFuture future = channelInfo.removeRpcFuture(rpcResponse.getLogId());
+            RpcFuture future = channelInfo.removeRpcFuture(rpcResponse.getCorrelationId());
             if (future == null) {
                 return rpcResponse;
             }
@@ -157,7 +157,7 @@ public class BaiduRpcProtocol extends AbstractProtocol {
                 }
             } catch (Exception ex) {
                 // 解析失败直接抛异常
-                throw new RpcException(RpcException.SERIALIZATION_EXCEPTION, "decode response failed");
+                throw new RpcException(RpcException.SERIALIZATION_EXCEPTION, "decode response failed", ex);
             }
             return rpcResponse;
         } finally {
@@ -168,7 +168,6 @@ public class BaiduRpcProtocol extends AbstractProtocol {
                 protoAndAttachmentBuf.release();
             }
         }
-
     }
 
     @Override
@@ -227,9 +226,10 @@ public class BaiduRpcProtocol extends AbstractProtocol {
             rpcMeta = (BaiduRpcProto.RpcMeta) ProtobufUtils.parseFrom(
                     metaBuf, defaultRpcMetaInstance);
             BaiduRpcProto.RpcRequestMeta requestMeta = rpcMeta.getRequest();
-            request.setLogId(rpcMeta.getCorrelationId());
+            request.setCorrelationId(rpcMeta.getCorrelationId());
             int compressType = rpcMeta.getCompressType();
             request.setCompressType(compressType);
+            request.setLogId(requestMeta.getLogId());
 
             RpcMethodInfo rpcMethodInfo = serviceManager.getService(
                     requestMeta.getServiceName(), requestMeta.getMethodName());
@@ -270,17 +270,17 @@ public class BaiduRpcProtocol extends AbstractProtocol {
 
             // proto body
             Compress compress = compressManager.getCompress(compressType);
-            int protoSize = protoAndAttachmentBuf.readableBytes() - rpcMeta.getAttachmentSize();
-            ByteBuf protoBuf = protoAndAttachmentBuf.readSlice(protoSize);
-            Object proto = compress.uncompressInput(protoBuf, rpcMethodInfo);
-            request.setArgs(new Object[] {proto});
-
-            // attachment
-            if (rpcMeta.getAttachmentSize() > 0) {
+            if (rpcMeta.hasAttachmentSize() && rpcMeta.getAttachmentSize() > 0) {
+                int protoSize = protoAndAttachmentBuf.readableBytes() - rpcMeta.getAttachmentSize();
+                ByteBuf protoBuf = protoAndAttachmentBuf.readSlice(protoSize);
+                Object proto = compress.uncompressInput(protoBuf, rpcMethodInfo);
+                request.setArgs(new Object[] {proto});
                 request.setBinaryAttachment(protoAndAttachmentBuf);
                 protoAndAttachmentBuf = null;
+            } else {
+                Object proto = compress.uncompressInput(protoAndAttachmentBuf, rpcMethodInfo);
+                request.setArgs(new Object[] {proto});
             }
-
             return request;
         } finally {
             if (metaBuf != null) {
@@ -296,7 +296,7 @@ public class BaiduRpcProtocol extends AbstractProtocol {
     public ByteBuf encodeResponse(Request request, Response response) throws Exception {
         BaiduRpcEncodePacket responsePacket = new BaiduRpcEncodePacket();
         BaiduRpcProto.RpcMeta.Builder metaBuilder = BaiduRpcProto.RpcMeta.newBuilder();
-        metaBuilder.setCorrelationId(response.getLogId());
+        metaBuilder.setCorrelationId(response.getCorrelationId());
         int compressType = response.getCompressType();
         metaBuilder.setCompressType(compressType);
         BaiduRpcProto.RpcResponseMeta.Builder responseMetaBuilder = BaiduRpcProto.RpcResponseMeta.newBuilder();

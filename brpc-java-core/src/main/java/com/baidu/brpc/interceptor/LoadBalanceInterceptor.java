@@ -12,7 +12,6 @@ import com.baidu.brpc.client.channel.BrpcChannel;
 import com.baidu.brpc.exceptions.RpcException;
 import com.baidu.brpc.protocol.Request;
 import com.baidu.brpc.protocol.Response;
-import io.netty.channel.Channel;
 import lombok.Setter;
 
 import java.util.HashSet;
@@ -69,20 +68,15 @@ public class LoadBalanceInterceptor extends AbstractInterceptor {
     }
 
     protected void invokeRpc(Request request, Response response) throws Exception {
-        selectChannel(request);
+        rpcClient.encodeAndLoadBalance(request);
         rpcCore(request, response);
     }
 
-    protected Channel selectChannel(Request request) {
-        // select instance by load balance, and select channel from instance.
-        Channel channel = rpcClient.selectChannel(request);
-        request.setChannel(channel);
-        return channel;
-    }
 
     protected void rpcCore(Request request, Response response) throws Exception {
         // send request with the channel.
         AsyncAwareFuture future = rpcClient.sendRequest(request);
+        // receive
         if (future.isAsync()) {
             response.setRpcFuture((RpcFuture) future);
         } else {

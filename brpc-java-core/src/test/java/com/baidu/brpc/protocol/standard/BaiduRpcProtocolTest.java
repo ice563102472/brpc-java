@@ -16,6 +16,13 @@
 
 package com.baidu.brpc.protocol.standard;
 
+import java.lang.reflect.Constructor;
+import java.util.Map;
+
+import com.baidu.brpc.RpcOptionsUtils;
+import org.junit.Assert;
+import org.junit.Test;
+
 import com.baidu.brpc.RpcMethodInfo;
 import com.baidu.brpc.buffer.DynamicCompositeByteBuf;
 import com.baidu.brpc.client.BrpcProxy;
@@ -23,13 +30,9 @@ import com.baidu.brpc.client.RpcClient;
 import com.baidu.brpc.protocol.Options;
 import com.baidu.brpc.protocol.RpcRequest;
 import com.baidu.brpc.utils.ByteBufUtils;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import org.junit.Assert;
-import org.junit.Test;
-
-import java.lang.reflect.Constructor;
-import java.util.Map;
 
 public class BaiduRpcProtocolTest {
     @Test
@@ -80,7 +83,7 @@ public class BaiduRpcProtocolTest {
         paramTypes[1] = Class.class;
         Constructor constructor = BrpcProxy.class.getDeclaredConstructor(paramTypes);
         constructor.setAccessible(true);
-        RpcClient rpcClient = new RpcClient("list://127.0.0.1:8002");
+        RpcClient rpcClient = new RpcClient("list://127.0.0.1:8002", RpcOptionsUtils.getRpcClientOptions());
         BrpcProxy rpcProxy = (BrpcProxy) constructor.newInstance(rpcClient, EchoService.class);
         rpcClient.shutdown();
         Map<String, RpcMethodInfo> methodInfoMap = rpcProxy.getRpcMethodMap();
