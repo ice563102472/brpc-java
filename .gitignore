@@ -14,7 +14,7 @@ logs/
 *artifacts
 .DS_Store
 BaiduRpcErrno.java
-Options.java
+#Options.java
 StreamingRpcProto.java
 SofaRpcProto.java
 BaiduRpcProto.java
