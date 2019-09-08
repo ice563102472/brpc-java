@@ -22,39 +22,39 @@ package com.baidu.brpc.client.loadbalance;
 @Deprecated
 public enum LoadBalanceType {
 
-    RANDOM(0, "RANDOM", new RandomStrategy()),
-    ROUND_ROBIN(1, "ROUND_ROBIN", new RoundRobinStrategy()),
-    WEIGHT(2, "WEIGHT", new WeightStrategy()),
-    FAIR(3, "FAIR", new FairStrategy());
+	RANDOM(0, "RANDOM", new RandomStrategy()),
+	ROUND_ROBIN(1, "ROUND_ROBIN", new RoundRobinStrategy()),
+	WEIGHT(2, "WEIGHT", new WeightStrategy()),
+	FAIR(3, "FAIR", new FairStrategy());
 
-    private int id;
-    private String name;
-    private LoadBalanceStrategy strategy;
+	private int id;
+	private String name;
+	private LoadBalanceStrategy strategy;
 
-    LoadBalanceType(int id, String name, LoadBalanceStrategy strategy) {
-        this.id = id;
-        this.name = name;
-        this.strategy = strategy;
-    }
+	LoadBalanceType(int id, String name, LoadBalanceStrategy strategy) {
+		this.id = id;
+		this.name = name;
+		this.strategy = strategy;
+	}
 
-    public static LoadBalanceType parse(int id) {
-        for (LoadBalanceType item : LoadBalanceType.values()) {
-            if (item.getId() == id) {
-                return item;
-            }
-        }
-        throw new IllegalArgumentException("unknown load balance id");
-    }
+	public static LoadBalanceType parse(int id) {
+		for (LoadBalanceType item : LoadBalanceType.values()) {
+			if (item.getId() == id) {
+				return item;
+			}
+		}
+		throw new IllegalArgumentException("unknown load balance id");
+	}
 
-    public int getId() {
-        return id;
-    }
+	public int getId() {
+		return id;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public LoadBalanceStrategy getStrategy() {
-        return strategy;
-    }
+	public LoadBalanceStrategy getStrategy() {
+		return strategy;
+	}
 }

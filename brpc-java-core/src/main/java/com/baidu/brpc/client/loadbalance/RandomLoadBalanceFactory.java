@@ -17,13 +17,13 @@ package com.baidu.brpc.client.loadbalance;
 
 public class RandomLoadBalanceFactory implements LoadBalanceFactory {
 
-    @Override
-    public Integer getLoadBalanceType() {
-        return LoadBalanceStrategy.LOAD_BALANCE_RANDOM;
-    }
+	@Override
+	public Integer getLoadBalanceType() {
+		return LoadBalanceStrategy.LOAD_BALANCE_RANDOM;
+	}
 
-    @Override
-    public LoadBalanceStrategy createLoadBalance() {
-        return new RandomStrategy();
-    }
+	@Override
+	public LoadBalanceStrategy createLoadBalance() {
+		return new RandomStrategy();
+	}
 }

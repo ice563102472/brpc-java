@@ -21,15 +21,15 @@ import com.baidu.brpc.naming.NamingService;
 import com.baidu.brpc.naming.NamingServiceFactory;
 
 public class SpringCloudNamingFactory implements NamingServiceFactory {
-    public static final String NAMING_PREFIX = "springcloud";
+	public static final String NAMING_PREFIX = "springcloud";
 
-    @Override
-    public String getName() {
-        return NAMING_PREFIX;
-    }
+	@Override
+	public String getName() {
+		return NAMING_PREFIX;
+	}
 
-    @Override
-    public NamingService createNamingService(BrpcURL url) {
-        return new SpringCloudNamingService(url);
-    }
+	@Override
+	public NamingService createNamingService(BrpcURL url) {
+		return new SpringCloudNamingService(url);
+	}
 }

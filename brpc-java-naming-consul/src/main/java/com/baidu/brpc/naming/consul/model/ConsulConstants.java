@@ -18,33 +18,33 @@ package com.baidu.brpc.naming.consul.model;
 
 public class ConsulConstants {
 
-    public static final int DEFAULT_CONSUL_INTERVAL = 30;
+	public static final int DEFAULT_CONSUL_INTERVAL = 30;
 
-    public static final String CONSULINTERVAL = "consulInterval";
+	public static final String CONSULINTERVAL = "consulInterval";
 
-    public static final String LOOKUPINTERVAL = "lookupInterval";
+	public static final String LOOKUPINTERVAL = "lookupInterval";
 
-    /**
-     * Time To Live, in seconds. Every service will register a ttl for health check.
-     */
-    public static final int TTL = 30;
-    /**
-     * consul block time for query params, measures in minutes.
-     */
-    public static final int CONSUL_BLOCK_TIME_MINUTES = 10;
+	/**
+	 * Time To Live, in seconds. Every service will register a ttl for health check.
+	 */
+	public static final int TTL = 30;
+	/**
+	 * consul block time for query params, measures in minutes.
+	 */
+	public static final int CONSUL_BLOCK_TIME_MINUTES = 10;
 
-    /**
-     * consul block time for query params, measures in seconds.
-     */
-    public static final long CONSUL_BLOCK_TIME_SECONDS = CONSUL_BLOCK_TIME_MINUTES * 60;
+	/**
+	 * consul block time for query params, measures in seconds.
+	 */
+	public static final long CONSUL_BLOCK_TIME_SECONDS = CONSUL_BLOCK_TIME_MINUTES * 60;
 
-    /**
-     * heartbeat cycle time
-     */
-    public static final int HEARTBEAT_CIRCLE = 2000;
+	/**
+	 * heartbeat cycle time
+	 */
+	public static final int HEARTBEAT_CIRCLE = 2000;
 
-    /**
-     * default check time for consul service
-     */
-    public static final int DEFAULT_LOOKUP_INTERVAL = 20000;
+	/**
+	 * default check time for consul service
+	 */
+	public static final int DEFAULT_LOOKUP_INTERVAL = 20000;
 }

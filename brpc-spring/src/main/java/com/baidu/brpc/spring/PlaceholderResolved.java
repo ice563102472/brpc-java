@@ -23,11 +23,11 @@ package com.baidu.brpc.spring;
  */
 public interface PlaceholderResolved {
 
-    /**
-     * parsed placeholder value returned.
-     *
-     * @param placeholder the placeholder
-     * @return parsed string
-     */
-    String doResolved(String placeholder);
+	/**
+	 * parsed placeholder value returned.
+	 *
+	 * @param placeholder the placeholder
+	 * @return parsed string
+	 */
+	String doResolved(String placeholder);
 }

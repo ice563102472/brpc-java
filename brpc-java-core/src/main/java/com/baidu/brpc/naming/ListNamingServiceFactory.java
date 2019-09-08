@@ -17,18 +17,18 @@ package com.baidu.brpc.naming;
 
 public class ListNamingServiceFactory implements NamingServiceFactory {
 
-    @Override
-    public String getName() {
-        return "list";
-    }
+	@Override
+	public String getName() {
+		return "list";
+	}
 
-    @Override
-    public NamingService createNamingService(BrpcURL url) {
-        String schema = url.getSchema();
-        if ("list".equals(schema)) {
-            return new ListNamingService(url);
-        } else {
-            throw new IllegalArgumentException("schema is not valid:" + schema);
-        }
-    }
+	@Override
+	public NamingService createNamingService(BrpcURL url) {
+		String schema = url.getSchema();
+		if ("list".equals(schema)) {
+			return new ListNamingService(url);
+		} else {
+			throw new IllegalArgumentException("schema is not valid:" + schema);
+		}
+	}
 }

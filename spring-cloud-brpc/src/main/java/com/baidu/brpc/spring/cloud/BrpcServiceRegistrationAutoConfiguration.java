@@ -21,47 +21,47 @@ import java.util.Map;
 @Configuration
 @AutoConfigureBefore(EurekaClientAutoConfiguration.class)
 public class BrpcServiceRegistrationAutoConfiguration implements PriorityOrdered {
-    public static final String ENV_PORT_KEY = "brpc.global.server.port";
-    public static final String META_DATA_PORT_KEY = "brpcPort";
+	public static final String ENV_PORT_KEY = "brpc.global.server.port";
+	public static final String META_DATA_PORT_KEY = "brpcPort";
 
-    private ConfigurableEnvironment env;
+	private ConfigurableEnvironment env;
 
-    public BrpcServiceRegistrationAutoConfiguration(ConfigurableEnvironment env) {
-        this.env = env;
-    }
+	public BrpcServiceRegistrationAutoConfiguration(ConfigurableEnvironment env) {
+		this.env = env;
+	}
 
-    public int getOrder() {
-        return Ordered.LOWEST_PRECEDENCE - 1;
-    }
+	public int getOrder() {
+		return Ordered.LOWEST_PRECEDENCE - 1;
+	}
 
-    @Bean
-    @ConditionalOnMissingBean
-    public ManagementMetadataProvider serviceManagementMetadataProvider() {
-        return new DefaultManagementMetadataProvider();
-    }
+	@Bean
+	@ConditionalOnMissingBean
+	public ManagementMetadataProvider serviceManagementMetadataProvider() {
+		return new DefaultManagementMetadataProvider();
+	}
 
-    @Bean
-    @ConditionalOnMissingBean(value = EurekaInstanceConfig.class, search = SearchStrategy.CURRENT)
-    public EurekaInstanceConfigBean eurekaInstanceConfigBean(
-            InetUtils inetUtils, ManagementMetadataProvider managementMetadataProvider) {
-        EurekaInstanceConfigBean instance = new EurekaClientAutoConfiguration(env)
-                .eurekaInstanceConfigBean(inetUtils, managementMetadataProvider);
+	@Bean
+	@ConditionalOnMissingBean(value = EurekaInstanceConfig.class, search = SearchStrategy.CURRENT)
+	public EurekaInstanceConfigBean eurekaInstanceConfigBean(
+			InetUtils inetUtils, ManagementMetadataProvider managementMetadataProvider) {
+		EurekaInstanceConfigBean instance = new EurekaClientAutoConfiguration(env)
+				.eurekaInstanceConfigBean(inetUtils, managementMetadataProvider);
 
-        String brpcPort = env.getProperty(ENV_PORT_KEY);
-        if (StringUtils.isNoneBlank(brpcPort)) {
-            instance.getMetadataMap().put(META_DATA_PORT_KEY, brpcPort);
-        }
-        return instance;
-    }
+		String brpcPort = env.getProperty(ENV_PORT_KEY);
+		if (StringUtils.isNoneBlank(brpcPort)) {
+			instance.getMetadataMap().put(META_DATA_PORT_KEY, brpcPort);
+		}
+		return instance;
+	}
 
-    private void setupJmxPort(EurekaInstanceConfigBean instance, Integer jmxPort) {
-        Map<String, String> metadataMap = instance.getMetadataMap();
-        if (metadataMap.get("jmx.port") == null && jmxPort != null) {
-            metadataMap.put("jmx.port", String.valueOf(jmxPort));
-        }
-    }
+	private void setupJmxPort(EurekaInstanceConfigBean instance, Integer jmxPort) {
+		Map<String, String> metadataMap = instance.getMetadataMap();
+		if (metadataMap.get("jmx.port") == null && jmxPort != null) {
+			metadataMap.put("jmx.port", String.valueOf(jmxPort));
+		}
+	}
 
-    private String getProperty(String property) {
-        return this.env.containsProperty(property) ? this.env.getProperty(property) : "";
-    }
+	private String getProperty(String property) {
+		return this.env.containsProperty(property) ? this.env.getProperty(property) : "";
+	}
 }

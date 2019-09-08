@@ -30,92 +30,92 @@ import java.util.Map;
 @Setter
 @ConfigurationProperties(prefix = "brpc")
 public class BrpcProperties implements EnvironmentAware {
-    private BrpcConfig global;
-    private Environment environment;
+	private BrpcConfig global;
+	private Environment environment;
 
-    private static Map<String, String> extractMap(Environment env, String prefix) {
-        Map<String, String> result = new HashMap<String, String>();
-        int i = 0;
-        while (true) {
-            String key = env.getProperty(String.format("%s[%d].key", prefix, i));
-            String value = env.getProperty(String.format("%s[%d].value", prefix, i));
-            if (key == null || value == null) {
-                break;
-            }
-            result.put(key, value);
-            i++;
-        }
-        return result;
-    }
+	private static Map<String, String> extractMap(Environment env, String prefix) {
+		Map<String, String> result = new HashMap<String, String>();
+		int i = 0;
+		while (true) {
+			String key = env.getProperty(String.format("%s[%d].key", prefix, i));
+			String value = env.getProperty(String.format("%s[%d].value", prefix, i));
+			if (key == null || value == null) {
+				break;
+			}
+			result.put(key, value);
+			i++;
+		}
+		return result;
+	}
 
-    public BrpcConfig getServiceConfig(Class<?> serviceInterface) {
-        BrpcConfig brpcConfig = new BrpcConfig(global);
-        StringBuilder sb = new StringBuilder(64);
-        String prefix = sb.append("brpc.custom.")
-                .append(serviceInterface.getName())
-                .append(".")
-                .toString();
-        ReflectionUtils.doWithFields(RpcNamingConfig.class, new ReflectionUtils.FieldCallback() {
-            @Override
-            public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
-                Object value;
-                if (field.getName().equals("extra")) {
-                    // extra field is a list of {key, value} objects
-                    value = extractMap(environment, prefix + "naming.extra");
-                } else {
-                    StringBuilder sb = new StringBuilder(128);
-                    String key = sb.append(prefix).append("naming.").append(field.getName()).toString();
-                    value = environment.getProperty(key, field.getType());
-                }
-                if (value != null) {
-                    try {
-                        field.setAccessible(true);
-                        field.set(brpcConfig.getNaming(), value);
-                    } catch (Exception ex) {
-                        throw new RuntimeException("set custom config failed", ex);
-                    }
-                }
-            }
-        });
+	public BrpcConfig getServiceConfig(Class<?> serviceInterface) {
+		BrpcConfig brpcConfig = new BrpcConfig(global);
+		StringBuilder sb = new StringBuilder(64);
+		String prefix = sb.append("brpc.custom.")
+				.append(serviceInterface.getName())
+				.append(".")
+				.toString();
+		ReflectionUtils.doWithFields(RpcNamingConfig.class, new ReflectionUtils.FieldCallback() {
+			@Override
+			public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
+				Object value;
+				if (field.getName().equals("extra")) {
+					// extra field is a list of {key, value} objects
+					value = extractMap(environment, prefix + "naming.extra");
+				} else {
+					StringBuilder sb = new StringBuilder(128);
+					String key = sb.append(prefix).append("naming.").append(field.getName()).toString();
+					value = environment.getProperty(key, field.getType());
+				}
+				if (value != null) {
+					try {
+						field.setAccessible(true);
+						field.set(brpcConfig.getNaming(), value);
+					} catch (Exception ex) {
+						throw new RuntimeException("set custom config failed", ex);
+					}
+				}
+			}
+		});
 
-        ReflectionUtils.doWithFields(RpcClientConfig.class, new ReflectionUtils.FieldCallback() {
-            @Override
-            public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
-                StringBuilder sb = new StringBuilder(128);
-                String key = sb.append(prefix).append("client.").append(field.getName()).toString();
-                Object value = environment.getProperty(key, field.getType());
-                if (value != null) {
-                    try {
-                        field.setAccessible(true);
-                        field.set(brpcConfig.getClient(), value);
-                    } catch (Exception ex) {
-                        throw new RuntimeException("set custom config failed", ex);
-                    }
-                }
-            }
-        });
+		ReflectionUtils.doWithFields(RpcClientConfig.class, new ReflectionUtils.FieldCallback() {
+			@Override
+			public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
+				StringBuilder sb = new StringBuilder(128);
+				String key = sb.append(prefix).append("client.").append(field.getName()).toString();
+				Object value = environment.getProperty(key, field.getType());
+				if (value != null) {
+					try {
+						field.setAccessible(true);
+						field.set(brpcConfig.getClient(), value);
+					} catch (Exception ex) {
+						throw new RuntimeException("set custom config failed", ex);
+					}
+				}
+			}
+		});
 
-        ReflectionUtils.doWithFields(RpcServerConfig.class, new ReflectionUtils.FieldCallback() {
-            @Override
-            public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
-                StringBuilder sb = new StringBuilder(128);
-                String key = sb.append(prefix).append("server.").append(field.getName()).toString();
-                Object value = environment.getProperty(key, field.getType());
-                if (value != null) {
-                    try {
-                        field.setAccessible(true);
-                        field.set(brpcConfig.getServer(), value);
-                    } catch (Exception ex) {
-                        throw new RuntimeException("set custom config failed", ex);
-                    }
-                }
-            }
-        });
+		ReflectionUtils.doWithFields(RpcServerConfig.class, new ReflectionUtils.FieldCallback() {
+			@Override
+			public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
+				StringBuilder sb = new StringBuilder(128);
+				String key = sb.append(prefix).append("server.").append(field.getName()).toString();
+				Object value = environment.getProperty(key, field.getType());
+				if (value != null) {
+					try {
+						field.setAccessible(true);
+						field.set(brpcConfig.getServer(), value);
+					} catch (Exception ex) {
+						throw new RuntimeException("set custom config failed", ex);
+					}
+				}
+			}
+		});
 
-        return brpcConfig;
-    }
+		return brpcConfig;
+	}
 
-    public void setEnvironment(Environment environment) {
-        this.environment = environment;
-    }
+	public void setEnvironment(Environment environment) {
+		this.environment = environment;
+	}
 }

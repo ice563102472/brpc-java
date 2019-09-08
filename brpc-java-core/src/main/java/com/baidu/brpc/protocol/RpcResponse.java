@@ -30,15 +30,15 @@ import lombok.Setter;
 @Getter
 public class RpcResponse extends AbstractResponse {
 
-    private static final FastThreadLocal<RpcResponse> CURRENT_RPC_RESPONSE = new FastThreadLocal<RpcResponse>() {
-        @Override
-        protected RpcResponse initialValue() {
-            return new RpcResponse();
-        }
-    };
+	private static final FastThreadLocal<RpcResponse> CURRENT_RPC_RESPONSE = new FastThreadLocal<RpcResponse>() {
+		@Override
+		protected RpcResponse initialValue() {
+			return new RpcResponse();
+		}
+	};
 
-    public static RpcResponse getRpcResponse() {
-        return CURRENT_RPC_RESPONSE.get();
-    }
+	public static RpcResponse getRpcResponse() {
+		return CURRENT_RPC_RESPONSE.get();
+	}
 
 }

@@ -21,52 +21,52 @@ package com.baidu.brpc.protocol.push;
  */
 public interface SPHead {
 
-    /**
-     * 业务请求
-     */
-    int TYPE_REQUEST = 0;
+	/**
+	 * 业务请求
+	 */
+	int TYPE_REQUEST = 0;
 
-    /**
-     * 业务返回
-     */
-    int TYPE_RESPONSE = 1;
+	/**
+	 * 业务返回
+	 */
+	int TYPE_RESPONSE = 1;
 
-    /**
-     * server push的请求
-     */
-    int TYPE_PUSH_REQUEST = 2;
+	/**
+	 * server push的请求
+	 */
+	int TYPE_PUSH_REQUEST = 2;
 
-    /**
-     * server push的返回
-     */
-    int TYPE_PUSH_RESPONSE = 3;
+	/**
+	 * server push的返回
+	 */
+	int TYPE_PUSH_RESPONSE = 3;
 
-    /**
-     * register请求
-     */
-    int TYPE_REGISTER_REQUEST = 4;
+	/**
+	 * register请求
+	 */
+	int TYPE_REGISTER_REQUEST = 4;
 
-    /**
-     * register返回
-     */
-    int TYPE_REGISTER_RESPONSE = 5;
+	/**
+	 * register返回
+	 */
+	int TYPE_REGISTER_RESPONSE = 5;
 
-    long getLogId();
+	long getLogId();
 
-    void setLogId(long logId);
+	void setLogId(long logId);
 
-    long getCorrelationId();
+	long getCorrelationId();
 
-    void setCorrelationId(long correlationId);
+	void setCorrelationId(long correlationId);
 
-    int getType();
+	int getType();
 
-    void setType(int type);
+	void setType(int type);
 
-    @Override
-    int hashCode();
+	@Override
+	int hashCode();
 
-    @Override
-    boolean equals(Object obj);
+	@Override
+	boolean equals(Object obj);
 
 }

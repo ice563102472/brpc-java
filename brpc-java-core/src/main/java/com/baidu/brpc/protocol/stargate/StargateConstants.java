@@ -23,44 +23,44 @@ import java.util.regex.Pattern;
  */
 public interface StargateConstants {
 
-    /**
-     * version
-     */
-    String STARGATE_VERSION = "1.2.18";
+	/**
+	 * version
+	 */
+	String STARGATE_VERSION = "1.2.18";
 
-    /**
-     * 全局采用逗号分隔
-     */
-    Pattern COMMA_SPLIT_PATTERN = Pattern.compile("\\s*[,]+\\s*");
+	/**
+	 * 全局采用逗号分隔
+	 */
+	Pattern COMMA_SPLIT_PATTERN = Pattern.compile("\\s*[,]+\\s*");
 
-    /**
-     * URI里指定默认值,比如有key,那么DEFAULT_KEY_PREFIX+key指定的值就是该key的默认值
-     */
-    String DEFAULT_KEY_PREFIX = "default.";
+	/**
+	 * URI里指定默认值,比如有key,那么DEFAULT_KEY_PREFIX+key指定的值就是该key的默认值
+	 */
+	String DEFAULT_KEY_PREFIX = "default.";
 
-    /**
-     * 服务分组key
-     */
-    String GROUP_KEY = "group";
+	/**
+	 * 服务分组key
+	 */
+	String GROUP_KEY = "group";
 
-    /**
-     * 服务接口key
-     */
-    String INTERFACE_KEY = "interface";
+	/**
+	 * 服务接口key
+	 */
+	String INTERFACE_KEY = "interface";
 
-    /**
-     * 服务版本key
-     */
-    String VERSION_KEY = "version";
+	/**
+	 * 服务版本key
+	 */
+	String VERSION_KEY = "version";
 
-    /**
-     * 服务简单key
-     */
-    String INTERFACE_SIMPLE_KEY = "interface.simple";
+	/**
+	 * 服务简单key
+	 */
+	String INTERFACE_SIMPLE_KEY = "interface.simple";
 
-    /**
-     * zk 上 consumer 目录
-     */
-    String ZK_CONSUMER_DIR = "consumer";
+	/**
+	 * zk 上 consumer 目录
+	 */
+	String ZK_CONSUMER_DIR = "consumer";
 
 }

@@ -30,24 +30,24 @@ import java.util.Map;
 @ToString
 @NoArgsConstructor
 public final class StargateRpcRequestPacket {
-    private String id;
+	private String id;
 
-    private String methodName;
+	private String methodName;
 
-    private Object[] parameters;
+	private Object[] parameters;
 
-    private Class<?>[] parameterTypes;
+	private Class<?>[] parameterTypes;
 
-    private Map<String, Object> attachments;
+	private Map<String, Object> attachments;
 
-    private StargateURI uri;
+	private StargateURI uri;
 
-    public StargateRpcRequestPacket(StargateURI uri, String methodName,
-                                    Class<?>[] parameterTypes, Object[] parameters) {
-        this.id = StargateUtils.genUUID();
-        this.uri = uri;
-        this.methodName = methodName;
-        this.parameterTypes = parameterTypes;
-        this.parameters = parameters;
-    }
+	public StargateRpcRequestPacket(StargateURI uri, String methodName,
+	                                Class<?>[] parameterTypes, Object[] parameters) {
+		this.id = StargateUtils.genUUID();
+		this.uri = uri;
+		this.methodName = methodName;
+		this.parameterTypes = parameterTypes;
+		this.parameters = parameters;
+	}
 }

@@ -22,17 +22,17 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class RpcServerTest {
-    public static void main(String[] args) {
-        SpringApplication application = new SpringApplication(RpcServerTest.class);
-        application.setWebApplicationType(WebApplicationType.NONE);
-        application.run(args);
+	public static void main(String[] args) {
+		SpringApplication application = new SpringApplication(RpcServerTest.class);
+		application.setWebApplicationType(WebApplicationType.NONE);
+		application.run(args);
 
-        // make server keep running
-        synchronized (RpcServerTest.class) {
-            try {
-                RpcServerTest.class.wait();
-            } catch (Throwable e) {
-            }
-        }
-    }
+		// make server keep running
+		synchronized (RpcServerTest.class) {
+			try {
+				RpcServerTest.class.wait();
+			} catch (Throwable e) {
+			}
+		}
+	}
 }

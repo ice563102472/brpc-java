@@ -16,17 +16,16 @@
 
 package com.baidu.brpc.server.currentlimit;
 
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import com.baidu.brpc.protocol.Request;
 import com.baidu.brpc.utils.CustomThreadFactory;
-
 import io.netty.util.HashedWheelTimer;
 import io.netty.util.Timeout;
 import io.netty.util.Timer;
 import io.netty.util.TimerTask;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * a simple counter implement of current limit algorithm
@@ -37,36 +36,36 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CounterCurrentLimiter implements CurrentLimiter {
 
-    private final int timeIntervalMs = 200;
+	private final int timeIntervalMs = 200;
 
-    private final int maxReqPerInterval;
+	private final int maxReqPerInterval;
 
-    private AtomicInteger count = new AtomicInteger(0);
+	private AtomicInteger count = new AtomicInteger(0);
 
-    private Timer timer = new HashedWheelTimer(new CustomThreadFactory("counterLimiter-timer-thread"));
+	private Timer timer = new HashedWheelTimer(new CustomThreadFactory("counterLimiter-timer-thread"));
 
-    /**
-     * constructor
-     *
-     * @param maxQps max query per second
-     */
-    public CounterCurrentLimiter(int maxQps) {
-        if (maxQps <= 0) {
-            throw new IllegalArgumentException("maxQps must be positive!");
-        }
-        this.maxReqPerInterval = maxQps / (1000 / timeIntervalMs);
-        timer.newTimeout(new TimerTask() {
-            @Override
-            public void run(Timeout timeout) {
-                count.set(0);
-                timer.newTimeout(this, timeIntervalMs, TimeUnit.MILLISECONDS);
-            }
-        }, timeIntervalMs, TimeUnit.MILLISECONDS);
-    }
+	/**
+	 * constructor
+	 *
+	 * @param maxQps max query per second
+	 */
+	public CounterCurrentLimiter(int maxQps) {
+		if (maxQps <= 0) {
+			throw new IllegalArgumentException("maxQps must be positive!");
+		}
+		this.maxReqPerInterval = maxQps / (1000 / timeIntervalMs);
+		timer.newTimeout(new TimerTask() {
+			@Override
+			public void run(Timeout timeout) {
+				count.set(0);
+				timer.newTimeout(this, timeIntervalMs, TimeUnit.MILLISECONDS);
+			}
+		}, timeIntervalMs, TimeUnit.MILLISECONDS);
+	}
 
-    @Override
-    public boolean isAllowable(Request request) {
-        return count.getAndIncrement() <= maxReqPerInterval;
-    }
+	@Override
+	public boolean isAllowable(Request request) {
+		return count.getAndIncrement() <= maxReqPerInterval;
+	}
 
 }

@@ -16,33 +16,32 @@
 
 package com.baidu.brpc.example.spring.server;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-
 import com.baidu.brpc.example.spring.api.EchoRequest;
 import com.baidu.brpc.example.spring.api.EchoResponse;
 import com.baidu.brpc.example.spring.api.EchoService;
 import com.baidu.brpc.spring.annotation.NamingOption;
 import com.baidu.brpc.spring.annotation.RpcExporter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 @Service("echoServiceImpl")
 @RpcExporter(port = "8012",
-        useServiceSharedThreadPool = false,
-        rpcServerOptionsBeanName = "rpcServerOptions",
-        interceptorBeanName = "customInterceptor",
-        extraOptions = {
-                // We can pass extra options to the NamingService
-                // `weight` is just an example here, currently we don't have any NamingService supports weight yet
-                @NamingOption(key = "weight", value = "10")
-        }
+		useServiceSharedThreadPool = false,
+		rpcServerOptionsBeanName = "rpcServerOptions",
+		interceptorBeanName = "customInterceptor",
+		extraOptions = {
+				// We can pass extra options to the NamingService
+				// `weight` is just an example here, currently we don't have any NamingService supports weight yet
+				@NamingOption(key = "weight", value = "10")
+		}
 )
 public class EchoServiceImpl implements EchoService {
-    private static final Logger LOG = LoggerFactory.getLogger(EchoServiceImpl.class);
+	private static final Logger LOG = LoggerFactory.getLogger(EchoServiceImpl.class);
 
-    @Override
-    public EchoResponse echo(EchoRequest request) {
-        // 读取request attachment
+	@Override
+	public EchoResponse echo(EchoRequest request) {
+		// 读取request attachment
 //        RpcContext rpcContext = RpcContext.getContext();
 //        ByteBuf attachment = rpcContext.getRequestBinaryAttachment();
 //        if (attachment != null) {
@@ -54,11 +53,11 @@ public class EchoServiceImpl implements EchoService {
 //            rpcContext.setResponseBinaryAttachment(Unpooled.copiedBuffer(attachment));
 //        }
 
-        String message = request.getMessage();
-        EchoResponse response = new EchoResponse();
-        response.setMessage(message);
-        LOG.debug("EchoService.echo, request={}, response={}",
-                request.getMessage(), response.getMessage());
-        return response;
-    }
+		String message = request.getMessage();
+		EchoResponse response = new EchoResponse();
+		response.setMessage(message);
+		LOG.debug("EchoService.echo, request={}, response={}",
+				request.getMessage(), response.getMessage());
+		return response;
+	}
 }

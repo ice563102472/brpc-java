@@ -24,11 +24,11 @@ import org.junit.Test;
 import java.lang.reflect.Method;
 
 public class RpcMetaUtilsTest {
-    @Test
-    public void testParseRpcMeta() throws Exception {
-        Method method = EchoService.class.getMethod("echo", Echo.EchoRequest.class);
-        RpcMetaUtils.RpcMetaInfo rpcMeta = RpcMetaUtils.parseRpcMeta(method);
-        Assert.assertTrue(rpcMeta.getServiceName().equals("example.EchoService"));
-        Assert.assertTrue(rpcMeta.getMethodName().equals("Echo"));
-    }
+	@Test
+	public void testParseRpcMeta() throws Exception {
+		Method method = EchoService.class.getMethod("echo", Echo.EchoRequest.class);
+		RpcMetaUtils.RpcMetaInfo rpcMeta = RpcMetaUtils.parseRpcMeta(method);
+		Assert.assertTrue(rpcMeta.getServiceName().equals("example.EchoService"));
+		Assert.assertTrue(rpcMeta.getMethodName().equals("Echo"));
+	}
 }

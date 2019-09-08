@@ -17,7 +17,6 @@
 package com.baidu.brpc.protocol.push.impl;
 
 import com.baidu.brpc.protocol.push.ServerPushPacket;
-
 import io.netty.buffer.ByteBuf;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,6 +25,6 @@ import lombok.Setter;
 @Getter
 public class DefaultServerPushPacket extends ServerPushPacket {
 
-    private ByteBuf bodyBuf; // body
+	private ByteBuf bodyBuf; // body
 
 }

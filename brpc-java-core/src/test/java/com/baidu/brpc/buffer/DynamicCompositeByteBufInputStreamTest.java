@@ -24,53 +24,53 @@ import org.junit.Test;
 import java.io.IOException;
 
 public class DynamicCompositeByteBufInputStreamTest {
-    @Test
-    public void testRead() throws IOException {
-        ByteBuf buf = Unpooled.buffer(12);
-        buf.writeByte(1);
-        buf.writeByte(2);
-        DynamicCompositeByteBuf compositeByteBuf = new DynamicCompositeByteBuf(buf);
-        DynamicCompositeByteBufInputStream inputStream = new DynamicCompositeByteBufInputStream(compositeByteBuf);
-        Assert.assertTrue(inputStream != null);
-        int b = inputStream.read();
-        Assert.assertTrue(b == 1);
+	@Test
+	public void testRead() throws IOException {
+		ByteBuf buf = Unpooled.buffer(12);
+		buf.writeByte(1);
+		buf.writeByte(2);
+		DynamicCompositeByteBuf compositeByteBuf = new DynamicCompositeByteBuf(buf);
+		DynamicCompositeByteBufInputStream inputStream = new DynamicCompositeByteBufInputStream(compositeByteBuf);
+		Assert.assertTrue(inputStream != null);
+		int b = inputStream.read();
+		Assert.assertTrue(b == 1);
 
-        Assert.assertTrue(buf.refCnt() == 1);
-        inputStream.close();
-        Assert.assertTrue(buf.refCnt() == 1);
-        compositeByteBuf.release();
-        Assert.assertTrue(buf.refCnt() == 0);
-        inputStream.close();
-    }
+		Assert.assertTrue(buf.refCnt() == 1);
+		inputStream.close();
+		Assert.assertTrue(buf.refCnt() == 1);
+		compositeByteBuf.release();
+		Assert.assertTrue(buf.refCnt() == 0);
+		inputStream.close();
+	}
 
-    @Test
-    public void testReadBytes() throws IOException {
-        byte[] bytes = "hello".getBytes();
-        ByteBuf buf = Unpooled.wrappedBuffer(bytes);
-        DynamicCompositeByteBuf compositeByteBuf = new DynamicCompositeByteBuf(buf);
-        DynamicCompositeByteBufInputStream inputStream = new DynamicCompositeByteBufInputStream(compositeByteBuf);
+	@Test
+	public void testReadBytes() throws IOException {
+		byte[] bytes = "hello".getBytes();
+		ByteBuf buf = Unpooled.wrappedBuffer(bytes);
+		DynamicCompositeByteBuf compositeByteBuf = new DynamicCompositeByteBuf(buf);
+		DynamicCompositeByteBufInputStream inputStream = new DynamicCompositeByteBufInputStream(compositeByteBuf);
 
-        byte[] dstBytes = new byte[bytes.length];
-        inputStream.read(dstBytes, 0, bytes.length);
-        for (int i = 0; i < bytes.length; i++) {
-            Assert.assertTrue(dstBytes[i] == bytes[i]);
-        }
-        compositeByteBuf.release();
-        inputStream.close();
-    }
+		byte[] dstBytes = new byte[bytes.length];
+		inputStream.read(dstBytes, 0, bytes.length);
+		for (int i = 0; i < bytes.length; i++) {
+			Assert.assertTrue(dstBytes[i] == bytes[i]);
+		}
+		compositeByteBuf.release();
+		inputStream.close();
+	}
 
-    @Test
-    public void testSkip() throws IOException {
-        ByteBuf buf = Unpooled.buffer(12);
-        buf.writeInt(12);
-        buf.writeInt(23);
-        buf.writeInt(34);
-        DynamicCompositeByteBuf compositeByteBuf = new DynamicCompositeByteBuf(buf);
-        DynamicCompositeByteBufInputStream inputStream = new DynamicCompositeByteBufInputStream(compositeByteBuf);
-        inputStream.skip(4);
-        int i = inputStream.readInt();
-        Assert.assertTrue(i == 23);
-        compositeByteBuf.release();
-        inputStream.close();
-    }
+	@Test
+	public void testSkip() throws IOException {
+		ByteBuf buf = Unpooled.buffer(12);
+		buf.writeInt(12);
+		buf.writeInt(23);
+		buf.writeInt(34);
+		DynamicCompositeByteBuf compositeByteBuf = new DynamicCompositeByteBuf(buf);
+		DynamicCompositeByteBufInputStream inputStream = new DynamicCompositeByteBufInputStream(compositeByteBuf);
+		inputStream.skip(4);
+		int i = inputStream.readInt();
+		Assert.assertTrue(i == 23);
+		compositeByteBuf.release();
+		inputStream.close();
+	}
 }

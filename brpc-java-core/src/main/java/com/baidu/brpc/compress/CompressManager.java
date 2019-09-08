@@ -16,45 +16,46 @@
 
 package com.baidu.brpc.compress;
 
+import com.baidu.brpc.protocol.Options;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class CompressManager {
-    private static final int MAX_COMPRESS_NUM = 16;
-    private static volatile CompressManager instance;
-    private Compress[] compressArray;
-    private int compressNum;
+	private static final int MAX_COMPRESS_NUM = 16;
+	private static volatile CompressManager instance;
+	private Compress[] compressArray;
+	private int compressNum;
 
-    public static CompressManager getInstance() {
-        if (instance == null) {
-            synchronized(CompressManager.class) {
-                if (instance == null) {
-                    instance = new CompressManager();
-                }
-            }
-        }
-        return instance;
-    }
+	public static CompressManager getInstance() {
+		if (instance == null) {
+			synchronized (CompressManager.class) {
+				if (instance == null) {
+					instance = new CompressManager();
+				}
+			}
+		}
+		return instance;
+	}
 
-    private CompressManager() {
-        compressArray = new Compress[MAX_COMPRESS_NUM];
-        compressArray[Options.CompressType.COMPRESS_TYPE_NONE_VALUE] = new NoneCompress();
-        compressArray[Options.CompressType.COMPRESS_TYPE_GZIP_VALUE] = new GzipCompress();
-        compressArray[Options.CompressType.COMPRESS_TYPE_ZLIB_VALUE] = new ZlibCompress();
-        compressArray[Options.CompressType.COMPRESS_TYPE_SNAPPY_VALUE] = new SnappyCompress();
-        compressNum = 4;
-    }
+	private CompressManager() {
+		compressArray = new Compress[MAX_COMPRESS_NUM];
+		compressArray[Options.CompressType.COMPRESS_TYPE_NONE_VALUE] = new NoneCompress();
+		compressArray[Options.CompressType.COMPRESS_TYPE_GZIP_VALUE] = new GzipCompress();
+		compressArray[Options.CompressType.COMPRESS_TYPE_ZLIB_VALUE] = new ZlibCompress();
+		compressArray[Options.CompressType.COMPRESS_TYPE_SNAPPY_VALUE] = new SnappyCompress();
+		compressNum = 4;
+	}
 
-    public Compress getCompress(int compressType) {
-        if (compressType < 0 || compressType >= compressNum) {
-            throw new RuntimeException("out of bound");
-        }
-        Compress compress = compressArray[compressType];
-        if (compress == null) {
-            String errMsg = String.format("compress type=%d not support", compressType);
-            log.warn(errMsg);
-            throw new RuntimeException(errMsg);
-        }
-        return compress;
-    }
+	public Compress getCompress(int compressType) {
+		if (compressType < 0 || compressType >= compressNum) {
+			throw new RuntimeException("out of bound");
+		}
+		Compress compress = compressArray[compressType];
+		if (compress == null) {
+			String errMsg = String.format("compress type=%d not support", compressType);
+			log.warn(errMsg);
+			throw new RuntimeException(errMsg);
+		}
+		return compress;
+	}
 }

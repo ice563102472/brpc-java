@@ -28,21 +28,21 @@ import lombok.Setter;
 @Getter
 @EqualsAndHashCode
 public class SubscribeInfo extends NamingOptions {
-    /**
-     * the interface class name.
-     */
-    private String interfaceName;
+	/**
+	 * the interface class name.
+	 */
+	private String interfaceName;
 
-    public SubscribeInfo() {
-    }
+	public SubscribeInfo() {
+	}
 
-    public SubscribeInfo(SubscribeInfo rhs) {
-        super(rhs);
-        this.interfaceName = rhs.getInterfaceName();
-    }
+	public SubscribeInfo(SubscribeInfo rhs) {
+		super(rhs);
+		this.interfaceName = rhs.getInterfaceName();
+	}
 
-    public SubscribeInfo(NamingOptions namingOptions) {
-        super(namingOptions);
-    }
+	public SubscribeInfo(NamingOptions namingOptions) {
+		super(namingOptions);
+	}
 
 }

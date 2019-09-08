@@ -30,53 +30,53 @@ import java.util.regex.Pattern;
  */
 public class StargateUtils {
 
-    private static final Pattern KVP_PATTERN = Pattern.compile("([_.a-zA-Z0-9][-_.a-zA-Z0-9]*)[=](.*)");
+	private static final Pattern KVP_PATTERN = Pattern.compile("([_.a-zA-Z0-9][-_.a-zA-Z0-9]*)[=](.*)");
 
-    private StargateUtils() {
-    }
+	private StargateUtils() {
+	}
 
-    public static Map<String, String> toStringMap(String... pairs) {
-        Map<String, String> parameters = new HashMap<String, String>();
-        if (pairs.length > 0) {
-            if (pairs.length % 2 != 0) {
-                throw new IllegalArgumentException("pairs must be even.");
-            }
-            for (int i = 0; i < pairs.length; i = i + 2) {
-                parameters.put(pairs[i], pairs[i + 1]);
-            }
-        }
-        return parameters;
-    }
+	public static Map<String, String> toStringMap(String... pairs) {
+		Map<String, String> parameters = new HashMap<String, String>();
+		if (pairs.length > 0) {
+			if (pairs.length % 2 != 0) {
+				throw new IllegalArgumentException("pairs must be even.");
+			}
+			for (int i = 0; i < pairs.length; i = i + 2) {
+				parameters.put(pairs[i], pairs[i + 1]);
+			}
+		}
+		return parameters;
+	}
 
-    public static String genUUID() {
-        return UUID.randomUUID().toString();
-    }
+	public static String genUUID() {
+		return UUID.randomUUID().toString();
+	}
 
-    public static String getIpByHost(String hostName) {
-        try {
-            return InetAddress.getByName(hostName).getHostAddress();
-        } catch (UnknownHostException e) {
-            return hostName;
-        }
-    }
+	public static String getIpByHost(String hostName) {
+		try {
+			return InetAddress.getByName(hostName).getHostAddress();
+		} catch (UnknownHostException e) {
+			return hostName;
+		}
+	}
 
-    public static Map<String, String> parseQueryString(String qs) {
-        if (qs == null || qs.length() == 0) {
-            return new HashMap<String, String>();
-        }
-        return parseKeyValuePair(qs, "\\&");
-    }
+	public static Map<String, String> parseQueryString(String qs) {
+		if (qs == null || qs.length() == 0) {
+			return new HashMap<String, String>();
+		}
+		return parseKeyValuePair(qs, "\\&");
+	}
 
-    private static Map<String, String> parseKeyValuePair(String str, String itemSeparator) {
-        String[] tmp = str.split(itemSeparator);
-        Map<String, String> map = new HashMap<String, String>(tmp.length);
-        for (String s : tmp) {
-            Matcher matcher = KVP_PATTERN.matcher(s);
-            if (!matcher.matches()) {
-                continue;
-            }
-            map.put(matcher.group(1), matcher.group(2));
-        }
-        return map;
-    }
+	private static Map<String, String> parseKeyValuePair(String str, String itemSeparator) {
+		String[] tmp = str.split(itemSeparator);
+		Map<String, String> map = new HashMap<String, String>(tmp.length);
+		for (String s : tmp) {
+			Matcher matcher = KVP_PATTERN.matcher(s);
+			if (!matcher.matches()) {
+				continue;
+			}
+			map.put(matcher.group(1), matcher.group(2));
+		}
+		return map;
+	}
 }

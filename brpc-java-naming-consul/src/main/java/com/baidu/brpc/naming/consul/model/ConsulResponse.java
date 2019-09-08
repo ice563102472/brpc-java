@@ -18,47 +18,47 @@ package com.baidu.brpc.naming.consul.model;
 
 public class ConsulResponse<T> {
 
-    /**
-     * details return from consul
-     */
-    private T value;
+	/**
+	 * details return from consul
+	 */
+	private T value;
 
-    private Long consulIndex;
+	private Long consulIndex;
 
-    private Boolean consulKnownLeader;
+	private Boolean consulKnownLeader;
 
-    private Long consulLastContact;
+	private Long consulLastContact;
 
-    public T getValue() {
-        return value;
-    }
+	public T getValue() {
+		return value;
+	}
 
-    public void setValue(T value) {
-        this.value = value;
-    }
+	public void setValue(T value) {
+		this.value = value;
+	}
 
-    public Long getConsulIndex() {
-        return consulIndex;
-    }
+	public Long getConsulIndex() {
+		return consulIndex;
+	}
 
-    public void setConsulIndex(Long consulIndex) {
-        this.consulIndex = consulIndex;
-    }
+	public void setConsulIndex(Long consulIndex) {
+		this.consulIndex = consulIndex;
+	}
 
-    public Boolean getConsulKnownLeader() {
-        return consulKnownLeader;
-    }
+	public Boolean getConsulKnownLeader() {
+		return consulKnownLeader;
+	}
 
-    public void setConsulKnownLeader(Boolean consulKnownLeader) {
-        this.consulKnownLeader = consulKnownLeader;
-    }
+	public void setConsulKnownLeader(Boolean consulKnownLeader) {
+		this.consulKnownLeader = consulKnownLeader;
+	}
 
-    public Long getConsulLastContact() {
-        return consulLastContact;
-    }
+	public Long getConsulLastContact() {
+		return consulLastContact;
+	}
 
-    public void setConsulLastContact(Long consulLastContact) {
-        this.consulLastContact = consulLastContact;
-    }
+	public void setConsulLastContact(Long consulLastContact) {
+		this.consulLastContact = consulLastContact;
+	}
 
 }

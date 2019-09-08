@@ -22,28 +22,28 @@ import io.netty.util.Timer;
 
 public class ClientHealthCheckTimerInstance {
 
-    private static volatile Timer healthCheckTimer;
+	private static volatile Timer healthCheckTimer;
 
-    private ClientHealthCheckTimerInstance() {
+	private ClientHealthCheckTimerInstance() {
 
-    }
+	}
 
-    public static Timer getOrCreateInstance() {
+	public static Timer getOrCreateInstance() {
 
-        if (healthCheckTimer == null) {
-            synchronized (ClientHealthCheckTimerInstance.class) {
-                if (healthCheckTimer == null) {
-                    healthCheckTimer =
-                            new HashedWheelTimer(new CustomThreadFactory("health-check-timer-thread"));
-                }
-            }
-        }
+		if (healthCheckTimer == null) {
+			synchronized (ClientHealthCheckTimerInstance.class) {
+				if (healthCheckTimer == null) {
+					healthCheckTimer =
+							new HashedWheelTimer(new CustomThreadFactory("health-check-timer-thread"));
+				}
+			}
+		}
 
-        return healthCheckTimer;
-    }
+		return healthCheckTimer;
+	}
 
-    public static Timer getInstance() {
+	public static Timer getInstance() {
 
-        return healthCheckTimer;
-    }
+		return healthCheckTimer;
+	}
 }

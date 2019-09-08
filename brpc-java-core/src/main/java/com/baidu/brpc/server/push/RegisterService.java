@@ -5,11 +5,11 @@ package com.baidu.brpc.server.push;
  */
 public interface RegisterService {
 
-    /**
-     * 注册和保存clientName
-     *
-     * @param clientName
-     */
-    Response registerClient(String clientName);
+	/**
+	 * 注册和保存clientName
+	 *
+	 * @param clientName
+	 */
+	Response registerClient(String clientName);
 
 }

@@ -4,50 +4,49 @@
 
 package com.baidu.brpc.client.channel;
 
+import com.baidu.brpc.client.instance.ServiceInstance;
+import com.baidu.brpc.protocol.Protocol;
+import io.netty.channel.Channel;
+
 import java.util.NoSuchElementException;
 import java.util.Queue;
 
-import com.baidu.brpc.client.instance.ServiceInstance;
-import com.baidu.brpc.protocol.Protocol;
-
-import io.netty.channel.Channel;
-
 public interface BrpcChannel {
-    Channel getChannel() throws Exception, NoSuchElementException, IllegalStateException;
+	Channel getChannel() throws Exception, NoSuchElementException, IllegalStateException;
 
-    void returnChannel(Channel channel);
+	void returnChannel(Channel channel);
 
-    void removeChannel(Channel channel);
+	void removeChannel(Channel channel);
 
-    void updateChannel(Channel channel);
+	void updateChannel(Channel channel);
 
-    void close();
+	void close();
 
-    Channel connect(final String ip, final int port);
+	Channel connect(final String ip, final int port);
 
-    ServiceInstance getServiceInstance();
+	ServiceInstance getServiceInstance();
 
-    long getFailedNum();
+	long getFailedNum();
 
-    void incFailedNum();
+	void incFailedNum();
 
-    Queue<Integer> getLatencyWindow();
+	Queue<Integer> getLatencyWindow();
 
-    void updateLatency(int latency);
+	void updateLatency(int latency);
 
-    void updateLatencyWithReadTimeOut();
+	void updateLatencyWithReadTimeOut();
 
-    Protocol getProtocol();
+	Protocol getProtocol();
 
-    void updateMaxConnection(int num);
+	void updateMaxConnection(int num);
 
-    int getCurrentMaxConnection();
+	int getCurrentMaxConnection();
 
-    int getActiveConnectionNum();
+	int getActiveConnectionNum();
 
-    int getIdleConnectionNum();
+	int getIdleConnectionNum();
 
-    int hashCode();
+	int hashCode();
 
-    boolean equals(Object object);
+	boolean equals(Object object);
 }

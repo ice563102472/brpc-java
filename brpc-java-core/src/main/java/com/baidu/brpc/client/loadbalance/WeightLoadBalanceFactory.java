@@ -17,13 +17,13 @@ package com.baidu.brpc.client.loadbalance;
 
 public class WeightLoadBalanceFactory implements LoadBalanceFactory {
 
-    @Override
-    public Integer getLoadBalanceType() {
-        return LoadBalanceStrategy.LOAD_BALANCE_WEIGHT;
-    }
+	@Override
+	public Integer getLoadBalanceType() {
+		return LoadBalanceStrategy.LOAD_BALANCE_WEIGHT;
+	}
 
-    @Override
-    public LoadBalanceStrategy createLoadBalance() {
-        return new WeightStrategy();
-    }
+	@Override
+	public LoadBalanceStrategy createLoadBalance() {
+		return new WeightStrategy();
+	}
 }

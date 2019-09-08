@@ -27,17 +27,17 @@ import java.nio.ByteBuffer;
 
 public class IOUtilsTest {
 
-    @Test
-    public void testByteBufToString() throws IOException {
-        ByteBuf byteBuf = Unpooled.buffer(16);
-        byteBuf.writeInt(123);
-        byteBuf.writeInt(456);
-        ByteBufInputStream inputStream = new ByteBufInputStream(byteBuf);
-        byte[] bytes = IOUtils.readInputStream(inputStream);
-        Assert.assertEquals(8, bytes.length);
+	@Test
+	public void testByteBufToString() throws IOException {
+		ByteBuf byteBuf = Unpooled.buffer(16);
+		byteBuf.writeInt(123);
+		byteBuf.writeInt(456);
+		ByteBufInputStream inputStream = new ByteBufInputStream(byteBuf);
+		byte[] bytes = IOUtils.readInputStream(inputStream);
+		Assert.assertEquals(8, bytes.length);
 
-        ByteBuffer buf = ByteBuffer.wrap(bytes);
-        Assert.assertEquals(123, buf.getInt(0));
-        Assert.assertEquals(456, buf.getInt(4));
-    }
+		ByteBuffer buf = ByteBuffer.wrap(bytes);
+		Assert.assertEquals(123, buf.getInt(0));
+		Assert.assertEquals(456, buf.getInt(4));
+	}
 }

@@ -23,16 +23,16 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 @SpringBootApplication
 @EnableDiscoveryClient
 public class RpcServerTest {
-    public static void main(String[] args) {
-        SpringApplication application = new SpringApplication(RpcServerTest.class);
-        application.run(args);
+	public static void main(String[] args) {
+		SpringApplication application = new SpringApplication(RpcServerTest.class);
+		application.run(args);
 
-        // make server keep running
-        synchronized (RpcServerTest.class) {
-            try {
-                RpcServerTest.class.wait();
-            } catch (Throwable e) {
-            }
-        }
-    }
+		// make server keep running
+		synchronized (RpcServerTest.class) {
+			try {
+				RpcServerTest.class.wait();
+			} catch (Throwable e) {
+			}
+		}
+	}
 }

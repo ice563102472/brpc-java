@@ -23,13 +23,13 @@ import lombok.Setter;
 @Setter
 public class RpcNamingConfig extends NamingOptions {
 
-    private String namingServiceUrl;
+	private String namingServiceUrl;
 
-    public RpcNamingConfig() {
-    }
+	public RpcNamingConfig() {
+	}
 
-    public RpcNamingConfig(RpcNamingConfig rhs) {
-        super(rhs);
-        this.namingServiceUrl = rhs.getNamingServiceUrl();
-    }
+	public RpcNamingConfig(RpcNamingConfig rhs) {
+		super(rhs);
+		this.namingServiceUrl = rhs.getNamingServiceUrl();
+	}
 }

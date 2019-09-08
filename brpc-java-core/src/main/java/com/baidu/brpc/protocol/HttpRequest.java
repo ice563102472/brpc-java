@@ -16,11 +16,7 @@
 package com.baidu.brpc.protocol;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.handler.codec.http.DefaultFullHttpRequest;
-import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.HttpHeaders;
-import io.netty.handler.codec.http.HttpMethod;
-import io.netty.handler.codec.http.HttpVersion;
+import io.netty.handler.codec.http.*;
 import io.netty.util.concurrent.FastThreadLocal;
 import lombok.Getter;
 import lombok.Setter;
@@ -40,73 +36,73 @@ import lombok.Setter;
 @Setter
 public class HttpRequest extends AbstractRequest {
 
-    private static final FastThreadLocal<HttpRequest> CURRENT_RPC_REQUEST = new FastThreadLocal<HttpRequest>() {
-        @Override
-        protected HttpRequest initialValue() {
-            return new HttpRequest();
-        }
-    };
+	private static final FastThreadLocal<HttpRequest> CURRENT_RPC_REQUEST = new FastThreadLocal<HttpRequest>() {
+		@Override
+		protected HttpRequest initialValue() {
+			return new HttpRequest();
+		}
+	};
 
-    public static HttpRequest getHttpRequest() {
-        return CURRENT_RPC_REQUEST.get();
-    }
+	public static HttpRequest getHttpRequest() {
+		return CURRENT_RPC_REQUEST.get();
+	}
 
-    private FullHttpRequest nettyHttpRequest;
+	private FullHttpRequest nettyHttpRequest;
 
-    public HttpRequest() {
-        this.nettyHttpRequest = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, "");
-    }
+	public HttpRequest() {
+		this.nettyHttpRequest = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, "");
+	}
 
-    @Override
-    public Object getMsg() {
-        return nettyHttpRequest;
-    }
+	@Override
+	public Object getMsg() {
+		return nettyHttpRequest;
+	}
 
-    @Override
-    public void setMsg(Object o) {
-        FullHttpRequest request = (FullHttpRequest) o;
-        nettyHttpRequest.setProtocolVersion(request.protocolVersion());
-        nettyHttpRequest.headers().add(request.headers());
-        nettyHttpRequest.setMethod(request.method());
-        nettyHttpRequest.setUri(request.uri());
-        nettyHttpRequest.content().writeBytes(request.content());
-        nettyHttpRequest.trailingHeaders().add(request.trailingHeaders());
-        nettyHttpRequest.setDecoderResult(request.decoderResult());
-    }
+	@Override
+	public void setMsg(Object o) {
+		FullHttpRequest request = (FullHttpRequest) o;
+		nettyHttpRequest.setProtocolVersion(request.protocolVersion());
+		nettyHttpRequest.headers().add(request.headers());
+		nettyHttpRequest.setMethod(request.method());
+		nettyHttpRequest.setUri(request.uri());
+		nettyHttpRequest.content().writeBytes(request.content());
+		nettyHttpRequest.trailingHeaders().add(request.trailingHeaders());
+		nettyHttpRequest.setDecoderResult(request.decoderResult());
+	}
 
-    @Override
-    public void reset() {
-        super.reset();
-        nettyHttpRequest.setUri("");
-        nettyHttpRequest.content().clear();
-        nettyHttpRequest.headers().clear();
-        nettyHttpRequest.trailingHeaders().clear();
-    }
+	@Override
+	public void reset() {
+		super.reset();
+		nettyHttpRequest.setUri("");
+		nettyHttpRequest.content().clear();
+		nettyHttpRequest.headers().clear();
+		nettyHttpRequest.trailingHeaders().clear();
+	}
 
-    @Override
-    public Request retain() {
-        super.retain();
-        nettyHttpRequest.retain();
-        return this;
-    }
+	@Override
+	public Request retain() {
+		super.retain();
+		nettyHttpRequest.retain();
+		return this;
+	}
 
-    @Override
-    public void release() {
-        super.release();
-        if (nettyHttpRequest.refCnt() > 0) {
-            nettyHttpRequest.release();
-        }
-    }
+	@Override
+	public void release() {
+		super.release();
+		if (nettyHttpRequest.refCnt() > 0) {
+			nettyHttpRequest.release();
+		}
+	}
 
-    public HttpHeaders headers() {
-        return nettyHttpRequest.headers();
-    }
+	public HttpHeaders headers() {
+		return nettyHttpRequest.headers();
+	}
 
-    public String uri() {
-        return nettyHttpRequest.uri();
-    }
+	public String uri() {
+		return nettyHttpRequest.uri();
+	}
 
-    public ByteBuf content() {
-        return nettyHttpRequest.content();
-    }
+	public ByteBuf content() {
+		return nettyHttpRequest.content();
+	}
 }

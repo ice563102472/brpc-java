@@ -17,49 +17,49 @@
 package com.baidu.brpc.exceptions;
 
 public class TooBigDataException extends Exception {
-    private int code;
+	private int code;
 
-    public TooBigDataException() {
-        super();
-    }
+	public TooBigDataException() {
+		super();
+	}
 
-    public TooBigDataException(String message, Throwable cause) {
-        super(message, cause);
-    }
+	public TooBigDataException(String message, Throwable cause) {
+		super(message, cause);
+	}
 
-    public TooBigDataException(String message) {
-        super(message);
-    }
+	public TooBigDataException(String message) {
+		super(message);
+	}
 
-    public TooBigDataException(Throwable cause) {
-        super(cause);
-    }
+	public TooBigDataException(Throwable cause) {
+		super(cause);
+	}
 
-    public TooBigDataException(int code) {
-        super();
-        this.code = code;
-    }
+	public TooBigDataException(int code) {
+		super();
+		this.code = code;
+	}
 
-    public TooBigDataException(int code, String message, Throwable cause) {
-        super(message, cause);
-        this.code = code;
-    }
+	public TooBigDataException(int code, String message, Throwable cause) {
+		super(message, cause);
+		this.code = code;
+	}
 
-    public TooBigDataException(int code, String message) {
-        super(message);
-        this.code = code;
-    }
+	public TooBigDataException(int code, String message) {
+		super(message);
+		this.code = code;
+	}
 
-    public TooBigDataException(int code, Throwable cause) {
-        super(cause);
-        this.code = code;
-    }
+	public TooBigDataException(int code, Throwable cause) {
+		super(cause);
+		this.code = code;
+	}
 
-    public int getCode() {
-        return code;
-    }
+	public int getCode() {
+		return code;
+	}
 
-    public void setCode(int code) {
-        this.code = code;
-    }
+	public void setCode(int code) {
+		this.code = code;
+	}
 }

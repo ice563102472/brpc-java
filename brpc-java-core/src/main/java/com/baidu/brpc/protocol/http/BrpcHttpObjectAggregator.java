@@ -15,12 +15,12 @@
  */
 package com.baidu.brpc.protocol.http;
 
-import java.util.List;
-
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.util.ReferenceCountUtil;
+
+import java.util.List;
 
 /**
  * Migrate from netty {@link HttpObjectAggregator}
@@ -30,20 +30,20 @@ import io.netty.util.ReferenceCountUtil;
  */
 public class BrpcHttpObjectAggregator extends HttpObjectAggregator {
 
-    public BrpcHttpObjectAggregator(int maxContentLength) {
-        super(maxContentLength);
-    }
+	public BrpcHttpObjectAggregator(int maxContentLength) {
+		super(maxContentLength);
+	}
 
-    public void aggregate(final ChannelHandlerContext ctx, Object msg, List<Object> out) throws Exception {
-        if (acceptInboundMessage(msg)) {
-            try {
-                decode(ctx, (HttpObject) msg, out);
-            } finally {
-                ReferenceCountUtil.release(msg);
-            }
-        } else {
-            out.add(msg);
-        }
-    }
+	public void aggregate(final ChannelHandlerContext ctx, Object msg, List<Object> out) throws Exception {
+		if (acceptInboundMessage(msg)) {
+			try {
+				decode(ctx, (HttpObject) msg, out);
+			} finally {
+				ReferenceCountUtil.release(msg);
+			}
+		} else {
+			out.add(msg);
+		}
+	}
 
 }

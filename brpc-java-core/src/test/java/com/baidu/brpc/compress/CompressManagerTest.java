@@ -20,12 +20,12 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class CompressManagerTest {
-    @Test
-    public void testGetCompress() {
-        CompressManager compressManager = CompressManager.getInstance();
-        Compress compress = compressManager.getCompress(Options.CompressType.COMPRESS_TYPE_NONE_VALUE);
-        Assert.assertNotNull(compress);
-        compress = compressManager.getCompress(Options.CompressType.COMPRESS_TYPE_GZIP_VALUE);
-        Assert.assertNotNull(compress);
-    }
+	@Test
+	public void testGetCompress() {
+		CompressManager compressManager = CompressManager.getInstance();
+		Compress compress = compressManager.getCompress(Options.CompressType.COMPRESS_TYPE_NONE_VALUE);
+		Assert.assertNotNull(compress);
+		compress = compressManager.getCompress(Options.CompressType.COMPRESS_TYPE_GZIP_VALUE);
+		Assert.assertNotNull(compress);
+	}
 }

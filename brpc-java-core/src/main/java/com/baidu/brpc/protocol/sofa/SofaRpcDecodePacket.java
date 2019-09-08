@@ -26,6 +26,6 @@ import lombok.Setter;
 @Setter
 @Getter
 public class SofaRpcDecodePacket {
-    private ByteBuf metaBuf;
-    private ByteBuf protoBuf;
+	private ByteBuf metaBuf;
+	private ByteBuf protoBuf;
 }

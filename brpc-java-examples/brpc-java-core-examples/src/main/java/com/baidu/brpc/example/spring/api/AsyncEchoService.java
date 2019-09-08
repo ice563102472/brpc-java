@@ -25,13 +25,13 @@ import java.util.concurrent.Future;
  * Created by huwenwei on 2018/11/23.
  */
 public interface AsyncEchoService extends EchoService {
-    /**
-     * brpc/sofa：
-     * serviceName默认是包名 + 类名，methodName是proto文件Service内对应方法名，
-     * hulu：
-     * serviceName默认是类名，methodName是proto文件Service内对应方法index。
-     */
-    @BrpcMeta(serviceName = "example.EchoService", methodName = "Echo")
+	/**
+	 * brpc/sofa：
+	 * serviceName默认是包名 + 类名，methodName是proto文件Service内对应方法名，
+	 * hulu：
+	 * serviceName默认是类名，methodName是proto文件Service内对应方法index。
+	 */
+	@BrpcMeta(serviceName = "example.EchoService", methodName = "Echo")
 //    @BrpcMeta(serviceName = "EchoService", methodName = "0")
-    Future<EchoResponse> echo(EchoRequest request, RpcCallback<EchoResponse> callback);
+	Future<EchoResponse> echo(EchoRequest request, RpcCallback<EchoResponse> callback);
 }

@@ -24,39 +24,39 @@ import java.util.Map;
 @Setter
 @Getter
 public class NamingOptions {
-    /**
-     * identify different service implementation for the same interface.
-     */
-    private String group = "normal";
+	/**
+	 * identify different service implementation for the same interface.
+	 */
+	private String group = "normal";
 
-    /**
-     * identify service version.
-     */
-    private String version = "1.0.0";
+	/**
+	 * identify service version.
+	 */
+	private String version = "1.0.0";
 
-    /**
-     * if true, naming service will throw exception when register/subscribe exceptions.
-     */
-    private boolean ignoreFailOfNamingService = false;
+	/**
+	 * if true, naming service will throw exception when register/subscribe exceptions.
+	 */
+	private boolean ignoreFailOfNamingService = false;
 
-    /**
-     * use serviceId to identify all instances for this service.
-     */
-    private String serviceId = "";
+	/**
+	 * use serviceId to identify all instances for this service.
+	 */
+	private String serviceId = "";
 
-    /**
-     * extra {@link NamingService} specific options
-     */
-    private Map<String, String> extra;
+	/**
+	 * extra {@link NamingService} specific options
+	 */
+	private Map<String, String> extra;
 
-    public NamingOptions() {
-    }
+	public NamingOptions() {
+	}
 
-    public NamingOptions(NamingOptions rhs) {
-        this.group = rhs.getGroup();
-        this.version = rhs.getVersion();
-        this.ignoreFailOfNamingService = rhs.isIgnoreFailOfNamingService();
-        this.serviceId = rhs.getServiceId();
-        this.extra = rhs.extra;
-    }
+	public NamingOptions(NamingOptions rhs) {
+		this.group = rhs.getGroup();
+		this.version = rhs.getVersion();
+		this.ignoreFailOfNamingService = rhs.isIgnoreFailOfNamingService();
+		this.serviceId = rhs.getServiceId();
+		this.extra = rhs.extra;
+	}
 }

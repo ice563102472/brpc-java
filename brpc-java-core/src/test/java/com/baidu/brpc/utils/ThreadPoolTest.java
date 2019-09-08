@@ -24,50 +24,50 @@ import org.junit.Test;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ThreadPoolTest {
-    @Before
-    public void setup() {
+	@Before
+	public void setup() {
 
-    }
+	}
 
-    @After
-    public void teardown() {
+	@After
+	public void teardown() {
 
-    }
+	}
 
-    @Test
-    public void sanity() {
-        ThreadPool threadPool = new ThreadPool(2, new CustomThreadFactory("test"));
-        for (int i = 0; i < 100; ++i) {
-            threadPool.submit(new Runnable() {
-                @Override
-                public void run() {
-                    System.out.println("I was run");
-                }
-            });
-        }
-        System.out.println("here");
-        threadPool.stop();
-        threadPool.join();
-    }
+	@Test
+	public void sanity() {
+		ThreadPool threadPool = new ThreadPool(2, new CustomThreadFactory("test"));
+		for (int i = 0; i < 100; ++i) {
+			threadPool.submit(new Runnable() {
+				@Override
+				public void run() {
+					System.out.println("I was run");
+				}
+			});
+		}
+		System.out.println("here");
+		threadPool.stop();
+		threadPool.join();
+	}
 
-    @Test
-    public void fifo() {
-        // Only one consumer thread
-        ThreadPool threadPool = new ThreadPool(1, new CustomThreadFactory("test"));
-        final AtomicInteger numConsumed = new AtomicInteger(0);
-        final AtomicInteger numCreated = new AtomicInteger(0);
-        for (int i = 0; i < 100; ++i) {
-            threadPool.submit(new Runnable() {
-                int index = numCreated.getAndAdd(1);
+	@Test
+	public void fifo() {
+		// Only one consumer thread
+		ThreadPool threadPool = new ThreadPool(1, new CustomThreadFactory("test"));
+		final AtomicInteger numConsumed = new AtomicInteger(0);
+		final AtomicInteger numCreated = new AtomicInteger(0);
+		for (int i = 0; i < 100; ++i) {
+			threadPool.submit(new Runnable() {
+				int index = numCreated.getAndAdd(1);
 
-                @Override
-                public void run() {
-                    Assert.assertEquals(numConsumed.getAndAdd(1), index);
-                }
-            });
-        }
-        threadPool.stop();
-        threadPool.join();
-    }
+				@Override
+				public void run() {
+					Assert.assertEquals(numConsumed.getAndAdd(1), index);
+				}
+			});
+		}
+		threadPool.stop();
+		threadPool.join();
+	}
 
 }

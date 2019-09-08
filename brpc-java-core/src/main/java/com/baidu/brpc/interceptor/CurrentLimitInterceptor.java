@@ -28,15 +28,15 @@ import com.baidu.brpc.server.currentlimit.CurrentLimiter;
  */
 public class CurrentLimitInterceptor extends AbstractInterceptor {
 
-    private CurrentLimiter limiter;
+	private CurrentLimiter limiter;
 
-    public CurrentLimitInterceptor(CurrentLimiter limiter) {
-        this.limiter = limiter;
-    }
+	public CurrentLimitInterceptor(CurrentLimiter limiter) {
+		this.limiter = limiter;
+	}
 
-    @Override
-    public boolean handleRequest(Request request) {
-        return limiter.isAllowable(request);
-    }
+	@Override
+	public boolean handleRequest(Request request) {
+		return limiter.isAllowable(request);
+	}
 
 }

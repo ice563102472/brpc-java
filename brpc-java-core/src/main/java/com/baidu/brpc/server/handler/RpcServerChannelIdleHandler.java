@@ -25,25 +25,25 @@ import org.slf4j.LoggerFactory;
 
 /**
  * 关闭空闲连接
- * 
+ *
  * @author wenweihu86
  */
 public class RpcServerChannelIdleHandler extends ChannelDuplexHandler {
-    private static final Logger LOG = LoggerFactory.getLogger(RpcServerChannelIdleHandler.class);
+	private static final Logger LOG = LoggerFactory.getLogger(RpcServerChannelIdleHandler.class);
 
-    @Override
-    public void userEventTriggered(ChannelHandlerContext ctx, Object event) throws Exception {
-        if (event instanceof IdleStateEvent) {
-            IdleStateEvent e = (IdleStateEvent) event;
-            if (e.state() == IdleState.ALL_IDLE) {
-                // if no read and write for period time, close current channel
-                LOG.debug("channel={} ip={} is idle for period time, close now.",
-                        ctx.channel(), ctx.channel().remoteAddress());
-                ctx.close();
-            } else {
-                LOG.debug("idle on channel[{}]:{}", e.state(), ctx.channel());
-            }
-        }
-    }
+	@Override
+	public void userEventTriggered(ChannelHandlerContext ctx, Object event) throws Exception {
+		if (event instanceof IdleStateEvent) {
+			IdleStateEvent e = (IdleStateEvent) event;
+			if (e.state() == IdleState.ALL_IDLE) {
+				// if no read and write for period time, close current channel
+				LOG.debug("channel={} ip={} is idle for period time, close now.",
+						ctx.channel(), ctx.channel().remoteAddress());
+				ctx.close();
+			} else {
+				LOG.debug("idle on channel[{}]:{}", e.state(), ctx.channel());
+			}
+		}
+	}
 
 }

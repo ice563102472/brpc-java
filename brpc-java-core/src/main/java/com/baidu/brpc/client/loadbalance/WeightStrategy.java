@@ -15,13 +15,13 @@
  */
 package com.baidu.brpc.client.loadbalance;
 
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
-
 import com.baidu.brpc.client.RpcClient;
 import com.baidu.brpc.client.channel.BrpcChannel;
 import com.baidu.brpc.protocol.Request;
+
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 /**
  * Simple weight load balance strategy implementation
@@ -29,43 +29,43 @@ import com.baidu.brpc.protocol.Request;
  */
 public class WeightStrategy implements LoadBalanceStrategy {
 
-    private Random random = new Random(System.currentTimeMillis());
+	private Random random = new Random(System.currentTimeMillis());
 
-    @Override
-    public void init(RpcClient rpcClient) {
+	@Override
+	public void init(RpcClient rpcClient) {
 
-    }
+	}
 
-    @Override
-    public BrpcChannel selectInstance(
-            Request request,
-            List<BrpcChannel> instances,
-            Set<BrpcChannel> selectedInstances) {
-        long instanceNum = instances.size();
-        if (instanceNum == 0) {
-            return null;
-        }
+	@Override
+	public BrpcChannel selectInstance(
+			Request request,
+			List<BrpcChannel> instances,
+			Set<BrpcChannel> selectedInstances) {
+		long instanceNum = instances.size();
+		if (instanceNum == 0) {
+			return null;
+		}
 
-        long sum = 0;
-        for (BrpcChannel instance : instances) {
-            sum += getWeight(instance.getFailedNum());
-        }
-        long randWeight = random.nextLong() % sum;
-        for (BrpcChannel channelGroup : instances) {
-            randWeight -= getWeight(channelGroup.getFailedNum());
-            if (randWeight <= 0) {
-                return channelGroup;
-            }
-        }
+		long sum = 0;
+		for (BrpcChannel instance : instances) {
+			sum += getWeight(instance.getFailedNum());
+		}
+		long randWeight = random.nextLong() % sum;
+		for (BrpcChannel channelGroup : instances) {
+			randWeight -= getWeight(channelGroup.getFailedNum());
+			if (randWeight <= 0) {
+				return channelGroup;
+			}
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    @Override
-    public void destroy() {
-    }
+	@Override
+	public void destroy() {
+	}
 
-    private long getWeight(long failedNum) {
-        return 1000000000 / (failedNum + 1);
-    }
+	private long getWeight(long failedNum) {
+		return 1000000000 / (failedNum + 1);
+	}
 }

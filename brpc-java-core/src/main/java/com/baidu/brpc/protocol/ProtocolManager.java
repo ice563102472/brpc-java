@@ -16,76 +16,76 @@
 
 package com.baidu.brpc.protocol;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Created by huwenwei on 2017/9/23.
  */
 @Slf4j
 public class ProtocolManager {
-    private Map<Integer, ProtocolFactory> protocolFactoryMap = new HashMap<Integer, ProtocolFactory>();
-    private Map<Integer, Protocol> protocolMap = new HashMap<Integer, Protocol>();
-    private List<Protocol> coexistenceProtocols = new ArrayList<Protocol>();
-    private int coexistenceProtocolSize = 0;
+	private Map<Integer, ProtocolFactory> protocolFactoryMap = new HashMap<Integer, ProtocolFactory>();
+	private Map<Integer, Protocol> protocolMap = new HashMap<Integer, Protocol>();
+	private List<Protocol> coexistenceProtocols = new ArrayList<Protocol>();
+	private int coexistenceProtocolSize = 0;
 
-    private static ProtocolManager instance;
+	private static ProtocolManager instance;
 
-    public static ProtocolManager getInstance() {
-        if (instance == null) {
-            synchronized (ProtocolManager.class) {
-                if (instance == null) {
-                    instance = new ProtocolManager();
-                }
-            }
-        }
-        return instance;
-    }
+	public static ProtocolManager getInstance() {
+		if (instance == null) {
+			synchronized (ProtocolManager.class) {
+				if (instance == null) {
+					instance = new ProtocolManager();
+				}
+			}
+		}
+		return instance;
+	}
 
-    private ProtocolManager() {
-    }
+	private ProtocolManager() {
+	}
 
-    /**
-     * application can register custom protocol
-     */
-    public void registerProtocol(ProtocolFactory protocolFactory, String encoding) {
-        Integer protocolType = protocolFactory.getProtocolType();
-        if (protocolFactoryMap.get(protocolType) != null) {
-            throw new RuntimeException("protocol exist, type=" + protocolType);
-        }
-        Protocol protocol = protocolFactory.createProtocol(encoding);
-        protocolMap.put(protocolType, protocol);
-        protocolFactoryMap.put(protocolType, protocolFactory);
-        if (protocol.isCoexistence()) {
-            coexistenceProtocols.add(protocol);
-            coexistenceProtocolSize++;
-        }
-        log.info("register protocol:{} success", protocolType);
-    }
+	/**
+	 * application can register custom protocol
+	 */
+	public void registerProtocol(ProtocolFactory protocolFactory, String encoding) {
+		Integer protocolType = protocolFactory.getProtocolType();
+		if (protocolFactoryMap.get(protocolType) != null) {
+			throw new RuntimeException("protocol exist, type=" + protocolType);
+		}
+		Protocol protocol = protocolFactory.createProtocol(encoding);
+		protocolMap.put(protocolType, protocol);
+		protocolFactoryMap.put(protocolType, protocolFactory);
+		if (protocol.isCoexistence()) {
+			coexistenceProtocols.add(protocol);
+			coexistenceProtocolSize++;
+		}
+		log.info("register protocol:{} success", protocolType);
+	}
 
-    public Protocol getProtocol(Integer protocolType) {
-        Protocol protocol = protocolMap.get(protocolType);
-        if (protocol != null) {
-            return protocol;
-        }
+	public Protocol getProtocol(Integer protocolType) {
+		Protocol protocol = protocolMap.get(protocolType);
+		if (protocol != null) {
+			return protocol;
+		}
 
-        throw new RuntimeException("protocol not exist, type=" + protocolType);
-    }
+		throw new RuntimeException("protocol not exist, type=" + protocolType);
+	}
 
-    public Map<Integer, Protocol> getProtocolMap() {
-        return protocolMap;
-    }
+	public Map<Integer, Protocol> getProtocolMap() {
+		return protocolMap;
+	}
 
-    public List<Protocol> getCoexistenceProtocols() {
-        return coexistenceProtocols;
-    }
+	public List<Protocol> getCoexistenceProtocols() {
+		return coexistenceProtocols;
+	}
 
-    public int getCoexistenceProtocolSize() {
-        return coexistenceProtocolSize;
-    }
+	public int getCoexistenceProtocolSize() {
+		return coexistenceProtocolSize;
+	}
 
 }

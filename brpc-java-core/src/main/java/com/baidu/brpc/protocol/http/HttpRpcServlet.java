@@ -39,97 +39,97 @@ import java.io.InputStream;
  */
 public class HttpRpcServlet extends HttpServlet {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HttpRpcServlet.class);
+	private static final Logger LOG = LoggerFactory.getLogger(HttpRpcServlet.class);
 
-    public void registerService(Object service) {
-        ServiceManager serviceManager = ServiceManager.getInstance();
-        serviceManager.registerService(service, null);
-    }
+	public void registerService(Object service) {
+		ServiceManager serviceManager = ServiceManager.getInstance();
+		serviceManager.registerService(service, null);
+	}
 
-    public void registerService(Class targetClass, Object service) {
-        ServiceManager serviceManager = ServiceManager.getInstance();
-        serviceManager.registerService(targetClass, service, null);
-    }
+	public void registerService(Class targetClass, Object service) {
+		ServiceManager serviceManager = ServiceManager.getInstance();
+		serviceManager.registerService(targetClass, service, null);
+	}
 
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-        long startTime = System.nanoTime();
-        String requestUri = req.getRequestURI();
-        if (requestUri == null) {
-            LOG.warn("invalid request");
-            resp.setStatus(404);
-            return;
-        }
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		long startTime = System.nanoTime();
+		String requestUri = req.getRequestURI();
+		if (requestUri == null) {
+			LOG.warn("invalid request");
+			resp.setStatus(404);
+			return;
+		}
 
-        String encoding = req.getCharacterEncoding();
-        String contentType = req.getContentType().split(";")[0];
-        if (contentType == null) {
-            contentType = "application/baidu.json-rpc";
-        } else {
-            contentType = contentType.toLowerCase();
-        }
+		String encoding = req.getCharacterEncoding();
+		String contentType = req.getContentType().split(";")[0];
+		if (contentType == null) {
+			contentType = "application/baidu.json-rpc";
+		} else {
+			contentType = contentType.toLowerCase();
+		}
 
-        byte[] bytes = this.readStream(req.getInputStream(), req.getContentLength());
+		byte[] bytes = this.readStream(req.getInputStream(), req.getContentLength());
 
-        FullHttpRequest httpRequest = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, requestUri);
-        httpRequest.headers().add(HttpHeaderNames.CONTENT_TYPE, contentType);
-        httpRequest.content().writeBytes(bytes);
-        int protocolType = HttpRpcProtocol.parseProtocolType(contentType);
-        ExtensionLoaderManager.getInstance().loadAllExtensions(encoding);
-        Protocol protocol = ProtocolManager.getInstance().getProtocol(protocolType);
-        Request request = null;
-        Response response = new HttpResponse();
-        String errorMsg = null;
-        try {
-            request = protocol.decodeRequest(httpRequest);
-            Object result = request.getTargetMethod().invoke(request.getTarget(), request.getArgs());
-            response.setResult(result);
-            response.setRpcMethodInfo(request.getRpcMethodInfo());
-            response.setLogId(request.getLogId());
-            response.setCorrelationId(request.getCorrelationId());
-            protocol.encodeResponse(request, response);
-        } catch (Exception ex) {
-            errorMsg = String.format("invoke method failed, msg=%s", ex.getMessage());
-            LOG.error(errorMsg);
-            response.setException(new RpcException(RpcException.SERVICE_EXCEPTION, errorMsg));
-        }
+		FullHttpRequest httpRequest = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.POST, requestUri);
+		httpRequest.headers().add(HttpHeaderNames.CONTENT_TYPE, contentType);
+		httpRequest.content().writeBytes(bytes);
+		int protocolType = HttpRpcProtocol.parseProtocolType(contentType);
+		ExtensionLoaderManager.getInstance().loadAllExtensions(encoding);
+		Protocol protocol = ProtocolManager.getInstance().getProtocol(protocolType);
+		Request request = null;
+		Response response = new HttpResponse();
+		String errorMsg = null;
+		try {
+			request = protocol.decodeRequest(httpRequest);
+			Object result = request.getTargetMethod().invoke(request.getTarget(), request.getArgs());
+			response.setResult(result);
+			response.setRpcMethodInfo(request.getRpcMethodInfo());
+			response.setLogId(request.getLogId());
+			response.setCorrelationId(request.getCorrelationId());
+			protocol.encodeResponse(request, response);
+		} catch (Exception ex) {
+			errorMsg = String.format("invoke method failed, msg=%s", ex.getMessage());
+			LOG.error(errorMsg);
+			response.setException(new RpcException(RpcException.SERVICE_EXCEPTION, errorMsg));
+		}
 
-        resp.setContentType(contentType);
-        resp.setCharacterEncoding(encoding);
-        if (errorMsg == null) {
-            byte[] content = ((HttpRpcProtocol) protocol).encodeResponseBody(protocolType, request, response);
-            resp.setContentLength(content.length);
-            resp.getOutputStream().write(content);
-        } else {
-            byte[] content = errorMsg.getBytes();
-            resp.setContentLength(content.length);
-            resp.getOutputStream().write(content);
-        }
+		resp.setContentType(contentType);
+		resp.setCharacterEncoding(encoding);
+		if (errorMsg == null) {
+			byte[] content = ((HttpRpcProtocol) protocol).encodeResponseBody(protocolType, request, response);
+			resp.setContentLength(content.length);
+			resp.getOutputStream().write(content);
+		} else {
+			byte[] content = errorMsg.getBytes();
+			resp.setContentLength(content.length);
+			resp.getOutputStream().write(content);
+		}
 
-        if (request != null) {
-            long endTime = System.nanoTime();
-            LOG.debug("uri={} logId={} service={} method={} elapseNs={}",
-                    requestUri,
-                    request.getLogId(),
-                    request.getTarget().getClass().getSimpleName(),
-                    request.getTargetMethod().getName(),
-                    endTime - startTime);
-        }
+		if (request != null) {
+			long endTime = System.nanoTime();
+			LOG.debug("uri={} logId={} service={} method={} elapseNs={}",
+					requestUri,
+					request.getLogId(),
+					request.getTarget().getClass().getSimpleName(),
+					request.getTargetMethod().getName(),
+					endTime - startTime);
+		}
 
-    }
+	}
 
-    private byte[] readStream(InputStream input, int length) throws IOException {
-        byte[] bytes = new byte[length];
+	private byte[] readStream(InputStream input, int length) throws IOException {
+		byte[] bytes = new byte[length];
 
-        int bytesRead;
-        for (int offset = 0; offset < bytes.length; offset += bytesRead) {
-            bytesRead = input.read(bytes, offset, bytes.length - offset);
-            if (bytesRead == -1) {
-                break;
-            }
-        }
+		int bytesRead;
+		for (int offset = 0; offset < bytes.length; offset += bytesRead) {
+			bytesRead = input.read(bytes, offset, bytes.length - offset);
+			if (bytesRead == -1) {
+				break;
+			}
+		}
 
-        return bytes;
-    }
+		return bytes;
+	}
 
 }

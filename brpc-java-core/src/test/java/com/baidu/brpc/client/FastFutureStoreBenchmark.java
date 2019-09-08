@@ -26,157 +26,158 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * benchmark
- *
+ * <p>
  * Created by wanghongfei on 2018/11/19.
  */
 public class FastFutureStoreBenchmark {
-    @Test
-    public void testBenchmark() throws Exception {
-        // int times = 200000;
-        // int times = 1500000;
-        int times = 3000000;
-        // int times = 6000000;
+	@Test
+	public void testBenchmark() throws Exception {
+		// int times = 200000;
+		// int times = 1500000;
+		int times = 3000000;
+		// int times = 6000000;
 
-        // warm jvm
-        runMap(times, 1);
-        runStore(times, 1);
-        runMap(times, 1);
-        runStore(times, 1);
+		// warm jvm
+		runMap(times, 1);
+		runStore(times, 1);
+		runMap(times, 1);
+		runStore(times, 1);
 
-        System.out.println("warm done");
+		System.out.println("warm done");
 
-        List<Double> all = new ArrayList<Double>();
-        for (int ix = 0 ; ix < 50; ++ix) {
-            long t1 = runStore(times, 4);
+		List<Double> all = new ArrayList<Double>();
+		for (int ix = 0; ix < 50; ++ix) {
+			long t1 = runStore(times, 4);
 
-            long t2 = runMap(times, 4);
+			long t2 = runMap(times, 4);
 
-            System.out.println("diff = " + (t2 - t1) + ", " + ((double) t2) / t1);
+			System.out.println("diff = " + (t2 - t1) + ", " + ((double) t2) / t1);
 
-            double ratio = ((double) t2 / t1);
-            all.add(ratio);
-        }
+			double ratio = ((double) t2 / t1);
+			all.add(ratio);
+		}
 
-        double sum = 0;
-        for (Double n : all) {
-            sum += n;
-        }
+		double sum = 0;
+		for (Double n : all) {
+			sum += n;
+		}
 
-        double result = sum / all.size();
-        System.out.println();
-        System.out.println(result);
+		double result = sum / all.size();
+		System.out.println();
+		System.out.println(result);
 
-        // Runtime.getRuntime().exec("say -v Ting-ting benchmark完成了, 结果是 " + result);
-    }
+		// Runtime.getRuntime().exec("say -v Ting-ting benchmark完成了, 结果是 " + result);
+	}
 
-    /**
-     * 运行FastFutureStore benchmark
-     *
-     * @param count 最大id数量
-     * @param threadCount 并发线程数
-     * @return
-     * @throws Exception
-     */
-    private long runStore(final int count, final int threadCount) throws Exception {
-        final AtomicLong result = new AtomicLong(0);
+	/**
+	 * 运行FastFutureStore benchmark
+	 *
+	 * @param count       最大id数量
+	 * @param threadCount 并发线程数
+	 * @return
+	 * @throws Exception
+	 */
+	private long runStore(final int count, final int threadCount) throws Exception {
+		final AtomicLong result = new AtomicLong(0);
 
-        final FastFutureStore store = new FastFutureStore(count);
+		final FastFutureStore store = new FastFutureStore(count);
 
-        List<Thread> thList = new ArrayList<Thread>(threadCount);
-        for (int c = 0; c < threadCount; ++c) {
-            Thread th = new Thread(new Runnable() {
-                @Override
-                public void run() {
+		List<Thread> thList = new ArrayList<Thread>(threadCount);
+		for (int c = 0; c < threadCount; ++c) {
+			Thread th = new Thread(new Runnable() {
+				@Override
+				public void run() {
 
-                    long t1 = System.currentTimeMillis();
+					long t1 = System.currentTimeMillis();
 
-                    List<Long> idList = new ArrayList<Long>(count / threadCount);
-                    for (int ix = 0; ix < count / threadCount; ++ix) {
-                        long id = store.put(new RpcFuture());
-                        idList.add(id);
-                    }
-
-
-                    for (int ix = 0; ix < count / threadCount; ++ix) {
-                        long id = idList.get(ix);
-                        RpcFuture fut = store.getAndRemove(id);
-                        if (null == fut) {
-                            throw new IllegalStateException("fut is null");
-                        }
-                    }
-
-                    long t2 = System.currentTimeMillis();
-
-                    result.addAndGet(t2 - t1);
-                }
-            });
-
-            thList.add(th);
-            th.start();
-        }
-
-        for (Thread th : thList) {
-            th.join();
-        }
-
-        return result.get();
-    }
-
-    /**
-     * 运行ConcurrentHashMap benchmark
-     * @param count
-     * @param threadCount
-     * @return
-     * @throws Exception
-     */
-    private long runMap(final int count, final int threadCount) throws Exception {
-        final AtomicLong result = new AtomicLong(0);
-
-        // 为了防止Hashmap扩容, 将每条线程需要执行的操作次数 / 0.75的结果作为map初始容量
-        int singleThreadCount = count / threadCount;
-        int cap = (int) (singleThreadCount / 0.75);
-        final Map<Long, RpcFuture> map = new ConcurrentHashMap<Long, RpcFuture>(cap);
-        // final Map<Long, RpcFuture> map = new HashMap<Long, RpcFuture>(cap);
-
-        final AtomicLong idGen = new AtomicLong(0);
-
-        List<Thread> thList = new ArrayList<Thread>(threadCount);
-        for (int c = 0; c < threadCount; ++c) {
-            Thread th = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    long t1 = System.currentTimeMillis();
-
-                    List<Long> idList = new ArrayList<Long>(count / threadCount);
-                    for (int ix = 0; ix < count / threadCount; ++ix) {
-                        long id = idGen.getAndIncrement();
-                        idList.add(id);
-                        map.put(id, new RpcFuture());
-                    }
+					List<Long> idList = new ArrayList<Long>(count / threadCount);
+					for (int ix = 0; ix < count / threadCount; ++ix) {
+						long id = store.put(new RpcFuture());
+						idList.add(id);
+					}
 
 
-                    for (int ix = 0; ix < count / threadCount; ++ix) {
-                        long id = idList.get(ix);
-                        RpcFuture fut = map.remove(id);
-                        if (null == fut) {
-                            throw new IllegalStateException("fut is null");
-                        }
-                    }
+					for (int ix = 0; ix < count / threadCount; ++ix) {
+						long id = idList.get(ix);
+						RpcFuture fut = store.getAndRemove(id);
+						if (null == fut) {
+							throw new IllegalStateException("fut is null");
+						}
+					}
 
-                    long t2 = System.currentTimeMillis();
+					long t2 = System.currentTimeMillis();
 
-                    result.addAndGet(t2 - t1);
-                }
-            });
+					result.addAndGet(t2 - t1);
+				}
+			});
 
-            thList.add(th);
-            th.start();
-        }
+			thList.add(th);
+			th.start();
+		}
 
-        for (Thread th : thList) {
-            th.join();
-        }
+		for (Thread th : thList) {
+			th.join();
+		}
 
-        return result.get();
-    }
+		return result.get();
+	}
+
+	/**
+	 * 运行ConcurrentHashMap benchmark
+	 *
+	 * @param count
+	 * @param threadCount
+	 * @return
+	 * @throws Exception
+	 */
+	private long runMap(final int count, final int threadCount) throws Exception {
+		final AtomicLong result = new AtomicLong(0);
+
+		// 为了防止Hashmap扩容, 将每条线程需要执行的操作次数 / 0.75的结果作为map初始容量
+		int singleThreadCount = count / threadCount;
+		int cap = (int) (singleThreadCount / 0.75);
+		final Map<Long, RpcFuture> map = new ConcurrentHashMap<Long, RpcFuture>(cap);
+		// final Map<Long, RpcFuture> map = new HashMap<Long, RpcFuture>(cap);
+
+		final AtomicLong idGen = new AtomicLong(0);
+
+		List<Thread> thList = new ArrayList<Thread>(threadCount);
+		for (int c = 0; c < threadCount; ++c) {
+			Thread th = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					long t1 = System.currentTimeMillis();
+
+					List<Long> idList = new ArrayList<Long>(count / threadCount);
+					for (int ix = 0; ix < count / threadCount; ++ix) {
+						long id = idGen.getAndIncrement();
+						idList.add(id);
+						map.put(id, new RpcFuture());
+					}
+
+
+					for (int ix = 0; ix < count / threadCount; ++ix) {
+						long id = idList.get(ix);
+						RpcFuture fut = map.remove(id);
+						if (null == fut) {
+							throw new IllegalStateException("fut is null");
+						}
+					}
+
+					long t2 = System.currentTimeMillis();
+
+					result.addAndGet(t2 - t1);
+				}
+			});
+
+			thList.add(th);
+			th.start();
+		}
+
+		for (Thread th : thList) {
+			th.join();
+		}
+
+		return result.get();
+	}
 }

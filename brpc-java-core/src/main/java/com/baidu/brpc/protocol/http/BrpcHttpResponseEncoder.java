@@ -15,22 +15,16 @@
  */
 package com.baidu.brpc.protocol.http;
 
-import static io.netty.handler.codec.http.HttpConstants.SP;
+import com.baidu.brpc.exceptions.RpcException;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufUtil;
+import io.netty.handler.codec.http.*;
+import io.netty.util.CharsetUtil;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import com.baidu.brpc.exceptions.RpcException;
-
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufUtil;
-import io.netty.handler.codec.http.HttpHeaderNames;
-import io.netty.handler.codec.http.HttpRequest;
-import io.netty.handler.codec.http.HttpResponse;
-import io.netty.handler.codec.http.HttpResponseEncoder;
-import io.netty.handler.codec.http.HttpResponseStatus;
-import io.netty.handler.codec.http.HttpStatusClass;
-import io.netty.util.CharsetUtil;
+import static io.netty.handler.codec.http.HttpConstants.SP;
 
 /**
  * Migrate from netty {@link HttpResponseEncoder}
@@ -40,75 +34,75 @@ import io.netty.util.CharsetUtil;
  */
 public class BrpcHttpResponseEncoder extends BrpcHttpObjectEncoder<HttpResponse> {
 
-    @Override
-    public boolean acceptOutboundMessage(Object msg) throws Exception {
-        return super.acceptOutboundMessage(msg) && !(msg instanceof HttpRequest);
-    }
+	@Override
+	public boolean acceptOutboundMessage(Object msg) throws Exception {
+		return super.acceptOutboundMessage(msg) && !(msg instanceof HttpRequest);
+	}
 
-    @Override
-    protected void encodeInitialLine(ByteBuf buf, HttpResponse response) throws Exception {
-        buf.writeCharSequence(response.protocolVersion().text(), CharsetUtil.US_ASCII);
-        buf.writeByte(SP);
-        ByteBufUtil.copy(response.status().codeAsText(), buf);
-        buf.writeByte(SP);
-        buf.writeCharSequence(response.status().reasonPhrase(), CharsetUtil.US_ASCII);
-        ByteBufUtil.writeShortBE(buf, CRLF_SHORT);
-    }
+	@Override
+	protected void encodeInitialLine(ByteBuf buf, HttpResponse response) throws Exception {
+		buf.writeCharSequence(response.protocolVersion().text(), CharsetUtil.US_ASCII);
+		buf.writeByte(SP);
+		ByteBufUtil.copy(response.status().codeAsText(), buf);
+		buf.writeByte(SP);
+		buf.writeCharSequence(response.status().reasonPhrase(), CharsetUtil.US_ASCII);
+		ByteBufUtil.writeShortBE(buf, CRLF_SHORT);
+	}
 
-    @Override
-    protected void sanitizeHeadersBeforeEncode(HttpResponse msg, boolean isAlwaysEmpty) {
-        if (isAlwaysEmpty) {
-            HttpResponseStatus status = msg.status();
-            if (status.codeClass() == HttpStatusClass.INFORMATIONAL
-                    || status.code() == HttpResponseStatus.NO_CONTENT.code()) {
+	@Override
+	protected void sanitizeHeadersBeforeEncode(HttpResponse msg, boolean isAlwaysEmpty) {
+		if (isAlwaysEmpty) {
+			HttpResponseStatus status = msg.status();
+			if (status.codeClass() == HttpStatusClass.INFORMATIONAL
+					|| status.code() == HttpResponseStatus.NO_CONTENT.code()) {
 
-                // Stripping Content-Length:
-                // See https://tools.ietf.org/html/rfc7230#section-3.3.2
-                msg.headers().remove(HttpHeaderNames.CONTENT_LENGTH);
+				// Stripping Content-Length:
+				// See https://tools.ietf.org/html/rfc7230#section-3.3.2
+				msg.headers().remove(HttpHeaderNames.CONTENT_LENGTH);
 
-                // Stripping Transfer-Encoding:
-                // See https://tools.ietf.org/html/rfc7230#section-3.3.1
-                msg.headers().remove(HttpHeaderNames.TRANSFER_ENCODING);
-            } else if (status.code() == HttpResponseStatus.RESET_CONTENT.code()) {
+				// Stripping Transfer-Encoding:
+				// See https://tools.ietf.org/html/rfc7230#section-3.3.1
+				msg.headers().remove(HttpHeaderNames.TRANSFER_ENCODING);
+			} else if (status.code() == HttpResponseStatus.RESET_CONTENT.code()) {
 
-                // Stripping Transfer-Encoding:
-                msg.headers().remove(HttpHeaderNames.TRANSFER_ENCODING);
+				// Stripping Transfer-Encoding:
+				msg.headers().remove(HttpHeaderNames.TRANSFER_ENCODING);
 
-                // Set Content-Length: 0
-                // https://httpstatuses.com/205
-                msg.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, 0);
-            }
-        }
-    }
+				// Set Content-Length: 0
+				// https://httpstatuses.com/205
+				msg.headers().setInt(HttpHeaderNames.CONTENT_LENGTH, 0);
+			}
+		}
+	}
 
-    @Override
-    protected boolean isContentAlwaysEmpty(HttpResponse msg) {
-        // Correctly handle special cases as stated in:
-        // https://tools.ietf.org/html/rfc7230#section-3.3.3
-        HttpResponseStatus status = msg.status();
+	@Override
+	protected boolean isContentAlwaysEmpty(HttpResponse msg) {
+		// Correctly handle special cases as stated in:
+		// https://tools.ietf.org/html/rfc7230#section-3.3.3
+		HttpResponseStatus status = msg.status();
 
-        if (status.codeClass() == HttpStatusClass.INFORMATIONAL) {
+		if (status.codeClass() == HttpStatusClass.INFORMATIONAL) {
 
-            if (status.code() == HttpResponseStatus.SWITCHING_PROTOCOLS.code()) {
-                // We need special handling for WebSockets version 00 as it will include an body.
-                // Fortunally this version should not really be used in the wild very often.
-                // See https://tools.ietf.org/html/draft-ietf-hybi-thewebsocketprotocol-00#section-1.2
-                return msg.headers().contains(HttpHeaderNames.SEC_WEBSOCKET_VERSION);
-            }
-            return true;
-        }
-        return status.code() == HttpResponseStatus.NO_CONTENT.code()
-                || status.code() == HttpResponseStatus.NOT_MODIFIED.code()
-                || status.code() == HttpResponseStatus.RESET_CONTENT.code();
-    }
+			if (status.code() == HttpResponseStatus.SWITCHING_PROTOCOLS.code()) {
+				// We need special handling for WebSockets version 00 as it will include an body.
+				// Fortunally this version should not really be used in the wild very often.
+				// See https://tools.ietf.org/html/draft-ietf-hybi-thewebsocketprotocol-00#section-1.2
+				return msg.headers().contains(HttpHeaderNames.SEC_WEBSOCKET_VERSION);
+			}
+			return true;
+		}
+		return status.code() == HttpResponseStatus.NO_CONTENT.code()
+				|| status.code() == HttpResponseStatus.NOT_MODIFIED.code()
+				|| status.code() == HttpResponseStatus.RESET_CONTENT.code();
+	}
 
-    public ByteBuf encode(Object msg) throws Exception {
-        List list = new LinkedList();
-        super.encode(msg, list);
-        if (list.size() == 1) {
-            return (ByteBuf) list.get(0);
-        } else {
-            throw new RpcException(RpcException.SERIALIZATION_EXCEPTION, "encode response failed");
-        }
-    }
+	public ByteBuf encode(Object msg) throws Exception {
+		List list = new LinkedList();
+		super.encode(msg, list);
+		if (list.size() == 1) {
+			return (ByteBuf) list.get(0);
+		} else {
+			throw new RpcException(RpcException.SERIALIZATION_EXCEPTION, "encode response failed");
+		}
+	}
 }

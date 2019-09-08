@@ -21,15 +21,15 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class IOUtils {
-    private static final int BUFFER_SIZE = 256;
+	private static final int BUFFER_SIZE = 256;
 
-    public static byte[] readInputStream(InputStream inputStream) throws IOException {
-        byte[] buf = new byte[BUFFER_SIZE];
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        int n;
-        while ((n = inputStream.read(buf)) >= 0) {
-            out.write(buf, 0, n);
-        }
-        return out.toByteArray();
-    }
+	public static byte[] readInputStream(InputStream inputStream) throws IOException {
+		byte[] buf = new byte[BUFFER_SIZE];
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		int n;
+		while ((n = inputStream.read(buf)) >= 0) {
+			out.write(buf, 0, n);
+		}
+		return out.toByteArray();
+	}
 }

@@ -30,15 +30,15 @@ import io.netty.util.concurrent.FastThreadLocal;
  */
 public class HttpResponse extends AbstractResponse {
 
-    private static final FastThreadLocal<HttpResponse> CURRENT_RPC_RESPONSE = new FastThreadLocal<HttpResponse>() {
-        @Override
-        protected HttpResponse initialValue() {
-            return new HttpResponse();
-        }
-    };
+	private static final FastThreadLocal<HttpResponse> CURRENT_RPC_RESPONSE = new FastThreadLocal<HttpResponse>() {
+		@Override
+		protected HttpResponse initialValue() {
+			return new HttpResponse();
+		}
+	};
 
-    public static HttpResponse getHttpResponse() {
-        return CURRENT_RPC_RESPONSE.get();
-    }
+	public static HttpResponse getHttpResponse() {
+		return CURRENT_RPC_RESPONSE.get();
+	}
 
 }

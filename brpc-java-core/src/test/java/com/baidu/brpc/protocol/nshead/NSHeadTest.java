@@ -26,29 +26,29 @@ import static org.junit.Assert.assertThat;
 
 public class NSHeadTest {
 
-    @Test
-    public void fromByteBuf() throws BadSchemaException {
-        byte[] bytes = new byte[]{
-                -22, 0, 1, 0, 123, 0, 0, 0, 108, 111, 110, 103, 101, 114, 45, 116, 104,
-                97, 110, 45, 115, 105, 120, 116, -108, -109, 112, -5, 0, 0, 0, 0, 41, 9, 0, 0
-        };
-        ByteBuf buf = Unpooled.wrappedBuffer(bytes);
-        NSHead head = NSHead.fromByteBuf(buf);
-        assertThat(head.id, equalTo((short) 234));
-        assertThat(head.logId, equalTo(123));
-        assertThat(head.version, equalTo((short) 1));
-        assertThat(head.provider, equalTo("longer-than-sixt")); // een discard
-        assertThat(head.bodyLength, equalTo(2345));
-    }
+	@Test
+	public void fromByteBuf() throws BadSchemaException {
+		byte[] bytes = new byte[]{
+				-22, 0, 1, 0, 123, 0, 0, 0, 108, 111, 110, 103, 101, 114, 45, 116, 104,
+				97, 110, 45, 115, 105, 120, 116, -108, -109, 112, -5, 0, 0, 0, 0, 41, 9, 0, 0
+		};
+		ByteBuf buf = Unpooled.wrappedBuffer(bytes);
+		NSHead head = NSHead.fromByteBuf(buf);
+		assertThat(head.id, equalTo((short) 234));
+		assertThat(head.logId, equalTo(123));
+		assertThat(head.version, equalTo((short) 1));
+		assertThat(head.provider, equalTo("longer-than-sixt")); // een discard
+		assertThat(head.bodyLength, equalTo(2345));
+	}
 
-    @Test
-    public void toBytes() {
-        byte[] bytes = new byte[]{
-                -22, 0, 1, 0, 123, 0, 0, 0, 108, 111, 110, 103, 101, 114, 45, 116, 104,
-                97, 110, 45, 115, 105, 120, 116, -108, -109, 112, -5, 0, 0, 0, 0, 41, 9, 0, 0
-        };
-        NSHead head = new NSHead(123, (short) 234, (short) 1, "longer-than-sixteen", 2345);
-        byte[] serialized = head.toBytes();
-        assertThat(serialized, equalTo(bytes));
-    }
+	@Test
+	public void toBytes() {
+		byte[] bytes = new byte[]{
+				-22, 0, 1, 0, 123, 0, 0, 0, 108, 111, 110, 103, 101, 114, 45, 116, 104,
+				97, 110, 45, 115, 105, 120, 116, -108, -109, 112, -5, 0, 0, 0, 0, 41, 9, 0, 0
+		};
+		NSHead head = new NSHead(123, (short) 234, (short) 1, "longer-than-sixteen", 2345);
+		byte[] serialized = head.toBytes();
+		assertThat(serialized, equalTo(bytes));
+	}
 }

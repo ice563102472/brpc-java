@@ -17,18 +17,18 @@ package com.baidu.brpc.naming;
 
 public class DnsNamingServiceFactory implements NamingServiceFactory {
 
-    @Override
-    public String getName() {
-        return "dns";
-    }
+	@Override
+	public String getName() {
+		return "dns";
+	}
 
-    @Override
-    public NamingService createNamingService(BrpcURL url) {
-        String schema = url.getSchema();
-        if ("dns".equals(schema)) {
-            return new DnsNamingService(url);
-        } else {
-            throw new IllegalArgumentException("schema is not valid:" + schema);
-        }
-    }
+	@Override
+	public NamingService createNamingService(BrpcURL url) {
+		String schema = url.getSchema();
+		if ("dns".equals(schema)) {
+			return new DnsNamingService(url);
+		} else {
+			throw new IllegalArgumentException("schema is not valid:" + schema);
+		}
+	}
 }

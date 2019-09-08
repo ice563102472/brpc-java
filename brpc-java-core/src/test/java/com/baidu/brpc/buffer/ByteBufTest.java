@@ -22,12 +22,12 @@ import org.junit.Test;
 
 public class ByteBufTest {
 
-    @Test
-    public void testSlice() {
-        byte[] bytes = new byte[10];
-        ByteBuf buf = Unpooled.wrappedBuffer(bytes);
-        ByteBuf buf2 = buf.slice(0, 2);
-        System.out.println(buf.refCnt());
-        System.out.println(buf2.refCnt());
-    }
+	@Test
+	public void testSlice() {
+		byte[] bytes = new byte[10];
+		ByteBuf buf = Unpooled.wrappedBuffer(bytes);
+		ByteBuf buf2 = buf.slice(0, 2);
+		System.out.println(buf.refCnt());
+		System.out.println(buf2.refCnt());
+	}
 }

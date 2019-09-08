@@ -16,32 +16,31 @@
 
 package com.baidu.brpc.protocol.nshead;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface NSHeadMeta {
 
-    /**
-     * provider
-     * @return
-     */
-    String provider() default "";
+	/**
+	 * provider
+	 *
+	 * @return
+	 */
+	String provider() default "";
 
-    /**
-     * id
-     * @return
-     */
-    short id() default 0x00;
+	/**
+	 * id
+	 *
+	 * @return
+	 */
+	short id() default 0x00;
 
-    /**
-     * version
-     * @return
-     */
-    short version() default 0x01;
+	/**
+	 * version
+	 *
+	 * @return
+	 */
+	short version() default 0x01;
 }

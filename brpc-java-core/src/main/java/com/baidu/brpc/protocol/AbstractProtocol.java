@@ -19,7 +19,6 @@ package com.baidu.brpc.protocol;
 import com.baidu.brpc.client.RpcClient;
 import com.baidu.brpc.client.channel.BrpcChannel;
 import com.baidu.brpc.exceptions.NotEnoughDataException;
-
 import io.netty.channel.ChannelFuture;
 
 /**
@@ -29,53 +28,53 @@ import io.netty.channel.ChannelFuture;
  */
 public abstract class AbstractProtocol implements Protocol {
 
-    protected static NotEnoughDataException notEnoughDataException = new NotEnoughDataException();
+	protected static NotEnoughDataException notEnoughDataException = new NotEnoughDataException();
 
-    @Override
-    public Request createRequest() {
-        // tcp protocol implementation, http protocols should override this method
-        return new RpcRequest();
-    }
+	@Override
+	public Request createRequest() {
+		// tcp protocol implementation, http protocols should override this method
+		return new RpcRequest();
+	}
 
-    @Override
-    public Response createResponse() {
-        // tcp protocol implementation, http protocols should override this method
-        return new RpcResponse();
-    }
+	@Override
+	public Response createResponse() {
+		// tcp protocol implementation, http protocols should override this method
+		return new RpcResponse();
+	}
 
-    @Override
-    public Request getRequest() {
-        // tcp protocol implementation, http protocols should override this method
-        Request request = RpcRequest.getRpcRequest();
-        request.reset();
-        return request;
-    }
+	@Override
+	public Request getRequest() {
+		// tcp protocol implementation, http protocols should override this method
+		Request request = RpcRequest.getRpcRequest();
+		request.reset();
+		return request;
+	}
 
-    @Override
-    public Response getResponse() {
-        // tcp protocol implementation, http protocols should override this method
-        Response response = RpcResponse.getRpcResponse();
-        response.reset();
-        return response;
-    }
+	@Override
+	public Response getResponse() {
+		// tcp protocol implementation, http protocols should override this method
+		Response response = RpcResponse.getRpcResponse();
+		response.reset();
+		return response;
+	}
 
-    @Override
-    public void beforeRequestSent(Request request, RpcClient rpcClient, BrpcChannel channelGroup) {
-        // By default, in tcp protocols, there's nothing to to
-    }
+	@Override
+	public void beforeRequestSent(Request request, RpcClient rpcClient, BrpcChannel channelGroup) {
+		// By default, in tcp protocols, there's nothing to to
+	}
 
-    @Override
-    public boolean returnChannelBeforeResponse() {
-        return true;
-    }
+	@Override
+	public boolean returnChannelBeforeResponse() {
+		return true;
+	}
 
-    @Override
-    public void afterResponseSent(Request request, Response response, ChannelFuture channelFuture) {
-        // By default, in tcp protocols, there's nothing to to
-    }
+	@Override
+	public void afterResponseSent(Request request, Response response, ChannelFuture channelFuture) {
+		// By default, in tcp protocols, there's nothing to to
+	}
 
-    @Override
-    public boolean isCoexistence() {
-        return false;
-    }
+	@Override
+	public boolean isCoexistence() {
+		return false;
+	}
 }

@@ -21,17 +21,17 @@ import com.baidu.brpc.protocol.Response;
 
 public abstract class AbstractInterceptor implements Interceptor {
 
-    @Override
-    public boolean handleRequest(Request request) {
-        return true;
-    }
+	@Override
+	public boolean handleRequest(Request request) {
+		return true;
+	}
 
-    @Override
-    public void handleResponse(Response response) {
-    }
+	@Override
+	public void handleResponse(Response response) {
+	}
 
-    @Override
-    public void aroundProcess(Request request, Response response, InterceptorChain chain) throws Exception {
-        chain.intercept(request, response);
-    }
+	@Override
+	public void aroundProcess(Request request, Response response, InterceptorChain chain) throws Exception {
+		chain.intercept(request, response);
+	}
 }

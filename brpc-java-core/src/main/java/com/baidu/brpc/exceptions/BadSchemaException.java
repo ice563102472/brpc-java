@@ -17,49 +17,49 @@
 package com.baidu.brpc.exceptions;
 
 public class BadSchemaException extends Exception {
-    private int code;
+	private int code;
 
-    public BadSchemaException() {
-        super();
-    }
+	public BadSchemaException() {
+		super();
+	}
 
-    public BadSchemaException(String message, Throwable cause) {
-        super(message, cause);
-    }
+	public BadSchemaException(String message, Throwable cause) {
+		super(message, cause);
+	}
 
-    public BadSchemaException(String message) {
-        super(message);
-    }
+	public BadSchemaException(String message) {
+		super(message);
+	}
 
-    public BadSchemaException(Throwable cause) {
-        super(cause);
-    }
+	public BadSchemaException(Throwable cause) {
+		super(cause);
+	}
 
-    public BadSchemaException(int code) {
-        super();
-        this.code = code;
-    }
+	public BadSchemaException(int code) {
+		super();
+		this.code = code;
+	}
 
-    public BadSchemaException(int code, String message, Throwable cause) {
-        super(message, cause);
-        this.code = code;
-    }
+	public BadSchemaException(int code, String message, Throwable cause) {
+		super(message, cause);
+		this.code = code;
+	}
 
-    public BadSchemaException(int code, String message) {
-        super(message);
-        this.code = code;
-    }
+	public BadSchemaException(int code, String message) {
+		super(message);
+		this.code = code;
+	}
 
-    public BadSchemaException(int code, Throwable cause) {
-        super(cause);
-        this.code = code;
-    }
+	public BadSchemaException(int code, Throwable cause) {
+		super(cause);
+		this.code = code;
+	}
 
-    public int getCode() {
-        return code;
-    }
+	public int getCode() {
+		return code;
+	}
 
-    public void setCode(int code) {
-        this.code = code;
-    }
+	public void setCode(int code) {
+		this.code = code;
+	}
 }

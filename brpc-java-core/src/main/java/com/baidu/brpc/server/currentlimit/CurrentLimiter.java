@@ -28,6 +28,6 @@ import com.baidu.brpc.protocol.Request;
  */
 public interface CurrentLimiter {
 
-    boolean isAllowable(Request request);
+	boolean isAllowable(Request request);
 
 }

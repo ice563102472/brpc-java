@@ -49,118 +49,118 @@ import java.nio.ByteOrder;
  */
 public class NSHead {
 
-    public static final int NSHEAD_LENGTH = 36;
-    public static final int NSHEAD_MAGIC_NUM = 0xfb709394;
-    public static final int PROVIDER_LENGTH = 16;
+	public static final int NSHEAD_LENGTH = 36;
+	public static final int NSHEAD_MAGIC_NUM = 0xfb709394;
+	public static final int PROVIDER_LENGTH = 16;
 
-    private static final byte[] ZEROS = new byte[PROVIDER_LENGTH];
+	private static final byte[] ZEROS = new byte[PROVIDER_LENGTH];
 
-    public short id = 0x00;
+	public short id = 0x00;
 
-    public short version = 0x01;
+	public short version = 0x01;
 
-    public int logId;
+	public int logId;
 
-    public String provider = "";
+	public String provider = "";
 
-    public int magicNumber = NSHEAD_MAGIC_NUM;
+	public int magicNumber = NSHEAD_MAGIC_NUM;
 
-    public int reserved = 0;
+	public int reserved = 0;
 
-    public int bodyLength = 0;
+	public int bodyLength = 0;
 
-    public NSHead(int logId, short id, short version, String provider, int bodyLength) {
-        this.logId = logId;
-        this.id = id;
-        this.version = version;
-        if (provider != null) {
-            this.provider = provider;
-        }
-        this.bodyLength = bodyLength;
-    }
+	public NSHead(int logId, short id, short version, String provider, int bodyLength) {
+		this.logId = logId;
+		this.id = id;
+		this.version = version;
+		if (provider != null) {
+			this.provider = provider;
+		}
+		this.bodyLength = bodyLength;
+	}
 
-    public NSHead(int logId, int bodyLength) {
-        this.logId = logId;
-        this.bodyLength = bodyLength;
-    }
+	public NSHead(int logId, int bodyLength) {
+		this.logId = logId;
+		this.bodyLength = bodyLength;
+	}
 
-    public NSHead() {
-    }
+	public NSHead() {
+	}
 
-    public static NSHead fromByteBuf(ByteBuf buf) throws BadSchemaException {
-        NSHead head = new NSHead();
-        if (buf.readableBytes() < NSHEAD_LENGTH) {
-            throw new IllegalArgumentException("not enough bytes to read");
-        }
-        head.id = buf.readShortLE();
-        head.version = buf.readShortLE();
-        head.logId = buf.readIntLE();
-        byte[] bytes = new byte[PROVIDER_LENGTH];
-        buf.readBytes(bytes);
-        int n = 0;
-        while (n < bytes.length && bytes[n] != 0) {
-            n++;
-        }
-        head.provider = new String(bytes, 0, n);
-        head.magicNumber = buf.readIntLE();
-        if (head.magicNumber != NSHEAD_MAGIC_NUM) {
-            throw new BadSchemaException("nshead magic number does not match");
-        }
-        head.reserved = buf.readIntLE();
-        head.bodyLength = buf.readIntLE();
-        return head;
-    }
+	public static NSHead fromByteBuf(ByteBuf buf) throws BadSchemaException {
+		NSHead head = new NSHead();
+		if (buf.readableBytes() < NSHEAD_LENGTH) {
+			throw new IllegalArgumentException("not enough bytes to read");
+		}
+		head.id = buf.readShortLE();
+		head.version = buf.readShortLE();
+		head.logId = buf.readIntLE();
+		byte[] bytes = new byte[PROVIDER_LENGTH];
+		buf.readBytes(bytes);
+		int n = 0;
+		while (n < bytes.length && bytes[n] != 0) {
+			n++;
+		}
+		head.provider = new String(bytes, 0, n);
+		head.magicNumber = buf.readIntLE();
+		if (head.magicNumber != NSHEAD_MAGIC_NUM) {
+			throw new BadSchemaException("nshead magic number does not match");
+		}
+		head.reserved = buf.readIntLE();
+		head.bodyLength = buf.readIntLE();
+		return head;
+	}
 
-    public byte[] toBytes() {
-        ByteBuffer buf = ByteBuffer.allocate(NSHEAD_LENGTH);
-        buf.order(ByteOrder.LITTLE_ENDIAN);
-        buf.putShort(id);
-        buf.putShort(version);
-        buf.putInt(logId);
-        byte[] providerBytes = provider.getBytes();
-        if (providerBytes.length >= PROVIDER_LENGTH) {
-            buf.put(providerBytes, 0, PROVIDER_LENGTH);
-        } else {
-            buf.put(providerBytes, 0, providerBytes.length);
-            buf.put(ZEROS, 0, PROVIDER_LENGTH - providerBytes.length);
-        }
-        buf.putInt(magicNumber);
-        buf.putInt(reserved);
-        buf.putInt(bodyLength);
-        return buf.array();
-    }
+	public byte[] toBytes() {
+		ByteBuffer buf = ByteBuffer.allocate(NSHEAD_LENGTH);
+		buf.order(ByteOrder.LITTLE_ENDIAN);
+		buf.putShort(id);
+		buf.putShort(version);
+		buf.putInt(logId);
+		byte[] providerBytes = provider.getBytes();
+		if (providerBytes.length >= PROVIDER_LENGTH) {
+			buf.put(providerBytes, 0, PROVIDER_LENGTH);
+		} else {
+			buf.put(providerBytes, 0, providerBytes.length);
+			buf.put(ZEROS, 0, PROVIDER_LENGTH - providerBytes.length);
+		}
+		buf.putInt(magicNumber);
+		buf.putInt(reserved);
+		buf.putInt(bodyLength);
+		return buf.array();
+	}
 
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(id).append(version).append(logId).append(magicNumber).append(reserved)
-                .append(bodyLength).toHashCode();
-    }
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().append(id).append(version).append(logId).append(magicNumber).append(reserved)
+				.append(bodyLength).toHashCode();
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (!(obj instanceof NSHead)) {
-            return false;
-        }
-        NSHead other = (NSHead) obj;
-        return new EqualsBuilder().append(id, other.id).append(version, other.version).append(logId, other.logId)
-                .append(reserved, other.reserved).append(bodyLength, other.bodyLength).isEquals();
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof NSHead)) {
+			return false;
+		}
+		NSHead other = (NSHead) obj;
+		return new EqualsBuilder().append(id, other.id).append(version, other.version).append(logId, other.logId)
+				.append(reserved, other.reserved).append(bodyLength, other.bodyLength).isEquals();
+	}
 
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this).append("id", Integer.toHexString(id))
-                .append("version", Integer.toHexString(version))
-                .append("logId", Long.toHexString(logId) + "(" + logId + ")").append("provider", provider)
-                .append("magicNumber", Integer.toHexString(magicNumber))
-                .append("reserved", Integer.toHexString(reserved))
-                .append("bodyLength", Integer.toHexString(bodyLength)).toString();
-    }
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this).append("id", Integer.toHexString(id))
+				.append("version", Integer.toHexString(version))
+				.append("logId", Long.toHexString(logId) + "(" + logId + ")").append("provider", provider)
+				.append("magicNumber", Integer.toHexString(magicNumber))
+				.append("reserved", Integer.toHexString(reserved))
+				.append("bodyLength", Integer.toHexString(bodyLength)).toString();
+	}
 
 
 }

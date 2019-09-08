@@ -16,6 +16,7 @@
 package com.baidu.brpc.client.loadbalance;
 
 public interface LoadBalanceFactory {
-    Integer getLoadBalanceType();
-    LoadBalanceStrategy createLoadBalance();
+	Integer getLoadBalanceType();
+
+	LoadBalanceStrategy createLoadBalance();
 }

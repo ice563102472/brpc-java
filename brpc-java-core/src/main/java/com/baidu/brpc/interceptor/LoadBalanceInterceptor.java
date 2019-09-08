@@ -25,62 +25,62 @@ import java.util.concurrent.TimeUnit;
 
 @Setter
 public class LoadBalanceInterceptor extends AbstractInterceptor {
-    protected RpcClient rpcClient;
+	protected RpcClient rpcClient;
 
-    @Override
-    public void aroundProcess(Request request, Response response, InterceptorChain chain) throws Exception {
-        RpcException exception = null;
-        int currentTryTimes = 0;
-        int maxTryTimes = rpcClient.getRpcClientOptions().getMaxTryTimes();
-        while (currentTryTimes < maxTryTimes) {
-            try {
-                // if it is a retry request, add the last selected instance to request,
-                // so that load balance strategy can exclude the selected instance.
-                // if it is the initial request, not init HashSet, so it is more fast.
-                // therefore, it need LoadBalanceStrategy to judge if selectInstances is null.
-                if (currentTryTimes > 0) {
-                    if (request.getChannel() != null) {
-                        if (request.getSelectedInstances() == null) {
-                            request.setSelectedInstances(new HashSet<BrpcChannel>(maxTryTimes - 1));
-                        }
-                        BrpcChannel lastInstance = ChannelInfo
-                                .getClientChannelInfo(request.getChannel()).getChannelGroup();
-                        request.getSelectedInstances().add(lastInstance);
-                    }
-                }
-                invokeRpc(request, response);
-                break;
-            } catch (RpcException ex) {
-                exception = ex;
-                if (exception.getCode() == RpcException.INTERCEPT_EXCEPTION) {
-                    break;
-                }
-            } finally {
-                currentTryTimes++;
-            }
-        }
-        if (response.getResult() == null && response.getRpcFuture() == null) {
-            if (exception == null) {
-                exception = new RpcException(RpcException.UNKNOWN_EXCEPTION, "unknown error");
-            }
-            response.setException(exception);
-        }
-    }
+	@Override
+	public void aroundProcess(Request request, Response response, InterceptorChain chain) throws Exception {
+		RpcException exception = null;
+		int currentTryTimes = 0;
+		int maxTryTimes = rpcClient.getRpcClientOptions().getMaxTryTimes();
+		while (currentTryTimes < maxTryTimes) {
+			try {
+				// if it is a retry request, add the last selected instance to request,
+				// so that load balance strategy can exclude the selected instance.
+				// if it is the initial request, not init HashSet, so it is more fast.
+				// therefore, it need LoadBalanceStrategy to judge if selectInstances is null.
+				if (currentTryTimes > 0) {
+					if (request.getChannel() != null) {
+						if (request.getSelectedInstances() == null) {
+							request.setSelectedInstances(new HashSet<BrpcChannel>(maxTryTimes - 1));
+						}
+						BrpcChannel lastInstance = ChannelInfo
+								.getClientChannelInfo(request.getChannel()).getChannelGroup();
+						request.getSelectedInstances().add(lastInstance);
+					}
+				}
+				invokeRpc(request, response);
+				break;
+			} catch (RpcException ex) {
+				exception = ex;
+				if (exception.getCode() == RpcException.INTERCEPT_EXCEPTION) {
+					break;
+				}
+			} finally {
+				currentTryTimes++;
+			}
+		}
+		if (response.getResult() == null && response.getRpcFuture() == null) {
+			if (exception == null) {
+				exception = new RpcException(RpcException.UNKNOWN_EXCEPTION, "unknown error");
+			}
+			response.setException(exception);
+		}
+	}
 
-    protected void invokeRpc(Request request, Response response) throws Exception {
-        rpcClient.encodeAndLoadBalance(request);
-        rpcCore(request, response);
-    }
+	protected void invokeRpc(Request request, Response response) throws Exception {
+		rpcClient.encodeAndLoadBalance(request);
+		rpcCore(request, response);
+	}
 
 
-    protected void rpcCore(Request request, Response response) throws Exception {
-        // send request with the channel.
-        AsyncAwareFuture future = rpcClient.sendRequest(request);
-        // receive
-        if (future.isAsync()) {
-            response.setRpcFuture((RpcFuture) future);
-        } else {
-            response.setResult(future.get(request.getReadTimeoutMillis(), TimeUnit.MILLISECONDS));
-        }
-    }
+	protected void rpcCore(Request request, Response response) throws Exception {
+		// send request with the channel.
+		AsyncAwareFuture future = rpcClient.sendRequest(request);
+		// receive
+		if (future.isAsync()) {
+			response.setRpcFuture((RpcFuture) future);
+		} else {
+			response.setResult(future.get(request.getReadTimeoutMillis(), TimeUnit.MILLISECONDS));
+		}
+	}
 }

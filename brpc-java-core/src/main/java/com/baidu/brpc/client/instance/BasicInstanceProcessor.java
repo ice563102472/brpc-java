@@ -16,6 +16,10 @@
 
 package com.baidu.brpc.client.instance;
 
+import com.baidu.brpc.client.RpcClient;
+import com.baidu.brpc.client.channel.BrpcChannel;
+import com.baidu.brpc.client.channel.BrpcChannelFactory;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,97 +29,93 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import com.baidu.brpc.client.channel.BrpcChannel;
-import com.baidu.brpc.client.channel.BrpcChannelFactory;
-import com.baidu.brpc.client.RpcClient;
-
 public class BasicInstanceProcessor implements InstanceProcessor {
-    private CopyOnWriteArraySet<ServiceInstance> instances;
-    private CopyOnWriteArrayList<BrpcChannel> instanceChannels;
-    private ConcurrentMap<ServiceInstance, BrpcChannel> instanceChannelMap;
-    private Lock lock;
-    private RpcClient rpcClient;
+	private CopyOnWriteArraySet<ServiceInstance> instances;
+	private CopyOnWriteArrayList<BrpcChannel> instanceChannels;
+	private ConcurrentMap<ServiceInstance, BrpcChannel> instanceChannelMap;
+	private Lock lock;
+	private RpcClient rpcClient;
 
-    public BasicInstanceProcessor(RpcClient rpcClient) {
-        this.instances = new CopyOnWriteArraySet<ServiceInstance>();
-        this.instanceChannels = new CopyOnWriteArrayList<BrpcChannel>();
-        this.instanceChannelMap = new ConcurrentHashMap<ServiceInstance, BrpcChannel>();
-        this.lock = new ReentrantLock();
-        this.rpcClient = rpcClient;
-    }
+	public BasicInstanceProcessor(RpcClient rpcClient) {
+		this.instances = new CopyOnWriteArraySet<ServiceInstance>();
+		this.instanceChannels = new CopyOnWriteArrayList<BrpcChannel>();
+		this.instanceChannelMap = new ConcurrentHashMap<ServiceInstance, BrpcChannel>();
+		this.lock = new ReentrantLock();
+		this.rpcClient = rpcClient;
+	}
 
-    @Override
-    public void addInstance(ServiceInstance instance) {
-        lock.lock();
-        try {
-            if (instances.add(instance)) {
-                BrpcChannel brpcChannel = BrpcChannelFactory.createChannel(instance, rpcClient);
-                instanceChannels.add(brpcChannel);
-                instanceChannelMap.putIfAbsent(instance, brpcChannel);
-            }
-        } finally {
-            lock.unlock();
-        }
-    }
+	@Override
+	public void addInstance(ServiceInstance instance) {
+		lock.lock();
+		try {
+			if (instances.add(instance)) {
+				BrpcChannel brpcChannel = BrpcChannelFactory.createChannel(instance, rpcClient);
+				instanceChannels.add(brpcChannel);
+				instanceChannelMap.putIfAbsent(instance, brpcChannel);
+			}
+		} finally {
+			lock.unlock();
+		}
+	}
 
-    @Override
-    public void addInstances(Collection<ServiceInstance> addList) {
-        for (ServiceInstance instance : addList) {
-            addInstance(instance);
-        }
-    }
+	@Override
+	public void addInstances(Collection<ServiceInstance> addList) {
+		for (ServiceInstance instance : addList) {
+			addInstance(instance);
+		}
+	}
 
-    @Override
-    public void deleteInstances(Collection<ServiceInstance> deleteList) {
-        for (ServiceInstance instance : deleteList) {
-            deleteInstance(instance);
-        }
-    }
+	@Override
+	public void deleteInstances(Collection<ServiceInstance> deleteList) {
+		for (ServiceInstance instance : deleteList) {
+			deleteInstance(instance);
+		}
+	}
 
-    private void deleteInstance(ServiceInstance instance) {
-        lock.lock();
-        try {
-            if (instances.remove(instance)) {
-                Iterator<BrpcChannel> iterator = instanceChannels.iterator();
-                while (iterator.hasNext()) {
-                    BrpcChannel brpcChannel = iterator.next();
-                    if (brpcChannel.getServiceInstance().equals(instance)) {
-                        brpcChannel.close();
-                        instanceChannels.remove(brpcChannel);
-                        instanceChannelMap.remove(instance);
-                        break;
-                    }
-                }
-            }
-        } finally {
-            lock.unlock();
-        }
-    }
+	private void deleteInstance(ServiceInstance instance) {
+		lock.lock();
+		try {
+			if (instances.remove(instance)) {
+				Iterator<BrpcChannel> iterator = instanceChannels.iterator();
+				while (iterator.hasNext()) {
+					BrpcChannel brpcChannel = iterator.next();
+					if (brpcChannel.getServiceInstance().equals(instance)) {
+						brpcChannel.close();
+						instanceChannels.remove(brpcChannel);
+						instanceChannelMap.remove(instance);
+						break;
+					}
+				}
+			}
+		} finally {
+			lock.unlock();
+		}
+	}
 
-    @Override
-    public CopyOnWriteArraySet<ServiceInstance> getInstances() {
-        return instances;
-    }
+	@Override
+	public CopyOnWriteArraySet<ServiceInstance> getInstances() {
+		return instances;
+	}
 
-    @Override
-    public CopyOnWriteArrayList<BrpcChannel> getHealthyInstanceChannels() {
-        return instanceChannels;
-    }
+	@Override
+	public CopyOnWriteArrayList<BrpcChannel> getHealthyInstanceChannels() {
+		return instanceChannels;
+	}
 
-    @Override
-    public CopyOnWriteArrayList<BrpcChannel> getUnHealthyInstanceChannels() {
-        return instanceChannels;
-    }
+	@Override
+	public CopyOnWriteArrayList<BrpcChannel> getUnHealthyInstanceChannels() {
+		return instanceChannels;
+	}
 
-    @Override
-    public ConcurrentMap<ServiceInstance, BrpcChannel> getInstanceChannelMap() {
-        return instanceChannelMap;
-    }
+	@Override
+	public ConcurrentMap<ServiceInstance, BrpcChannel> getInstanceChannelMap() {
+		return instanceChannelMap;
+	}
 
-    @Override
-    public void stop() {
-        for (BrpcChannel brpcChannel : instanceChannels) {
-            brpcChannel.close();
-        }
-    }
+	@Override
+	public void stop() {
+		for (BrpcChannel brpcChannel : instanceChannels) {
+			brpcChannel.close();
+		}
+	}
 }

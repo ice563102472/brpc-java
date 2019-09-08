@@ -17,11 +17,6 @@
 package com.baidu.brpc.interceptor;
 
 import com.baidu.brpc.RpcOptionsUtils;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import com.baidu.brpc.client.BrpcProxy;
 import com.baidu.brpc.client.RpcClient;
 import com.baidu.brpc.protocol.Request;
@@ -30,118 +25,122 @@ import com.baidu.brpc.protocol.standard.Echo;
 import com.baidu.brpc.protocol.standard.EchoService;
 import com.baidu.brpc.protocol.standard.EchoServiceImpl;
 import com.baidu.brpc.server.RpcServer;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 public class InterceptorTest {
 
-    private static RpcServer rpcServer;
+	private static RpcServer rpcServer;
 
-    private static boolean[] flags = new boolean[4];
+	private static boolean[] flags = new boolean[4];
 
-    @BeforeClass
-    public static void beforeClass() {
-        rpcServer = new RpcServer(8000, RpcOptionsUtils.getRpcServerOptions());
-        rpcServer.registerService(new EchoServiceImpl());
-        rpcServer.getInterceptors().add(new Interceptor() {
-            @Override
-            public boolean handleRequest(Request request) {
-                System.out.println("server handleRequest1");
-                return true;
-            }
+	@BeforeClass
+	public static void beforeClass() {
+		rpcServer = new RpcServer(8000, RpcOptionsUtils.getRpcServerOptions());
+		rpcServer.registerService(new EchoServiceImpl());
+		rpcServer.getInterceptors().add(new Interceptor() {
+			@Override
+			public boolean handleRequest(Request request) {
+				System.out.println("server handleRequest1");
+				return true;
+			}
 
-            @Override
-            public void aroundProcess(Request request, Response response, InterceptorChain chain) throws Exception {
-                flags[0] = true;
-                chain.intercept(request, response);
-            }
+			@Override
+			public void aroundProcess(Request request, Response response, InterceptorChain chain) throws Exception {
+				flags[0] = true;
+				chain.intercept(request, response);
+			}
 
-            @Override
-            public void handleResponse(Response response) {
-                System.out.println("server handleResponse1");
-            }
-        });
+			@Override
+			public void handleResponse(Response response) {
+				System.out.println("server handleResponse1");
+			}
+		});
 
-        rpcServer.getInterceptors().add(new Interceptor() {
-            @Override
-            public boolean handleRequest(Request request) {
-                System.out.println("server handleRequest2");
-                return true;
-            }
+		rpcServer.getInterceptors().add(new Interceptor() {
+			@Override
+			public boolean handleRequest(Request request) {
+				System.out.println("server handleRequest2");
+				return true;
+			}
 
-            @Override
-            public void aroundProcess(Request request, Response response, InterceptorChain chain) throws Exception {
-                flags[1] = true;
-                chain.intercept(request, response);
-            }
+			@Override
+			public void aroundProcess(Request request, Response response, InterceptorChain chain) throws Exception {
+				flags[1] = true;
+				chain.intercept(request, response);
+			}
 
-            @Override
-            public void handleResponse(Response response) {
-                System.out.println("server handleResponse2");
-            }
-        });
-        rpcServer.start();
-    }
+			@Override
+			public void handleResponse(Response response) {
+				System.out.println("server handleResponse2");
+			}
+		});
+		rpcServer.start();
+	}
 
-    @AfterClass
-    public static void afterClass() {
-        if (rpcServer != null) {
-            rpcServer.shutdown();
-        }
-    }
+	@AfterClass
+	public static void afterClass() {
+		if (rpcServer != null) {
+			rpcServer.shutdown();
+		}
+	}
 
-    @Test
-    public void test() {
-        for (int i = 0; i < 4; ++i) {
-            Assert.assertFalse(flags[i]);
-        }
-        RpcClient rpcClient = new RpcClient("list://127.0.0.1:8000",
-                RpcOptionsUtils.getRpcClientOptions());
-        rpcClient.getInterceptors().add(new Interceptor() {
-            @Override
-            public boolean handleRequest(Request request) {
-                System.out.println("client handleRequest1");
-                return true;
-            }
+	@Test
+	public void test() {
+		for (int i = 0; i < 4; ++i) {
+			Assert.assertFalse(flags[i]);
+		}
+		RpcClient rpcClient = new RpcClient("list://127.0.0.1:8000",
+				RpcOptionsUtils.getRpcClientOptions());
+		rpcClient.getInterceptors().add(new Interceptor() {
+			@Override
+			public boolean handleRequest(Request request) {
+				System.out.println("client handleRequest1");
+				return true;
+			}
 
-            @Override
-            public void aroundProcess(Request request, Response response, InterceptorChain chain) throws Exception {
-                flags[2] = true;
-                chain.intercept(request, response);
-            }
+			@Override
+			public void aroundProcess(Request request, Response response, InterceptorChain chain) throws Exception {
+				flags[2] = true;
+				chain.intercept(request, response);
+			}
 
-            @Override
-            public void handleResponse(Response response) {
-                System.out.println("client handleResponse1");
-            }
-        });
+			@Override
+			public void handleResponse(Response response) {
+				System.out.println("client handleResponse1");
+			}
+		});
 
-        rpcClient.getInterceptors().add(new Interceptor() {
-            @Override
-            public boolean handleRequest(Request request) {
-                System.out.println("client handleRequest2");
-                return true;
-            }
+		rpcClient.getInterceptors().add(new Interceptor() {
+			@Override
+			public boolean handleRequest(Request request) {
+				System.out.println("client handleRequest2");
+				return true;
+			}
 
-            @Override
-            public void aroundProcess(Request request, Response response, InterceptorChain chain) throws Exception {
-                flags[3] = true;
-                chain.intercept(request, response);
-            }
+			@Override
+			public void aroundProcess(Request request, Response response, InterceptorChain chain) throws Exception {
+				flags[3] = true;
+				chain.intercept(request, response);
+			}
 
-            @Override
-            public void handleResponse(Response response) {
-                System.out.println("client handleResponse2");
-            }
-        });
+			@Override
+			public void handleResponse(Response response) {
+				System.out.println("client handleResponse2");
+			}
+		});
 
-        EchoService echoService = BrpcProxy.getProxy(rpcClient, EchoService.class);
-        final String message = "hello";
-        Echo.EchoRequest request = Echo.EchoRequest.newBuilder().setMessage(message).build();
-        Echo.EchoResponse response = echoService.echo(request);
-        Assert.assertEquals(response.getMessage(), message);
-        for (int i = 0; i < 4; ++i) {
-            Assert.assertTrue(flags[i]);
-        }
-        rpcClient.stop();
-    }
+		EchoService echoService = BrpcProxy.getProxy(rpcClient, EchoService.class);
+		final String message = "hello";
+		Echo.EchoRequest request = Echo.EchoRequest.newBuilder().setMessage(message).build();
+		Echo.EchoResponse response = echoService.echo(request);
+		Assert.assertEquals(response.getMessage(), message);
+		for (int i = 0; i < 4; ++i) {
+			Assert.assertTrue(flags[i]);
+		}
+		rpcClient.stop();
+	}
 
 }

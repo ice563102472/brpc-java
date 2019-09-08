@@ -17,5 +17,5 @@
 package com.baidu.brpc.example.push.normal;
 
 public interface EchoService2 {
-    EchoResponse echo(EchoRequest request);
+	EchoResponse echo(EchoRequest request);
 }

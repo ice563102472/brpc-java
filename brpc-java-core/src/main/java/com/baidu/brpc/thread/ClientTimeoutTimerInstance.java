@@ -22,27 +22,27 @@ import io.netty.util.Timer;
 
 public class ClientTimeoutTimerInstance {
 
-    private static volatile Timer timeoutTimer;
+	private static volatile Timer timeoutTimer;
 
-    private ClientTimeoutTimerInstance() {
+	private ClientTimeoutTimerInstance() {
 
-    }
+	}
 
-    public static Timer getOrCreateInstance() {
+	public static Timer getOrCreateInstance() {
 
-        if (timeoutTimer == null) {
-            synchronized (ClientTimeoutTimerInstance.class) {
-                if (timeoutTimer == null) {
-                    timeoutTimer = new HashedWheelTimer(new CustomThreadFactory("timeout-timer-thread"));
-                }
-            }
-        }
+		if (timeoutTimer == null) {
+			synchronized (ClientTimeoutTimerInstance.class) {
+				if (timeoutTimer == null) {
+					timeoutTimer = new HashedWheelTimer(new CustomThreadFactory("timeout-timer-thread"));
+				}
+			}
+		}
 
-        return timeoutTimer;
-    }
+		return timeoutTimer;
+	}
 
-    public static Timer getInstance() {
+	public static Timer getInstance() {
 
-        return timeoutTimer;
-    }
+		return timeoutTimer;
+	}
 }

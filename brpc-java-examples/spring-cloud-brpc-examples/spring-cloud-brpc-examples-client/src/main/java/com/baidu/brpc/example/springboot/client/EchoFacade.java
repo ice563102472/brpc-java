@@ -23,7 +23,9 @@ import com.baidu.brpc.example.springcloud.api.EchoResponse;
 import java.util.concurrent.Future;
 
 public interface EchoFacade {
-    EchoResponse echo(EchoRequest request);
-    EchoResponse echo2(EchoRequest request);
-    Future<EchoResponse> echo3(EchoRequest request);
+	EchoResponse echo(EchoRequest request);
+
+	EchoResponse echo2(EchoRequest request);
+
+	Future<EchoResponse> echo3(EchoRequest request);
 }

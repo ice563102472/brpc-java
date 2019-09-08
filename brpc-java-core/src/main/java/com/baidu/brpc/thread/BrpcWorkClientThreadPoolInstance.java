@@ -24,42 +24,42 @@ import com.baidu.brpc.utils.ThreadPool;
  */
 public class BrpcWorkClientThreadPoolInstance {
 
-    private static volatile ThreadPool workThreadPool;
+	private static volatile ThreadPool workThreadPool;
 
-    private static String name = "brpc-work-thread";
+	private static String name = "brpc-work-thread";
 
-    private BrpcWorkClientThreadPoolInstance() {
+	private BrpcWorkClientThreadPoolInstance() {
 
-    }
+	}
 
-    /**
-     * threadNum only works when thread pool instance create in the first time
-     */
-    public static ThreadPool getOrCreateInstance(int threadNum) {
+	/**
+	 * threadNum only works when thread pool instance create in the first time
+	 */
+	public static ThreadPool getOrCreateInstance(int threadNum) {
 
-        if (workThreadPool == null) {
-            synchronized(BrpcWorkClientThreadPoolInstance.class) {
-                if (workThreadPool == null) {
-                    workThreadPool = new ThreadPool(threadNum,
-                            new CustomThreadFactory(name));
-                }
-            }
-        }
+		if (workThreadPool == null) {
+			synchronized (BrpcWorkClientThreadPoolInstance.class) {
+				if (workThreadPool == null) {
+					workThreadPool = new ThreadPool(threadNum,
+							new CustomThreadFactory(name));
+				}
+			}
+		}
 
-        return workThreadPool;
-    }
+		return workThreadPool;
+	}
 
-    public static ThreadPool getInstance() {
-        return workThreadPool;
+	public static ThreadPool getInstance() {
+		return workThreadPool;
 
-    }
+	}
 
-    public static String getName() {
-        return name;
-    }
+	public static String getName() {
+		return name;
+	}
 
-    public static void setName(String name) {
-        BrpcWorkClientThreadPoolInstance.name = name;
-    }
+	public static void setName(String name) {
+		BrpcWorkClientThreadPoolInstance.name = name;
+	}
 
 }

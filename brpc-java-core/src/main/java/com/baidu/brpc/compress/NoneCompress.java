@@ -26,45 +26,45 @@ import java.io.IOException;
 
 @Slf4j
 public class NoneCompress implements Compress {
-    @Override
-    public ByteBuf compressInput(Object proto, RpcMethodInfo rpcMethodInfo) throws IOException {
-        byte[] bytes = rpcMethodInfo.inputEncode(proto);
-        return Unpooled.wrappedBuffer(bytes);
-    }
+	@Override
+	public ByteBuf compressInput(Object proto, RpcMethodInfo rpcMethodInfo) throws IOException {
+		byte[] bytes = rpcMethodInfo.inputEncode(proto);
+		return Unpooled.wrappedBuffer(bytes);
+	}
 
-    @Override
-    public Object uncompressOutput(ByteBuf byteBuf, RpcMethodInfo rpcMethodInfo) throws IOException {
-        return rpcMethodInfo.outputDecode(byteBuf);
-    }
+	@Override
+	public Object uncompressOutput(ByteBuf byteBuf, RpcMethodInfo rpcMethodInfo) throws IOException {
+		return rpcMethodInfo.outputDecode(byteBuf);
+	}
 
-    @Override
-    public Object uncompressOutput(byte[] bytes, RpcMethodInfo rpcMethodInfo) throws IOException {
-        return rpcMethodInfo.outputDecode(bytes);
-    }
+	@Override
+	public Object uncompressOutput(byte[] bytes, RpcMethodInfo rpcMethodInfo) throws IOException {
+		return rpcMethodInfo.outputDecode(bytes);
+	}
 
-    @Override
-    public Object uncompressOutput(DynamicCompositeByteBuf byteBuf, RpcMethodInfo rpcMethodInfo) throws IOException {
-        return rpcMethodInfo.outputDecode(byteBuf);
-    }
+	@Override
+	public Object uncompressOutput(DynamicCompositeByteBuf byteBuf, RpcMethodInfo rpcMethodInfo) throws IOException {
+		return rpcMethodInfo.outputDecode(byteBuf);
+	}
 
-    @Override
-    public ByteBuf compressOutput(Object proto, RpcMethodInfo rpcMethodInfo) throws IOException {
-        byte[] bytes = rpcMethodInfo.outputEncode(proto);
-        return Unpooled.wrappedBuffer(bytes);
-    }
+	@Override
+	public ByteBuf compressOutput(Object proto, RpcMethodInfo rpcMethodInfo) throws IOException {
+		byte[] bytes = rpcMethodInfo.outputEncode(proto);
+		return Unpooled.wrappedBuffer(bytes);
+	}
 
-    @Override
-    public Object uncompressInput(ByteBuf byteBuf, RpcMethodInfo rpcMethodInfo) throws IOException {
-        return rpcMethodInfo.inputDecode(byteBuf);
-    }
+	@Override
+	public Object uncompressInput(ByteBuf byteBuf, RpcMethodInfo rpcMethodInfo) throws IOException {
+		return rpcMethodInfo.inputDecode(byteBuf);
+	}
 
-    @Override
-    public Object uncompressInput(byte[] bytes, RpcMethodInfo rpcMethodInfo) throws IOException {
-        return rpcMethodInfo.inputDecode(bytes);
-    }
+	@Override
+	public Object uncompressInput(byte[] bytes, RpcMethodInfo rpcMethodInfo) throws IOException {
+		return rpcMethodInfo.inputDecode(bytes);
+	}
 
-    @Override
-    public Object uncompressInput(DynamicCompositeByteBuf byteBuf, RpcMethodInfo rpcMethodInfo) throws IOException {
-        return rpcMethodInfo.inputDecode(byteBuf);
-    }
+	@Override
+	public Object uncompressInput(DynamicCompositeByteBuf byteBuf, RpcMethodInfo rpcMethodInfo) throws IOException {
+		return rpcMethodInfo.inputDecode(byteBuf);
+	}
 }

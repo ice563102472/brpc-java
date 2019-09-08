@@ -17,7 +17,6 @@
 package com.baidu.brpc.thread;
 
 import com.baidu.brpc.utils.CustomThreadFactory;
-
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -28,51 +27,51 @@ import io.netty.channel.nio.NioEventLoopGroup;
 
 public class BrpcBossGroupInstance {
 
-    private static volatile EpollEventLoopGroup epollThreadPool;
+	private static volatile EpollEventLoopGroup epollThreadPool;
 
-    private static volatile NioEventLoopGroup nioThreadPool;
+	private static volatile NioEventLoopGroup nioThreadPool;
 
-    private BrpcBossGroupInstance() {
+	private BrpcBossGroupInstance() {
 
-    }
+	}
 
-    /**
-     * threadNum only works when thread pool instance create in the first time
-     */
-    public static EventLoopGroup getOrCreateEpollInstance(int threadNum) {
-        if (epollThreadPool == null) {
-            synchronized(BrpcBossGroupInstance.class) {
-                if (epollThreadPool == null) {
-                    epollThreadPool = new EpollEventLoopGroup(threadNum,
-                            new CustomThreadFactory("server-acceptor-thread"));
+	/**
+	 * threadNum only works when thread pool instance create in the first time
+	 */
+	public static EventLoopGroup getOrCreateEpollInstance(int threadNum) {
+		if (epollThreadPool == null) {
+			synchronized (BrpcBossGroupInstance.class) {
+				if (epollThreadPool == null) {
+					epollThreadPool = new EpollEventLoopGroup(threadNum,
+							new CustomThreadFactory("server-acceptor-thread"));
 
-                }
-            }
-        }
-        return epollThreadPool;
-    }
+				}
+			}
+		}
+		return epollThreadPool;
+	}
 
-    /**
-     * threadNum only works when thread pool instance create in the first time
-     */
-    public static EventLoopGroup getOrCreateNioInstance(int threadNum) {
-        if (nioThreadPool == null) {
-            synchronized(BrpcBossGroupInstance.class) {
-                if (nioThreadPool == null) {
-                    nioThreadPool = new NioEventLoopGroup(threadNum,
-                            new CustomThreadFactory("server-acceptor-thread"));
+	/**
+	 * threadNum only works when thread pool instance create in the first time
+	 */
+	public static EventLoopGroup getOrCreateNioInstance(int threadNum) {
+		if (nioThreadPool == null) {
+			synchronized (BrpcBossGroupInstance.class) {
+				if (nioThreadPool == null) {
+					nioThreadPool = new NioEventLoopGroup(threadNum,
+							new CustomThreadFactory("server-acceptor-thread"));
 
-                }
-            }
-        }
-        return nioThreadPool;
-    }
+				}
+			}
+		}
+		return nioThreadPool;
+	}
 
-    public static NioEventLoopGroup getNioInstance() {
-        return nioThreadPool;
-    }
+	public static NioEventLoopGroup getNioInstance() {
+		return nioThreadPool;
+	}
 
-    public static EpollEventLoopGroup getEpollInstance() {
-        return epollThreadPool;
-    }
+	public static EpollEventLoopGroup getEpollInstance() {
+		return epollThreadPool;
+	}
 }

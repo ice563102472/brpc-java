@@ -22,42 +22,42 @@ import java.util.Map;
 
 @Slf4j
 public class LoadBalanceManager {
-    private static volatile LoadBalanceManager instance;
-    private Map<Integer, LoadBalanceFactory> loadBalanceFactoryMap;
+	private static volatile LoadBalanceManager instance;
+	private Map<Integer, LoadBalanceFactory> loadBalanceFactoryMap;
 
-    public static LoadBalanceManager getInstance() {
-        if (instance == null) {
-            synchronized(LoadBalanceManager.class) {
-                if (instance == null) {
-                    instance = new LoadBalanceManager();
-                }
-            }
-        }
-        return instance;
-    }
+	public static LoadBalanceManager getInstance() {
+		if (instance == null) {
+			synchronized (LoadBalanceManager.class) {
+				if (instance == null) {
+					instance = new LoadBalanceManager();
+				}
+			}
+		}
+		return instance;
+	}
 
-    private LoadBalanceManager() {
-        loadBalanceFactoryMap = new HashMap<Integer, LoadBalanceFactory>();
-    }
+	private LoadBalanceManager() {
+		loadBalanceFactoryMap = new HashMap<Integer, LoadBalanceFactory>();
+	}
 
-    public void registerLoadBalanceFactory(LoadBalanceFactory factory) {
-        Integer loadBalanceType = factory.getLoadBalanceType();
-        if (loadBalanceFactoryMap.get(loadBalanceType) != null) {
-            throw new RuntimeException("load balance factory already exist:" + loadBalanceType);
-        }
-        loadBalanceFactoryMap.put(loadBalanceType, factory);
-        log.info("register load balance factory:{} success", factory.getClass().getSimpleName());
-    }
+	public void registerLoadBalanceFactory(LoadBalanceFactory factory) {
+		Integer loadBalanceType = factory.getLoadBalanceType();
+		if (loadBalanceFactoryMap.get(loadBalanceType) != null) {
+			throw new RuntimeException("load balance factory already exist:" + loadBalanceType);
+		}
+		loadBalanceFactoryMap.put(loadBalanceType, factory);
+		log.info("register load balance factory:{} success", factory.getClass().getSimpleName());
+	}
 
-    public LoadBalanceFactory getLoadBalanceFactory(Integer loadBalanceType) {
-        return loadBalanceFactoryMap.get(loadBalanceType);
-    }
+	public LoadBalanceFactory getLoadBalanceFactory(Integer loadBalanceType) {
+		return loadBalanceFactoryMap.get(loadBalanceType);
+	}
 
-    public LoadBalanceStrategy createLoadBalance(Integer loadBalanceType) {
-        LoadBalanceFactory factory = loadBalanceFactoryMap.get(loadBalanceType);
-        if (factory == null) {
-            throw new IllegalArgumentException("load balance not exist:" + loadBalanceType);
-        }
-        return factory.createLoadBalance();
-    }
+	public LoadBalanceStrategy createLoadBalance(Integer loadBalanceType) {
+		LoadBalanceFactory factory = loadBalanceFactoryMap.get(loadBalanceType);
+		if (factory == null) {
+			throw new IllegalArgumentException("load balance not exist:" + loadBalanceType);
+		}
+		return factory.createLoadBalance();
+	}
 }

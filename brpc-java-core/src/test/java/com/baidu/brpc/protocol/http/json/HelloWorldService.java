@@ -20,7 +20,7 @@ import com.baidu.brpc.protocol.BrpcMeta;
 
 public interface HelloWorldService {
 
-    @BrpcMeta(serviceName = "HelloWorldService", methodName = "hello")
-    String hello(String request);
+	@BrpcMeta(serviceName = "HelloWorldService", methodName = "hello")
+	String hello(String request);
 
 }

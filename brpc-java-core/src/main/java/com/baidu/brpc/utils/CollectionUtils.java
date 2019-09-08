@@ -24,23 +24,23 @@ import java.util.Collection;
  */
 public final class CollectionUtils {
 
-    /**
-     * Null-safe check if the specified collection is empty.
-     *
-     * @param collection the collection to check, may be null
-     * @return true if empty or null
-     */
-    public static boolean isEmpty(Collection<?> collection) {
-        return null == collection || collection.isEmpty();
-    }
+	/**
+	 * Null-safe check if the specified collection is empty.
+	 *
+	 * @param collection the collection to check, may be null
+	 * @return true if empty or null
+	 */
+	public static boolean isEmpty(Collection<?> collection) {
+		return null == collection || collection.isEmpty();
+	}
 
-    /**
-     * Null-safe check if the specified collection is not empty.
-     *
-     * @param collection the collection to check, may be null
-     * @return true if non-null and non-empty
-     */
-    public static boolean isNotEmpty(Collection<?> collection) {
-        return !isEmpty(collection);
-    }
+	/**
+	 * Null-safe check if the specified collection is not empty.
+	 *
+	 * @param collection the collection to check, may be null
+	 * @return true if non-null and non-empty
+	 */
+	public static boolean isNotEmpty(Collection<?> collection) {
+		return !isEmpty(collection);
+	}
 }

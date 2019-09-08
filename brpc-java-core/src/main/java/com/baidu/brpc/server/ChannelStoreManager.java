@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Map;
 
 public interface ChannelStoreManager {
-    void putChannel(String clientName, Channel channel);
+	void putChannel(String clientName, Channel channel);
 
-    Channel getChannel(String clientName);
+	Channel getChannel(String clientName);
 
-    void removeChannel(Channel channel);
+	void removeChannel(Channel channel);
 
-    Map<String, List<Channel>> getChannelMap();
+	Map<String, List<Channel>> getChannelMap();
 }

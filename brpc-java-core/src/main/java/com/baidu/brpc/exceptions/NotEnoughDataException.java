@@ -17,49 +17,49 @@
 package com.baidu.brpc.exceptions;
 
 public class NotEnoughDataException extends Exception {
-    private int code;
+	private int code;
 
-    public NotEnoughDataException() {
-        super();
-    }
+	public NotEnoughDataException() {
+		super();
+	}
 
-    public NotEnoughDataException(String message, Throwable cause) {
-        super(message, cause);
-    }
+	public NotEnoughDataException(String message, Throwable cause) {
+		super(message, cause);
+	}
 
-    public NotEnoughDataException(String message) {
-        super(message);
-    }
+	public NotEnoughDataException(String message) {
+		super(message);
+	}
 
-    public NotEnoughDataException(Throwable cause) {
-        super(cause);
-    }
+	public NotEnoughDataException(Throwable cause) {
+		super(cause);
+	}
 
-    public NotEnoughDataException(int code) {
-        super();
-        this.code = code;
-    }
+	public NotEnoughDataException(int code) {
+		super();
+		this.code = code;
+	}
 
-    public NotEnoughDataException(int code, String message, Throwable cause) {
-        super(message, cause);
-        this.code = code;
-    }
+	public NotEnoughDataException(int code, String message, Throwable cause) {
+		super(message, cause);
+		this.code = code;
+	}
 
-    public NotEnoughDataException(int code, String message) {
-        super(message);
-        this.code = code;
-    }
+	public NotEnoughDataException(int code, String message) {
+		super(message);
+		this.code = code;
+	}
 
-    public NotEnoughDataException(int code, Throwable cause) {
-        super(cause);
-        this.code = code;
-    }
+	public NotEnoughDataException(int code, Throwable cause) {
+		super(cause);
+		this.code = code;
+	}
 
-    public int getCode() {
-        return code;
-    }
+	public int getCode() {
+		return code;
+	}
 
-    public void setCode(int code) {
-        this.code = code;
-    }
+	public void setCode(int code) {
+		this.code = code;
+	}
 }

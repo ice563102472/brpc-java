@@ -15,10 +15,6 @@
  */
 package com.baidu.brpc.protocol;
 
-import java.lang.reflect.Method;
-import java.util.Map;
-import java.util.Set;
-
 import com.baidu.brpc.RpcMethodInfo;
 import com.baidu.brpc.client.RpcCallback;
 import com.baidu.brpc.client.RpcFuture;
@@ -27,152 +23,157 @@ import com.baidu.brpc.exceptions.RpcException;
 import com.baidu.brpc.naming.SubscribeInfo;
 import com.baidu.brpc.protocol.nshead.NSHead;
 import com.baidu.brpc.protocol.push.SPHead;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.FullHttpRequest;
 
+import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.Set;
+
 public interface Request {
 
-    /**
-     * The msg param is the real request content to sent by netty.
-     * For http protocols, the msg is an instance of {@link FullHttpRequest}.
-     * For tcp protocols, the msg may be an instance of byte[].
-     *
-     * @see HttpRequest
-     * @see RpcRequest
-     */
-    Object getMsg();
+	/**
+	 * The msg param is the real request content to sent by netty.
+	 * For http protocols, the msg is an instance of {@link FullHttpRequest}.
+	 * For tcp protocols, the msg may be an instance of byte[].
+	 *
+	 * @see HttpRequest
+	 * @see RpcRequest
+	 */
+	Object getMsg();
 
-    void setMsg(Object o);
+	void setMsg(Object o);
 
-    /**
-     * used to find RpcFuture, application can not set it.
-     * @return rpc future id
-     */
-    long getCorrelationId();
+	/**
+	 * used to find RpcFuture, application can not set it.
+	 *
+	 * @return rpc future id
+	 */
+	long getCorrelationId();
 
-    void setCorrelationId(long correlationId);
+	void setCorrelationId(long correlationId);
 
-    /**
-     * used to identify request for application, application can set it.
-     * @return application request id
-     */
-    long getLogId();
+	/**
+	 * used to identify request for application, application can set it.
+	 *
+	 * @return application request id
+	 */
+	long getLogId();
 
-    void setLogId(long logId);
+	void setLogId(long logId);
 
-    Object getTarget();
+	Object getTarget();
 
-    void setTarget(Object obj);
+	void setTarget(Object obj);
 
-    Method getTargetMethod();
+	Method getTargetMethod();
 
-    void setTargetMethod(Method method);
+	void setTargetMethod(Method method);
 
-    RpcMethodInfo getRpcMethodInfo();
+	RpcMethodInfo getRpcMethodInfo();
 
-    void setRpcMethodInfo(RpcMethodInfo rpcMethodInfo);
+	void setRpcMethodInfo(RpcMethodInfo rpcMethodInfo);
 
-    String getServiceName();
+	String getServiceName();
 
-    void setServiceName(String serviceName);
+	void setServiceName(String serviceName);
 
-    String getMethodName();
+	String getMethodName();
 
-    void setMethodName(String methodName);
+	void setMethodName(String methodName);
 
-    Object[] getArgs();
+	Object[] getArgs();
 
-    void setArgs(Object[] newArgs);
+	void setArgs(Object[] newArgs);
 
-    Map<String, Object> getKvAttachment();
+	Map<String, Object> getKvAttachment();
 
-    void setKvAttachment(Map<String, Object> requestKvAttachment);
+	void setKvAttachment(Map<String, Object> requestKvAttachment);
 
-    ByteBuf getBinaryAttachment();
+	ByteBuf getBinaryAttachment();
 
-    void setBinaryAttachment(ByteBuf requestBinaryAttachment);
+	void setBinaryAttachment(ByteBuf requestBinaryAttachment);
 
-    int getCompressType();
+	int getCompressType();
 
-    void setCompressType(int number);
+	void setCompressType(int number);
 
-    RpcException getException();
+	RpcException getException();
 
-    void setException(RpcException e);
+	void setException(RpcException e);
 
-    Channel getChannel();
+	Channel getChannel();
 
-    void setChannel(Channel channel);
+	void setChannel(Channel channel);
 
-    Set<BrpcChannel> getSelectedInstances();
+	Set<BrpcChannel> getSelectedInstances();
 
-    void setSelectedInstances(Set<BrpcChannel> selectedInstances);
+	void setSelectedInstances(Set<BrpcChannel> selectedInstances);
 
-    NSHead getNsHead();
+	NSHead getNsHead();
 
-    void setNsHead(NSHead nsHead);
+	void setNsHead(NSHead nsHead);
 
-    SPHead getSpHead();
+	SPHead getSpHead();
 
-    void setSpHead(SPHead spHead);
+	void setSpHead(SPHead spHead);
 
-    Request retain();
+	Request retain();
 
-    void release();
+	void release();
 
-    void reset();
+	void reset();
 
-    String getAuth();
+	String getAuth();
 
-    void setAuth(String auth);
+	void setAuth(String auth);
 
-    Long getTraceId();
+	Long getTraceId();
 
-    void setTraceId(Long traceId);
+	void setTraceId(Long traceId);
 
-    Long getSpanId();
+	Long getSpanId();
 
-    void setSpanId(Long spanId);
+	void setSpanId(Long spanId);
 
-    Long getParentSpanId();
+	Long getParentSpanId();
 
-    void setParentSpanId(Long parentSpanId);
+	void setParentSpanId(Long parentSpanId);
 
-    RpcCallback getCallback();
+	RpcCallback getCallback();
 
-    void setCallback(RpcCallback callback);
+	void setCallback(RpcCallback callback);
 
-    String getServiceTag();
+	String getServiceTag();
 
-    void setServiceTag(String serviceTag);
+	void setServiceTag(String serviceTag);
 
-    SubscribeInfo getSubscribeInfo();
+	SubscribeInfo getSubscribeInfo();
 
-    void setSubscribeInfo(SubscribeInfo subscribeInfo);
+	void setSubscribeInfo(SubscribeInfo subscribeInfo);
 
-    Integer getReadTimeoutMillis();
+	Integer getReadTimeoutMillis();
 
-    void setReadTimeoutMillis(Integer readTimeoutMillis);
+	void setReadTimeoutMillis(Integer readTimeoutMillis);
 
-    Integer getWriteTimeoutMillis();
+	Integer getWriteTimeoutMillis();
 
-    void setWriteTimeoutMillis(Integer writeTimeoutMillis);
+	void setWriteTimeoutMillis(Integer writeTimeoutMillis);
 
-    void setClientName(String clientName);
+	void setClientName(String clientName);
 
-    String getClientName();
+	String getClientName();
 
-    boolean isOneWay();
+	boolean isOneWay();
 
-    void setOneWay(boolean oneWay);
+	void setOneWay(boolean oneWay);
 
-    RpcFuture getRpcFuture();
+	RpcFuture getRpcFuture();
 
-    void setRpcFuture(RpcFuture rpcFuture);
+	void setRpcFuture(RpcFuture rpcFuture);
 
-    ByteBuf getSendBuf();
+	ByteBuf getSendBuf();
 
-    void setSendBuf(ByteBuf sendBuf);
+	void setSendBuf(ByteBuf sendBuf);
 }

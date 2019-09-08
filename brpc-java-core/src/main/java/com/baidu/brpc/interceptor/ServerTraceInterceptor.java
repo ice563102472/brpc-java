@@ -25,18 +25,18 @@ import com.baidu.brpc.protocol.Response;
  * This interceptor is just a placeholder for integration with tracing tools using AOP.
  */
 public class ServerTraceInterceptor extends AbstractInterceptor {
-    @Override
-    public boolean handleRequest(Request request) {
-        return super.handleRequest(request);
-    }
+	@Override
+	public boolean handleRequest(Request request) {
+		return super.handleRequest(request);
+	}
 
-    @Override
-    public void handleResponse(Response response) {
-        super.handleResponse(response);
-    }
+	@Override
+	public void handleResponse(Response response) {
+		super.handleResponse(response);
+	}
 
-    @Override
-    public void aroundProcess(Request request, Response response, InterceptorChain chain) throws Exception {
-        super.aroundProcess(request, response, chain);
-    }
+	@Override
+	public void aroundProcess(Request request, Response response, InterceptorChain chain) throws Exception {
+		super.aroundProcess(request, response, chain);
+	}
 }

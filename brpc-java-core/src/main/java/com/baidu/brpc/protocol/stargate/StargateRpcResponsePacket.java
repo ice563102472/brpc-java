@@ -31,18 +31,18 @@ import java.util.Map;
 @ToString
 @NoArgsConstructor
 public final class StargateRpcResponsePacket {
-    private String id;
+	private String id;
 
-    private Object exception;
+	private Object exception;
 
-    private Object result;
+	private Object result;
 
-    private Map<String, Object> attachments;
+	private Map<String, Object> attachments;
 
-    public StargateRpcResponsePacket(String id, Object result, Throwable exception) {
-        this.id = id;
-        this.result = result;
-        this.exception = exception;
-    }
+	public StargateRpcResponsePacket(String id, Object result, Throwable exception) {
+		this.id = id;
+		this.result = result;
+		this.exception = exception;
+	}
 
 }

@@ -18,9 +18,9 @@ package com.baidu.brpc.protocol.http.json;
 
 public class HelloWorldServiceImpl implements HelloWorldService {
 
-    @Override
-    public String hello(String request) {
+	@Override
+	public String hello(String request) {
 
-        return "hello " + request;
-    }
+		return "hello " + request;
+	}
 }

@@ -20,7 +20,7 @@ import org.junit.Test;
 
 /**
  * Test class for {@link RpcServiceExporter} and {@link RpcProxyFactoryBean} by XML configuration.
- * 
+ *
  * @author xiemalin
  * @since 2.17
  */
@@ -28,20 +28,20 @@ import org.junit.Test;
 public class RpcXmlConfigurationTest extends RpcXmlConfigurationTestBase {
 
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.baidu.jprotobuf.pbrpc.spring.RpcXmlConfigurationTestBase#getConfigurationPath()
-     */
-    @Override
-    protected String getConfigurationPath() {
-        return "classpath:" + RpcXmlConfigurationTest.class.getName().replace('.', '/') + ".xml";
-    }
-    
-    
-    @Test
-    public void testRpcRequestAndResponse() {
-        EchoService echoService = context.getBean("echoServiceProxy", EchoService.class);
-        super.internalRpcRequestAndResponse(echoService);
-    }
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see com.baidu.jprotobuf.pbrpc.spring.RpcXmlConfigurationTestBase#getConfigurationPath()
+	 */
+	@Override
+	protected String getConfigurationPath() {
+		return "classpath:" + RpcXmlConfigurationTest.class.getName().replace('.', '/') + ".xml";
+	}
+
+
+	@Test
+	public void testRpcRequestAndResponse() {
+		EchoService echoService = context.getBean("echoServiceProxy", EchoService.class);
+		super.internalRpcRequestAndResponse(echoService);
+	}
 }

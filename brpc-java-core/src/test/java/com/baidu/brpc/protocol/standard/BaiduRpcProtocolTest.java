@@ -16,77 +16,75 @@
 
 package com.baidu.brpc.protocol.standard;
 
-import java.lang.reflect.Constructor;
-import java.util.Map;
-
-import com.baidu.brpc.RpcOptionsUtils;
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.baidu.brpc.RpcMethodInfo;
+import com.baidu.brpc.RpcOptionsUtils;
 import com.baidu.brpc.buffer.DynamicCompositeByteBuf;
 import com.baidu.brpc.client.BrpcProxy;
 import com.baidu.brpc.client.RpcClient;
 import com.baidu.brpc.protocol.RpcRequest;
 import com.baidu.brpc.utils.ByteBufUtils;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.lang.reflect.Constructor;
+import java.util.Map;
 
 public class BaiduRpcProtocolTest {
-    @Test
-    public void testEncodeRequest() throws Exception {
-        RpcRequest rpcRequest = buildRpcRequest();
-        Assert.assertTrue(rpcRequest != null);
-        ByteBuf buf = new BaiduRpcProtocol().encodeRequest(rpcRequest);
-        Assert.assertTrue(buf.readableBytes() > 0);
-        System.out.println(buf.readableBytes());
-        System.out.println(ByteBufUtils.byteBufToString(buf));
-    }
+	@Test
+	public void testEncodeRequest() throws Exception {
+		RpcRequest rpcRequest = buildRpcRequest();
+		Assert.assertTrue(rpcRequest != null);
+		ByteBuf buf = new BaiduRpcProtocol().encodeRequest(rpcRequest);
+		Assert.assertTrue(buf.readableBytes() > 0);
+		System.out.println(buf.readableBytes());
+		System.out.println(ByteBufUtils.byteBufToString(buf));
+	}
 
-    @Test
-    public void testDecode() throws Exception {
-        RpcRequest rpcRequest = buildRpcRequest();
-        ByteBuf buf = new BaiduRpcProtocol().encodeRequest(rpcRequest);
-        DynamicCompositeByteBuf compositeByteBuf = new DynamicCompositeByteBuf();
-        compositeByteBuf.addBuffer(buf);
-        Assert.assertTrue(buf.readableBytes() == compositeByteBuf.readableBytes());
-        System.out.println(compositeByteBuf.toString());
+	@Test
+	public void testDecode() throws Exception {
+		RpcRequest rpcRequest = buildRpcRequest();
+		ByteBuf buf = new BaiduRpcProtocol().encodeRequest(rpcRequest);
+		DynamicCompositeByteBuf compositeByteBuf = new DynamicCompositeByteBuf();
+		compositeByteBuf.addBuffer(buf);
+		Assert.assertTrue(buf.readableBytes() == compositeByteBuf.readableBytes());
+		System.out.println(compositeByteBuf.toString());
 
-        BaiduRpcDecodePacket packet =  new BaiduRpcProtocol().decode(null, compositeByteBuf, true);
-        Assert.assertTrue(packet.getMetaBuf().readableBytes() > 0);
-        System.out.println(packet.getMetaBuf());
-        Assert.assertTrue(packet.getProtoAndAttachmentBuf().readableBytes() > 0);
-        System.out.println(packet.getProtoAndAttachmentBuf());
-    }
+		BaiduRpcDecodePacket packet = new BaiduRpcProtocol().decode(null, compositeByteBuf, true);
+		Assert.assertTrue(packet.getMetaBuf().readableBytes() > 0);
+		System.out.println(packet.getMetaBuf());
+		Assert.assertTrue(packet.getProtoAndAttachmentBuf().readableBytes() > 0);
+		System.out.println(packet.getProtoAndAttachmentBuf());
+	}
 
-    public RpcRequest buildRpcRequest() throws Exception {
-        RpcRequest rpcRequest = new RpcRequest();
-        rpcRequest.setLogId(0);
-        rpcRequest.setServiceName(EchoService.class.getName());
-        rpcRequest.setTargetMethod(EchoService.class.getMethod("echo", Echo.EchoRequest.class));
-        rpcRequest.setMethodName(rpcRequest.getTargetMethod().getName());
-        rpcRequest.setTarget(new EchoServiceImpl());
-        rpcRequest.setRpcMethodInfo(buildRpcMethodInfo());
+	public RpcRequest buildRpcRequest() throws Exception {
+		RpcRequest rpcRequest = new RpcRequest();
+		rpcRequest.setLogId(0);
+		rpcRequest.setServiceName(EchoService.class.getName());
+		rpcRequest.setTargetMethod(EchoService.class.getMethod("echo", Echo.EchoRequest.class));
+		rpcRequest.setMethodName(rpcRequest.getTargetMethod().getName());
+		rpcRequest.setTarget(new EchoServiceImpl());
+		rpcRequest.setRpcMethodInfo(buildRpcMethodInfo());
 
-        Echo.EchoRequest echoRequest = Echo.EchoRequest.newBuilder().setMessage("hello").build();
-        rpcRequest.setArgs(new Object[] {echoRequest});
-        rpcRequest.setBinaryAttachment(Unpooled.wrappedBuffer("hello".getBytes()));
-        rpcRequest.setCompressType(Options.CompressType.COMPRESS_TYPE_NONE_VALUE);
-        return rpcRequest;
-    }
+		Echo.EchoRequest echoRequest = Echo.EchoRequest.newBuilder().setMessage("hello").build();
+		rpcRequest.setArgs(new Object[]{echoRequest});
+		rpcRequest.setBinaryAttachment(Unpooled.wrappedBuffer("hello".getBytes()));
+		rpcRequest.setCompressType(Options.CompressType.COMPRESS_TYPE_NONE_VALUE);
+		return rpcRequest;
+	}
 
-    public static RpcMethodInfo buildRpcMethodInfo() throws Exception {
-        Class[] paramTypes = new Class[2];
-        paramTypes[0] = RpcClient.class;
-        paramTypes[1] = Class.class;
-        Constructor constructor = BrpcProxy.class.getDeclaredConstructor(paramTypes);
-        constructor.setAccessible(true);
-        RpcClient rpcClient = new RpcClient("list://127.0.0.1:8002", RpcOptionsUtils.getRpcClientOptions());
-        BrpcProxy rpcProxy = (BrpcProxy) constructor.newInstance(rpcClient, EchoService.class);
-        rpcClient.shutdown();
-        Map<String, RpcMethodInfo> methodInfoMap = rpcProxy.getRpcMethodMap();
-        RpcMethodInfo rpcMethodInfo = methodInfoMap.entrySet().iterator().next().getValue();
-        return rpcMethodInfo;
-    }
+	public static RpcMethodInfo buildRpcMethodInfo() throws Exception {
+		Class[] paramTypes = new Class[2];
+		paramTypes[0] = RpcClient.class;
+		paramTypes[1] = Class.class;
+		Constructor constructor = BrpcProxy.class.getDeclaredConstructor(paramTypes);
+		constructor.setAccessible(true);
+		RpcClient rpcClient = new RpcClient("list://127.0.0.1:8002", RpcOptionsUtils.getRpcClientOptions());
+		BrpcProxy rpcProxy = (BrpcProxy) constructor.newInstance(rpcClient, EchoService.class);
+		rpcClient.shutdown();
+		Map<String, RpcMethodInfo> methodInfoMap = rpcProxy.getRpcMethodMap();
+		RpcMethodInfo rpcMethodInfo = methodInfoMap.entrySet().iterator().next().getValue();
+		return rpcMethodInfo;
+	}
 }

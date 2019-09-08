@@ -18,6 +18,7 @@ package com.baidu.brpc.protocol.standard;
 
 // import io.brpc.protocol.RpcContext;
 // import io.netty.buffer.ByteBuf;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,11 +26,11 @@ import org.slf4j.LoggerFactory;
  * Created by wenweihu86 on 2017/4/25.
  */
 public class EchoServiceImpl implements EchoService {
-    private static final Logger LOG = LoggerFactory.getLogger(EchoServiceImpl.class);
+	private static final Logger LOG = LoggerFactory.getLogger(EchoServiceImpl.class);
 
-    @Override
-    public Echo.EchoResponse echo(Echo.EchoRequest request) {
-        // 读取request attachment
+	@Override
+	public Echo.EchoResponse echo(Echo.EchoRequest request) {
+		// 读取request attachment
 //        RpcContext rpcContext = RpcContext.getContext();
 //        String remoteHost = rpcContext.getRemoteHost();
 //        LOG.debug("remote host:{}", remoteHost);
@@ -39,16 +40,16 @@ public class EchoServiceImpl implements EchoService {
 //                String attachmentString = new String(attachment.array());
 //                LOG.debug("request attachment={}", attachmentString);
 //            }
-            // 设置response attachment
+		// 设置response attachment
 //            rpcContext.setResponseBinaryAttachment(Unpooled.copiedBuffer(attachment));
 //        }
 
-        String message = request.getMessage();
-        Echo.EchoResponse response = Echo.EchoResponse.newBuilder()
-                .setMessage(message).build();
+		String message = request.getMessage();
+		Echo.EchoResponse response = Echo.EchoResponse.newBuilder()
+				.setMessage(message).build();
 //        LOG.debug("EchoService.echo, request={}, response={}",
 //                request.getMessage(), response.getMessage());
 
-        return response;
-    }
+		return response;
+	}
 }

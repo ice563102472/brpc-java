@@ -19,14 +19,14 @@ package com.baidu.brpc.utils;
 import io.netty.buffer.ByteBuf;
 
 public class ByteBufUtils {
-    public static String byteBufToString(ByteBuf buf) {
-        StringBuilder sb = new StringBuilder();
-        if (buf.readableBytes() == 0) {
-            return sb.toString();
-        }
-        for (int i = buf.readerIndex(); i < buf.readerIndex() + buf.readableBytes(); i++) {
-            sb.append(buf.getUnsignedByte(i)).append(" ");
-        }
-        return sb.toString();
-    }
+	public static String byteBufToString(ByteBuf buf) {
+		StringBuilder sb = new StringBuilder();
+		if (buf.readableBytes() == 0) {
+			return sb.toString();
+		}
+		for (int i = buf.readerIndex(); i < buf.readerIndex() + buf.readableBytes(); i++) {
+			sb.append(buf.getUnsignedByte(i)).append(" ");
+		}
+		return sb.toString();
+	}
 }

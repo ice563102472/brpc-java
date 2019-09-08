@@ -16,13 +16,6 @@
 
 package com.baidu.brpc.protocol.nshead;
 
-import static org.junit.Assert.assertEquals;
-
-import java.lang.reflect.Method;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import com.baidu.brpc.ProtobufRpcMethodInfo;
 import com.baidu.brpc.RpcMethodInfo;
 import com.baidu.brpc.protocol.Request;
@@ -33,87 +26,93 @@ import com.baidu.brpc.protocol.standard.Echo.EchoRequest;
 import com.baidu.brpc.protocol.standard.EchoService;
 import com.baidu.brpc.protocol.standard.EchoServiceImpl;
 import com.baidu.brpc.server.ServiceManager;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.lang.reflect.Method;
+
+import static org.junit.Assert.assertEquals;
 
 public class NsHeadRpcProtocolProtobufTest {
 
-    private NSHeadRpcProtocol protocol = new NSHeadProtobufProtocol("utf-8");
-    @Before
-    public void init() {
-        if (ServiceManager.getInstance() != null) {
-            ServiceManager.getInstance().getServiceMap().clear();
-        }
-    }
+	private NSHeadRpcProtocol protocol = new NSHeadProtobufProtocol("utf-8");
 
-    @Test
-    public void testEncodeRequest() throws Exception {
+	@Before
+	public void init() {
+		if (ServiceManager.getInstance() != null) {
+			ServiceManager.getInstance().getServiceMap().clear();
+		}
+	}
 
-        EchoRequest request = Echo.EchoRequest.newBuilder().setMessage("hello").build();
+	@Test
+	public void testEncodeRequest() throws Exception {
 
-        RpcRequest rpcRequest = new RpcRequest();
-        rpcRequest.setArgs(new Object[] {request});
-        rpcRequest.setRpcMethodInfo(new ProtobufRpcMethodInfo(EchoService.class.getMethods()[0]));
-        rpcRequest.setLogId(3L);
-        NSHeadMeta nsHeadMeta = rpcRequest.getRpcMethodInfo().getNsHeadMeta();
-        rpcRequest.setNsHead(new NSHead(3, nsHeadMeta.id(),
-                nsHeadMeta.version(), nsHeadMeta.provider(), 0));
+		EchoRequest request = Echo.EchoRequest.newBuilder().setMessage("hello").build();
 
-        ByteBuf byteBuf = protocol.encodeRequest(rpcRequest);
+		RpcRequest rpcRequest = new RpcRequest();
+		rpcRequest.setArgs(new Object[]{request});
+		rpcRequest.setRpcMethodInfo(new ProtobufRpcMethodInfo(EchoService.class.getMethods()[0]));
+		rpcRequest.setLogId(3L);
+		NSHeadMeta nsHeadMeta = rpcRequest.getRpcMethodInfo().getNsHeadMeta();
+		rpcRequest.setNsHead(new NSHead(3, nsHeadMeta.id(),
+				nsHeadMeta.version(), nsHeadMeta.provider(), 0));
 
-        NSHead nsHead = NSHead.fromByteBuf(byteBuf);
+		ByteBuf byteBuf = protocol.encodeRequest(rpcRequest);
 
-        assertEquals(3, nsHead.logId);
-        assertEquals("", nsHead.provider);
-        assertEquals(byteBuf.readableBytes(), nsHead.bodyLength);
-    }
+		NSHead nsHead = NSHead.fromByteBuf(byteBuf);
 
-
-    @Test
-    public void testDecodeRequestSuccess() throws Exception {
-        ServiceManager.getInstance().getServiceMap().clear();
-
-        ServiceManager.getInstance().registerService(new EchoServiceImpl(), null);
-        Echo.EchoResponse response = Echo.EchoResponse.newBuilder()
-                .setMessage("hello").build();
-
-        NSHeadPacket packet = new NSHeadPacket();
-        byte[] body = encodeBody(response, EchoService.class.getMethods()[0]);
-        packet.setNsHead(new NSHead(1, body.length));
-        packet.setBodyBuf(Unpooled.wrappedBuffer(body));
-        Request request = protocol.decodeRequest(packet);
-
-        assertEquals(EchoService.class.getMethods()[0], request.getTargetMethod());
-        assertEquals(EchoServiceImpl.class, request.getTarget().getClass());
-    }
+		assertEquals(3, nsHead.logId);
+		assertEquals("", nsHead.provider);
+		assertEquals(byteBuf.readableBytes(), nsHead.bodyLength);
+	}
 
 
-    @Test
-    public void testEncodeResponse() throws Exception {
+	@Test
+	public void testDecodeRequestSuccess() throws Exception {
+		ServiceManager.getInstance().getServiceMap().clear();
 
-        Echo.EchoResponse response = Echo.EchoResponse.newBuilder()
-                .setMessage("hello").build();
+		ServiceManager.getInstance().registerService(new EchoServiceImpl(), null);
+		Echo.EchoResponse response = Echo.EchoResponse.newBuilder()
+				.setMessage("hello").build();
 
-        RpcResponse rpcResponse = new RpcResponse();
-        rpcResponse.setLogId(4L);
-        rpcResponse.setRpcMethodInfo(new ProtobufRpcMethodInfo(EchoService.class.getMethods()[0]));
-        rpcResponse.setResult(response);
+		NSHeadPacket packet = new NSHeadPacket();
+		byte[] body = encodeBody(response, EchoService.class.getMethods()[0]);
+		packet.setNsHead(new NSHead(1, body.length));
+		packet.setBodyBuf(Unpooled.wrappedBuffer(body));
+		Request request = protocol.decodeRequest(packet);
 
-        ByteBuf byteBuf = protocol.encodeResponse(null, rpcResponse);
+		assertEquals(EchoService.class.getMethods()[0], request.getTargetMethod());
+		assertEquals(EchoServiceImpl.class, request.getTarget().getClass());
+	}
 
-        NSHead nsHead = NSHead.fromByteBuf(byteBuf);
 
-        assertEquals(4, nsHead.logId);
-        assertEquals(byteBuf.readableBytes(), nsHead.bodyLength);
-    }
+	@Test
+	public void testEncodeResponse() throws Exception {
 
-    private byte[] encodeBody(Object body, Method invokeMethod) throws Exception {
+		Echo.EchoResponse response = Echo.EchoResponse.newBuilder()
+				.setMessage("hello").build();
 
-        Method method = protocol.getClass().getDeclaredMethod("encodeBody", Object.class, RpcMethodInfo.class);
-        method.setAccessible(true);
-        Object r = method.invoke(protocol, body, new ProtobufRpcMethodInfo(invokeMethod));
+		RpcResponse rpcResponse = new RpcResponse();
+		rpcResponse.setLogId(4L);
+		rpcResponse.setRpcMethodInfo(new ProtobufRpcMethodInfo(EchoService.class.getMethods()[0]));
+		rpcResponse.setResult(response);
 
-        return (byte[]) r;
-    }
+		ByteBuf byteBuf = protocol.encodeResponse(null, rpcResponse);
+
+		NSHead nsHead = NSHead.fromByteBuf(byteBuf);
+
+		assertEquals(4, nsHead.logId);
+		assertEquals(byteBuf.readableBytes(), nsHead.bodyLength);
+	}
+
+	private byte[] encodeBody(Object body, Method invokeMethod) throws Exception {
+
+		Method method = protocol.getClass().getDeclaredMethod("encodeBody", Object.class, RpcMethodInfo.class);
+		method.setAccessible(true);
+		Object r = method.invoke(protocol, body, new ProtobufRpcMethodInfo(invokeMethod));
+
+		return (byte[]) r;
+	}
 }

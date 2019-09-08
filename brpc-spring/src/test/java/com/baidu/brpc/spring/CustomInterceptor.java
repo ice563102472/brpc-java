@@ -17,28 +17,26 @@
 package com.baidu.brpc.spring;
 
 import com.baidu.brpc.interceptor.AbstractInterceptor;
+import com.baidu.brpc.protocol.Request;
+import com.baidu.brpc.protocol.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.baidu.brpc.interceptor.Interceptor;
-import com.baidu.brpc.protocol.Request;
-import com.baidu.brpc.protocol.Response;
-
 public class CustomInterceptor extends AbstractInterceptor {
-    private static final Logger LOG = LoggerFactory.getLogger(CustomInterceptor.class);
+	private static final Logger LOG = LoggerFactory.getLogger(CustomInterceptor.class);
 
-    public boolean handleRequest(Request rpcRequest) {
-        LOG.info("request intercepted, logId={}, service={}, method={}",
-                rpcRequest.getLogId(),
-                rpcRequest.getTarget().getClass().getSimpleName(),
-                rpcRequest.getTargetMethod().getName());
-        return true;
-    }
+	public boolean handleRequest(Request rpcRequest) {
+		LOG.info("request intercepted, logId={}, service={}, method={}",
+				rpcRequest.getLogId(),
+				rpcRequest.getTarget().getClass().getSimpleName(),
+				rpcRequest.getTargetMethod().getName());
+		return true;
+	}
 
-    public void handleResponse(Response response) {
-        if (response != null) {
-            LOG.info("reponse intercepted, logId={}, result={}",
-                    response.getLogId(), response.getResult());
-        }
-    }
+	public void handleResponse(Response response) {
+		if (response != null) {
+			LOG.info("reponse intercepted, logId={}, result={}",
+					response.getLogId(), response.getResult());
+		}
+	}
 }

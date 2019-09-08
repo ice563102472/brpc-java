@@ -21,25 +21,25 @@ import lombok.Setter;
 @Setter
 @Getter
 public class ServiceInstance extends Endpoint {
-    /**
-     * instance tag, such as sharding info.
-     * used by bns naming service.
-     */
-    private String tag;
+	/**
+	 * instance tag, such as sharding info.
+	 * used by bns naming service.
+	 */
+	private String tag;
 
-    public ServiceInstance() {
-        super();
-    }
+	public ServiceInstance() {
+		super();
+	}
 
-    public ServiceInstance(String ip, int port) {
-        super(ip, port);
-    }
+	public ServiceInstance(String ip, int port) {
+		super(ip, port);
+	}
 
-    public ServiceInstance(String address) {
-        super(address);
-    }
+	public ServiceInstance(String address) {
+		super(address);
+	}
 
-    public ServiceInstance(Endpoint endpoint) {
-        super(endpoint.getIp(), endpoint.getPort());
-    }
+	public ServiceInstance(Endpoint endpoint) {
+		super(endpoint.getIp(), endpoint.getPort());
+	}
 }

@@ -15,41 +15,41 @@
  */
 package com.baidu.brpc.client.loadbalance;
 
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicLong;
-
 import com.baidu.brpc.client.RpcClient;
 import com.baidu.brpc.client.channel.BrpcChannel;
 import com.baidu.brpc.protocol.Request;
+
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Round-robin load balance strategy implementation
  */
 public class RoundRobinStrategy implements LoadBalanceStrategy {
 
-    private AtomicLong counter = new AtomicLong(0);
+	private AtomicLong counter = new AtomicLong(0);
 
-    @Override
-    public void init(RpcClient rpcClient) {
+	@Override
+	public void init(RpcClient rpcClient) {
 
-    }
+	}
 
-    @Override
-    public BrpcChannel selectInstance(
-            Request request,
-            List<BrpcChannel> instances,
-            Set<BrpcChannel> selectedInstances) {
-        long instanceNum = instances.size();
-        if (instanceNum == 0) {
-            return null;
-        }
-        int index = (int) (counter.getAndIncrement() % instanceNum);
-        BrpcChannel channelGroup = instances.get(index);
-        return channelGroup;
-    }
+	@Override
+	public BrpcChannel selectInstance(
+			Request request,
+			List<BrpcChannel> instances,
+			Set<BrpcChannel> selectedInstances) {
+		long instanceNum = instances.size();
+		if (instanceNum == 0) {
+			return null;
+		}
+		int index = (int) (counter.getAndIncrement() % instanceNum);
+		BrpcChannel channelGroup = instances.get(index);
+		return channelGroup;
+	}
 
-    @Override
-    public void destroy() {
-    }
+	@Override
+	public void destroy() {
+	}
 }

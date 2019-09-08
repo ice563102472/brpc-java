@@ -28,34 +28,34 @@ import org.springframework.core.io.ResourceLoader;
 import java.util.Collection;
 
 public abstract class AbstractRegister implements ResourceLoaderAware, EnvironmentAware, BeanFactoryAware {
-    protected BeanFactory beanFactory;
-    protected ResourceLoader resourceLoader;
-    protected Environment environment;
+	protected BeanFactory beanFactory;
+	protected ResourceLoader resourceLoader;
+	protected Environment environment;
 
-    protected Class<?> getClass(String beanClassName) {
-        try {
-            return Class.forName(beanClassName);
-        } catch (ClassNotFoundException e) {
-            throw new BeanInitializationException("error create bean with class: " + beanClassName, e);
-        }
-    }
+	protected Class<?> getClass(String beanClassName) {
+		try {
+			return Class.forName(beanClassName);
+		} catch (ClassNotFoundException e) {
+			throw new BeanInitializationException("error create bean with class: " + beanClassName, e);
+		}
+	}
 
-    protected Collection<String> getBasePackages() {
-        return AutoConfigurationPackages.get(beanFactory);
-    }
+	protected Collection<String> getBasePackages() {
+		return AutoConfigurationPackages.get(beanFactory);
+	}
 
-    @Override
-    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        this.beanFactory = beanFactory;
-    }
+	@Override
+	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+		this.beanFactory = beanFactory;
+	}
 
-    @Override
-    public void setEnvironment(Environment environment) {
-        this.environment = environment;
-    }
+	@Override
+	public void setEnvironment(Environment environment) {
+		this.environment = environment;
+	}
 
-    @Override
-    public void setResourceLoader(ResourceLoader resourceLoader) {
-        this.resourceLoader = resourceLoader;
-    }
+	@Override
+	public void setResourceLoader(ResourceLoader resourceLoader) {
+		this.resourceLoader = resourceLoader;
+	}
 }

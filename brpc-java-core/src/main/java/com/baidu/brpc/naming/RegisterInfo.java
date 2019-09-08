@@ -21,7 +21,7 @@ import lombok.Setter;
 
 /**
  * POJO class of register info.
- * 
+ *
  * @author xiemalin
  */
 @Setter
@@ -29,26 +29,26 @@ import lombok.Setter;
 @EqualsAndHashCode
 public class RegisterInfo extends NamingOptions {
 
-    private String host;
+	private String host;
 
-    private int port;
+	private int port;
 
-    /**
-     * the interface class name.
-     */
-    private String interfaceName;
+	/**
+	 * the interface class name.
+	 */
+	private String interfaceName;
 
-    public RegisterInfo() {
-    }
+	public RegisterInfo() {
+	}
 
-    public RegisterInfo(RegisterInfo rhs) {
-        super(rhs);
-        this.host = rhs.getHost();
-        this.port = rhs.getPort();
-        this.interfaceName = rhs.getInterfaceName();
-    }
+	public RegisterInfo(RegisterInfo rhs) {
+		super(rhs);
+		this.host = rhs.getHost();
+		this.port = rhs.getPort();
+		this.interfaceName = rhs.getInterfaceName();
+	}
 
-    public RegisterInfo(NamingOptions namingOptions) {
-        super(namingOptions);
-    }
+	public RegisterInfo(NamingOptions namingOptions) {
+		super(namingOptions);
+	}
 }

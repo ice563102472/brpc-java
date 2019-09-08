@@ -24,20 +24,20 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 public interface InstanceProcessor {
-    void addInstance(ServiceInstance instance);
+	void addInstance(ServiceInstance instance);
 
-    void addInstances(Collection<ServiceInstance> addList);
+	void addInstances(Collection<ServiceInstance> addList);
 
-    void deleteInstances(Collection<ServiceInstance> deleteList);
+	void deleteInstances(Collection<ServiceInstance> deleteList);
 
-    CopyOnWriteArraySet<ServiceInstance> getInstances();
+	CopyOnWriteArraySet<ServiceInstance> getInstances();
 
-    CopyOnWriteArrayList<BrpcChannel> getHealthyInstanceChannels();
+	CopyOnWriteArrayList<BrpcChannel> getHealthyInstanceChannels();
 
-    CopyOnWriteArrayList<BrpcChannel> getUnHealthyInstanceChannels();
+	CopyOnWriteArrayList<BrpcChannel> getUnHealthyInstanceChannels();
 
-    ConcurrentMap<ServiceInstance, BrpcChannel> getInstanceChannelMap();
+	ConcurrentMap<ServiceInstance, BrpcChannel> getInstanceChannelMap();
 
-    void stop();
+	void stop();
 
 }

@@ -16,33 +16,32 @@
 
 package com.baidu.brpc.naming;
 
+import com.baidu.brpc.client.instance.ServiceInstance;
+import com.baidu.brpc.test.BaseMockitoTest;
+import org.junit.Test;
+
+import java.util.List;
+
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import java.util.List;
-
-import org.junit.Test;
-
-import com.baidu.brpc.client.instance.ServiceInstance;
-import com.baidu.brpc.test.BaseMockitoTest;
-
 public class DnsNamingServiceTest extends BaseMockitoTest {
 
-    @Test
-    public void testAll() {
-        String serverList = "dns://127.0.0.1:8888";
-        DnsNamingService namingService = new DnsNamingService(new BrpcURL(serverList));
-        assertThat(namingService.getHostPort(), is("127.0.0.1:8888"));
-        List<ServiceInstance> instances = namingService.lookup(null);
-        assertThat(instances, hasItems(new ServiceInstance("127.0.0.1", 8888)));
-        namingService.unsubscribe(null);
-    }
+	@Test
+	public void testAll() {
+		String serverList = "dns://127.0.0.1:8888";
+		DnsNamingService namingService = new DnsNamingService(new BrpcURL(serverList));
+		assertThat(namingService.getHostPort(), is("127.0.0.1:8888"));
+		List<ServiceInstance> instances = namingService.lookup(null);
+		assertThat(instances, hasItems(new ServiceInstance("127.0.0.1", 8888)));
+		namingService.unsubscribe(null);
+	}
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testEmptyServerList() {
-        DnsNamingService namingService = new DnsNamingService(new BrpcURL(""));
-        namingService.lookup(null);
-    }
+	@Test(expected = IllegalArgumentException.class)
+	public void testEmptyServerList() {
+		DnsNamingService namingService = new DnsNamingService(new BrpcURL(""));
+		namingService.lookup(null);
+	}
 
 }

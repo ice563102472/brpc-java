@@ -17,7 +17,6 @@
 package com.baidu.brpc.thread;
 
 import com.baidu.brpc.utils.CustomThreadFactory;
-
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -28,51 +27,51 @@ import io.netty.channel.nio.NioEventLoopGroup;
 
 public class BrpcIoThreadPoolInstance {
 
-    private static volatile EpollEventLoopGroup epollThreadPool;
+	private static volatile EpollEventLoopGroup epollThreadPool;
 
-    private static volatile NioEventLoopGroup nioThreadPool;
+	private static volatile NioEventLoopGroup nioThreadPool;
 
-    private BrpcIoThreadPoolInstance() {
+	private BrpcIoThreadPoolInstance() {
 
-    }
+	}
 
-    /**
-     * threadNum only works when thread pool instance create in the first time
-     */
-    public static EventLoopGroup getOrCreateEpollInstance(int threadNum) {
-        if (epollThreadPool == null) {
-            synchronized (BrpcIoThreadPoolInstance.class) {
-                if (epollThreadPool == null) {
-                    epollThreadPool = new EpollEventLoopGroup(threadNum,
-                                new CustomThreadFactory("brpc-io-thread"));
+	/**
+	 * threadNum only works when thread pool instance create in the first time
+	 */
+	public static EventLoopGroup getOrCreateEpollInstance(int threadNum) {
+		if (epollThreadPool == null) {
+			synchronized (BrpcIoThreadPoolInstance.class) {
+				if (epollThreadPool == null) {
+					epollThreadPool = new EpollEventLoopGroup(threadNum,
+							new CustomThreadFactory("brpc-io-thread"));
 
-                }
-            }
-        }
-        return epollThreadPool;
-    }
+				}
+			}
+		}
+		return epollThreadPool;
+	}
 
-    /**
-     * threadNum only works when thread pool instance create in the first time
-     */
-    public static EventLoopGroup getOrCreateNioInstance(int threadNum) {
-        if (nioThreadPool == null) {
-            synchronized(BrpcIoThreadPoolInstance.class) {
-                if (nioThreadPool == null) {
-                    nioThreadPool = new NioEventLoopGroup(threadNum,
-                            new CustomThreadFactory("brpc-io-thread"));
+	/**
+	 * threadNum only works when thread pool instance create in the first time
+	 */
+	public static EventLoopGroup getOrCreateNioInstance(int threadNum) {
+		if (nioThreadPool == null) {
+			synchronized (BrpcIoThreadPoolInstance.class) {
+				if (nioThreadPool == null) {
+					nioThreadPool = new NioEventLoopGroup(threadNum,
+							new CustomThreadFactory("brpc-io-thread"));
 
-                }
-            }
-        }
-        return nioThreadPool;
-    }
+				}
+			}
+		}
+		return nioThreadPool;
+	}
 
-    public static NioEventLoopGroup getNioInstance() {
-        return nioThreadPool;
-    }
+	public static NioEventLoopGroup getNioInstance() {
+		return nioThreadPool;
+	}
 
-    public static EpollEventLoopGroup getEpollInstance() {
-        return epollThreadPool;
-    }
+	public static EpollEventLoopGroup getEpollInstance() {
+		return epollThreadPool;
+	}
 }

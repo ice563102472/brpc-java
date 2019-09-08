@@ -20,5 +20,5 @@ import com.baidu.brpc.protocol.Request;
 import com.baidu.brpc.protocol.Response;
 
 public interface InterceptorChain {
-    void intercept(Request request, Response response) throws Exception;
+	void intercept(Request request, Response response) throws Exception;
 }

@@ -28,25 +28,25 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 public class CustomThreadFactory implements ThreadFactory {
 
-    private AtomicInteger threadNumber = new AtomicInteger(1);
-    private String namePrefix;
-    private ThreadGroup group;
+	private AtomicInteger threadNumber = new AtomicInteger(1);
+	private String namePrefix;
+	private ThreadGroup group;
 
-    public CustomThreadFactory(String namePrefix) {
-        SecurityManager s = System.getSecurityManager();
-        this.group = (s != null) ? s.getThreadGroup() :
-                Thread.currentThread().getThreadGroup();
-        this.namePrefix = namePrefix + "-";
-    }
+	public CustomThreadFactory(String namePrefix) {
+		SecurityManager s = System.getSecurityManager();
+		this.group = (s != null) ? s.getThreadGroup() :
+				Thread.currentThread().getThreadGroup();
+		this.namePrefix = namePrefix + "-";
+	}
 
-    @Override
-    public Thread newThread(Runnable r) {
-        String name = namePrefix + threadNumber.getAndIncrement();
-        Thread t = new FastThreadLocalThread(group, r, name, 0);
-        t.setDaemon(true);
-        t.setPriority(Thread.NORM_PRIORITY);
-        log.info("create thread:{}", name);
-        return t;
-    }
+	@Override
+	public Thread newThread(Runnable r) {
+		String name = namePrefix + threadNumber.getAndIncrement();
+		Thread t = new FastThreadLocalThread(group, r, name, 0);
+		t.setDaemon(true);
+		t.setPriority(Thread.NORM_PRIORITY);
+		log.info("create thread:{}", name);
+		return t;
+	}
 
 }

@@ -9,6 +9,6 @@ import lombok.Setter;
 @Setter
 public class PublicPbRpcPacket {
 
-    private NSHead nsHead;
-    private ByteBuf body;
+	private NSHead nsHead;
+	private ByteBuf body;
 }

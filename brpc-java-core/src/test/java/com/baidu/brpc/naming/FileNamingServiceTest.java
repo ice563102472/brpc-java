@@ -16,31 +16,30 @@
 
 package com.baidu.brpc.naming;
 
-import static org.hamcrest.CoreMatchers.hasItems;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import com.baidu.brpc.client.instance.ServiceInstance;
+import com.baidu.brpc.test.BaseMockitoTest;
+import org.junit.Test;
 
 import java.net.URL;
 import java.util.List;
 
-import org.junit.Test;
-
-import com.baidu.brpc.client.instance.ServiceInstance;
-import com.baidu.brpc.test.BaseMockitoTest;
+import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 public class FileNamingServiceTest extends BaseMockitoTest {
 
-    @Test
-    public void testAll() throws Exception {
-        URL url = Thread.currentThread().getContextClassLoader().getResource("test_server_list.txt");
-        String serverList = url.getFile();
-        FileNamingService namingService = new FileNamingService(new BrpcURL("file://" + serverList));
+	@Test
+	public void testAll() throws Exception {
+		URL url = Thread.currentThread().getContextClassLoader().getResource("test_server_list.txt");
+		String serverList = url.getFile();
+		FileNamingService namingService = new FileNamingService(new BrpcURL("file://" + serverList));
 
-        List<ServiceInstance> instances = namingService.lookup(null);
-        assertThat(instances.size(), is(1));
-        assertThat(instances, hasItems(
-                new ServiceInstance("127.0.0.1", 8002)
-        ));
-        namingService.unsubscribe(null);
-    }
+		List<ServiceInstance> instances = namingService.lookup(null);
+		assertThat(instances.size(), is(1));
+		assertThat(instances, hasItems(
+				new ServiceInstance("127.0.0.1", 8002)
+		));
+		namingService.unsubscribe(null);
+	}
 }
