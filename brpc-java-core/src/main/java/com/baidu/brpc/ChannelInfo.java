@@ -42,7 +42,7 @@ public class ChannelInfo {
     private Channel channel;
     private BrpcChannel channelGroup;
     private Protocol protocol;
-    private long logId;
+    private long correlationId;
     private FastFutureStore pendingRpc;
     private DynamicCompositeByteBuf recvBuf = new DynamicCompositeByteBuf(16);
 
@@ -89,12 +89,12 @@ public class ChannelInfo {
         return pendingRpc.put(future);
     }
 
-    public RpcFuture getRpcFuture(long logId) {
-        return pendingRpc.get(logId);
+    public RpcFuture getRpcFuture(long correlationId) {
+        return pendingRpc.get(correlationId);
     }
 
-    public RpcFuture removeRpcFuture(long logId) {
-        return pendingRpc.getAndRemove(logId);
+    public RpcFuture removeRpcFuture(long correlationId) {
+        return pendingRpc.getAndRemove(correlationId);
     }
 
     /**
@@ -102,14 +102,14 @@ public class ChannelInfo {
      *
      * @param channelType
      */
-    public void handleRequestFail(ChannelType channelType) {
+    public void handleRequestFail(ChannelType channelType, long correlationId) {
+        removeRpcFuture(correlationId);
         if (channelType != ChannelType.SHORT_CONNECTION) {
             channelGroup.incFailedNum();
             returnChannelAfterRequest();
         } else {
             channelGroup.close();
         }
-
     }
 
     /**

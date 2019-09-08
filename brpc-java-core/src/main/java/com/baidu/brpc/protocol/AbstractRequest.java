@@ -21,6 +21,7 @@ import java.util.Set;
 
 import com.baidu.brpc.RpcMethodInfo;
 import com.baidu.brpc.client.RpcCallback;
+import com.baidu.brpc.client.RpcFuture;
 import com.baidu.brpc.client.channel.BrpcChannel;
 import com.baidu.brpc.exceptions.RpcException;
 import com.baidu.brpc.naming.SubscribeInfo;
@@ -36,6 +37,9 @@ import lombok.Setter;
 @Getter
 public abstract class AbstractRequest implements Request {
     private Object msg;
+    // used to find RpcFuture, application can not set it.
+    private long correlationId;
+    // used to identify request for application, application can set it.
     private long logId;
     private Object target;
     private Method targetMethod;
@@ -61,6 +65,8 @@ public abstract class AbstractRequest implements Request {
     private Integer writeTimeoutMillis;
     private String clientName;
     private boolean oneWay; // if false, do not need send response.
+    private RpcFuture rpcFuture; // just used by client
+    private ByteBuf sendBuf; // just used by client
 
     /**
      * 订阅信息，客户端请求时，将订阅的服务信息存入
@@ -93,6 +99,8 @@ public abstract class AbstractRequest implements Request {
         readTimeoutMillis = null;
         writeTimeoutMillis = null;
         oneWay = false;
+        rpcFuture = null;
+        sendBuf = null;
     }
 
     @Override

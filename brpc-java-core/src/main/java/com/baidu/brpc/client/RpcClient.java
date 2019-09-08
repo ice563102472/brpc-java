@@ -16,20 +16,6 @@
 
 package com.baidu.brpc.client;
 
-import java.nio.channels.ClosedChannelException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import org.apache.commons.lang3.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.baidu.brpc.ChannelInfo;
 import com.baidu.brpc.client.channel.BrpcChannel;
 import com.baidu.brpc.client.channel.ChannelType;
@@ -68,9 +54,7 @@ import com.baidu.brpc.thread.ShutDownManager;
 import com.baidu.brpc.utils.BrpcConstants;
 import com.baidu.brpc.utils.CustomThreadFactory;
 import com.baidu.brpc.utils.ThreadPool;
-
 import io.netty.bootstrap.Bootstrap;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -87,6 +71,19 @@ import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.Timeout;
 import io.netty.util.Timer;
 import lombok.Getter;
+import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.nio.channels.ClosedChannelException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Created by huwenwei on 2017/4/25.
@@ -120,19 +117,6 @@ public class RpcClient {
      * 保存单例的引用
      */
     private FastFutureStore fastFutureStore;
-
-    /**
-     * @param service
-     */
-    public void registerPushService(Object service) {
-        ServiceManager.getInstance().registerPushService(service);
-
-        // 如果只注册了pushService，没有注册一个普通的服务的话， 报错
-        if (instanceProcessor.getInstances().size() == 0) {
-            LOG.error("there should be have normal servcies before register push service.");
-            throw new RpcException("there should be have normal services before register push service");
-        }
-    }
 
     public RpcClient(String namingServiceUrl) {
         this(namingServiceUrl, new RpcClientOptions(), null);
@@ -204,6 +188,19 @@ public class RpcClient {
 
     public static <T> T getProxy(RpcClient rpcClient, Class clazz) {
         return BrpcProxy.getProxy(rpcClient, clazz, null);
+    }
+
+    /**
+     * @param service
+     */
+    public void registerPushService(Object service) {
+        ServiceManager.getInstance().registerPushService(service);
+
+        // 如果只注册了pushService，没有注册一个普通的服务的话， 报错
+        if (instanceProcessor.getInstances().size() == 0) {
+            LOG.error("there should be have normal servcies before register push service.");
+            throw new RpcException("there should be have normal services before register push service");
+        }
     }
 
     public <T> T getProxy(Class clazz, NamingOptions namingOptions) {
@@ -347,7 +344,6 @@ public class RpcClient {
      * select channel from endpoint which is selected by custom load balance.
      *
      * @param endpoint ip:port
-     *
      * @return netty channel
      */
     public Channel selectChannel(Endpoint endpoint) {
@@ -382,51 +378,50 @@ public class RpcClient {
         channelInfo.getChannelGroup().removeChannel(channel);
     }
 
+    public void encodeAndLoadBalance(Request request) {
+        // encode request
+        RpcFuture rpcFuture = RpcFuture.createRpcFuture(request, this);
+        request.setRpcFuture(rpcFuture);
+        request.setCorrelationId(rpcFuture.getCorrelationId());
+        try {
+            request.setSendBuf(protocol.encodeRequest(request));
+        } catch (Throwable t) {
+            throw new RpcException(RpcException.SERIALIZATION_EXCEPTION, t.getMessage(), t);
+        }
+
+        // select instance by load balance, and select channel from instance.
+        Channel channel = selectChannel(request);
+        request.setChannel(channel);
+    }
+
     public <T> AsyncAwareFuture<T> sendRequest(Request request) {
-        Channel channel = request.getChannel();
-        ChannelInfo channelInfo = ChannelInfo.getClientChannelInfo(channel);
+        ChannelInfo channelInfo = ChannelInfo.getClientChannelInfo(request.getChannel());
+        channelInfo.setCorrelationId(request.getCorrelationId());
+        request.getRpcFuture().setChannelInfo(channelInfo);
         BrpcChannel brpcChannel = channelInfo.getChannelGroup();
         protocol.beforeRequestSent(request, this, brpcChannel);
 
-        // create RpcFuture object
-        RpcFuture rpcFuture = new RpcFuture();
-        rpcFuture.setRpcMethodInfo(request.getRpcMethodInfo());
-        rpcFuture.setCallback(request.getCallback());
-        rpcFuture.setRpcClient(this);
-        rpcFuture.setChannelInfo(channelInfo);
-        // generate logId
-        long logId = FastFutureStore.getInstance(0).put(rpcFuture);
-        request.setLogId(logId);
-
-        // read write timeout
-        final long readTimeout = request.getReadTimeoutMillis();
-        final long writeTimeout = request.getWriteTimeoutMillis();
         // register timeout timer
-        RpcTimeoutTimer timeoutTask = new RpcTimeoutTimer(channelInfo, request.getLogId(), this);
-        Timeout timeout = timeoutTimer.newTimeout(timeoutTask, readTimeout, TimeUnit.MILLISECONDS);
-
-        // set the missing parameters
-        rpcFuture.setTimeout(timeout);
-        channelInfo.setLogId(rpcFuture.getLogId());
+        RpcTimeoutTimer timeoutTask = new RpcTimeoutTimer(channelInfo, request.getCorrelationId(), this);
+        Timeout timeout = timeoutTimer.newTimeout(timeoutTask, request.getReadTimeoutMillis(), TimeUnit.MILLISECONDS);
+        request.getRpcFuture().setTimeout(timeout);
         try {
             // netty will release the send buffer after sent.
             // we retain here, so it can be used when rpc retry.
             request.retain();
-            ByteBuf byteBuf = protocol.encodeRequest(request);
-            ChannelFuture sendFuture = channel.writeAndFlush(byteBuf);
-            // set RpcContext writeTimeout
-            sendFuture.awaitUninterruptibly(writeTimeout);
+            ChannelFuture sendFuture = request.getChannel().writeAndFlush(request.getSendBuf());
+            sendFuture.awaitUninterruptibly(request.getWriteTimeoutMillis());
             if (!sendFuture.isSuccess()) {
                 if (!(sendFuture.cause() instanceof ClosedChannelException)) {
                     LOG.warn("send request failed, channelActive={}, ex=",
-                            channel.isActive(), sendFuture.cause());
+                            request.getChannel().isActive(), sendFuture.cause());
                 }
-                String errMsg = String.format("send request failed, channelActive=%b, ex=%s",
-                        channel.isActive(), sendFuture.cause().getMessage());
+                String errMsg = String.format("send request failed, channelActive=%b",
+                        request.getChannel().isActive());
                 throw new RpcException(RpcException.NETWORK_EXCEPTION, errMsg);
             }
         } catch (Exception ex) {
-            channelInfo.handleRequestFail(rpcClientOptions.getChannelType());
+            channelInfo.handleRequestFail(rpcClientOptions.getChannelType(), request.getCorrelationId());
             timeout.cancel();
             if (ex instanceof RpcException) {
                 throw (RpcException) ex;
@@ -437,8 +432,7 @@ public class RpcClient {
 
         // return channel
         channelInfo.handleRequestSuccess();
-
-        return rpcFuture;
+        return request.getRpcFuture();
     }
 
     public void triggerCallback(Runnable runnable) {
