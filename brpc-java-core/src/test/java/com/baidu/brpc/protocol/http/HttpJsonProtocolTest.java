@@ -17,10 +17,9 @@
 package com.baidu.brpc.protocol.http;
 
 import com.baidu.brpc.RpcMethodInfo;
+import com.baidu.brpc.protocol.*;
 import com.baidu.brpc.protocol.HttpRequest;
 import com.baidu.brpc.protocol.HttpResponse;
-import com.baidu.brpc.protocol.Request;
-import com.baidu.brpc.protocol.Response;
 import com.baidu.brpc.protocol.http.json.HelloWorldService;
 import com.baidu.brpc.protocol.http.json.HelloWorldServiceImpl;
 import com.baidu.brpc.server.ServiceManager;
@@ -39,7 +38,7 @@ import static org.junit.Assert.assertEquals;
 public class HttpJsonProtocolTest {
 
 	private HttpRpcProtocol protocol = new HttpRpcProtocol(
-			ProtocolType.PROTOCOL_HTTP_JSON_VALUE, "utf-8");
+			Options.ProtocolType.PROTOCOL_HTTP_JSON_VALUE, "utf-8");
 
 	@Test
 	public void testEncodeHttpRequest() throws Exception {
@@ -88,7 +87,7 @@ public class HttpJsonProtocolTest {
 		Method method = protocol.getClass().getDeclaredMethod("encodeBody", int.class, String.class,
 				Object.class, RpcMethodInfo.class);
 		method.setAccessible(true);
-		Object r = method.invoke(protocol, ProtocolType.PROTOCOL_HTTP_JSON_VALUE, "utf-8", body,
+		Object r = method.invoke(protocol, Options.ProtocolType.PROTOCOL_HTTP_JSON_VALUE, "utf-8", body,
 				new RpcMethodInfo(HelloWorldService.class.getMethods()[0]));
 		return (byte[]) r;
 	}

@@ -40,7 +40,7 @@ import static org.junit.Assert.assertEquals;
 public class HttpProtoProtocolTest {
 
 	private HttpRpcProtocol protocol = new HttpRpcProtocol(
-			ProtocolType.PROTOCOL_HTTP_PROTOBUF_VALUE, "utf-8");
+			Options.ProtocolType.PROTOCOL_HTTP_PROTOBUF_VALUE, "utf-8");
 
 	@Test
 	public void testEncodeHttpRequest() throws Exception {
@@ -103,7 +103,7 @@ public class HttpProtoProtocolTest {
 		Method method = protocol.getClass().getDeclaredMethod("encodeBody", int.class, String.class,
 				Object.class, RpcMethodInfo.class);
 		method.setAccessible(true);
-		Object r = method.invoke(protocol, ProtocolType.PROTOCOL_HTTP_PROTOBUF_VALUE, "utf-8",
+		Object r = method.invoke(protocol, Options.ProtocolType.PROTOCOL_HTTP_PROTOBUF_VALUE, "utf-8",
 				body, new ProtobufRpcMethodInfo(EchoService.class.getMethods()[0]));
 
 		return (byte[]) r;

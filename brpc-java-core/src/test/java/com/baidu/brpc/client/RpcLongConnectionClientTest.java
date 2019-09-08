@@ -17,6 +17,7 @@
 package com.baidu.brpc.client;
 
 import com.baidu.brpc.RpcOptionsUtils;
+import com.baidu.brpc.protocol.Options;
 import com.baidu.brpc.protocol.standard.Echo;
 import com.baidu.brpc.protocol.standard.EchoService;
 import com.baidu.brpc.protocol.standard.EchoServiceImpl;

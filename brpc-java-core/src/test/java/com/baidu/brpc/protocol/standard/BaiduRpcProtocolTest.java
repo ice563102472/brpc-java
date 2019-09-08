@@ -21,6 +21,7 @@ import com.baidu.brpc.RpcOptionsUtils;
 import com.baidu.brpc.buffer.DynamicCompositeByteBuf;
 import com.baidu.brpc.client.BrpcProxy;
 import com.baidu.brpc.client.RpcClient;
+import com.baidu.brpc.protocol.Options;
 import com.baidu.brpc.protocol.RpcRequest;
 import com.baidu.brpc.utils.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
