@@ -109,6 +109,7 @@ public class BenchmarkTest {
 			this.echoServiceAsync = echoServiceAsync;
 		}
 
+		@Override
 		public void run() {
 			while (!stop) {
 				try {
