@@ -15,12 +15,13 @@
  */
 package com.baidu.brpc.client.channel;
 
+import java.util.NoSuchElementException;
+
 import com.baidu.brpc.ChannelInfo;
 import com.baidu.brpc.client.RpcClient;
 import com.baidu.brpc.client.instance.ServiceInstance;
-import io.netty.channel.Channel;
 
-import java.util.NoSuchElementException;
+import io.netty.channel.Channel;
 
 /**
  * BrpcShortChannel build single & short connection with server
@@ -28,79 +29,49 @@ import java.util.NoSuchElementException;
  */
 public class BrpcShortChannel extends AbstractBrpcChannel {
 
-	private volatile Channel channel;
+    public BrpcShortChannel(ServiceInstance instance, RpcClient rpcClient) {
+        super(instance, rpcClient.getBootstrap(), rpcClient.getProtocol(), rpcClient);
+    }
 
-	public BrpcShortChannel(ServiceInstance instance, RpcClient rpcClient) {
-		super(instance, rpcClient.getBootstrap(), rpcClient.getProtocol(), rpcClient);
-	}
+    @Override
+    public Channel getChannel() throws Exception, NoSuchElementException, IllegalStateException {
+        Channel channel = connect(serviceInstance.getIp(), serviceInstance.getPort());
+        ChannelInfo channelInfo = ChannelInfo.getOrCreateClientChannelInfo(channel);
+        channelInfo.setProtocol(protocol);
+        channelInfo.setChannelGroup(this);
+        return channel;
+    }
 
-	@Override
-	public Channel getChannel() throws Exception, NoSuchElementException, IllegalStateException {
-		if (channel == null || !channel.isActive()) {
-			synchronized (this) {
-				if (channel != null && !channel.isActive()) {
-					channel.close();
-					channel = null;
-				}
-				if (channel == null) {
-					channel = connect(serviceInstance.getIp(), serviceInstance.getPort());
-					ChannelInfo channelInfo = ChannelInfo.getOrCreateClientChannelInfo(channel);
-					channelInfo.setProtocol(protocol);
-					channelInfo.setChannelGroup(this);
+    @Override
+    public void returnChannel(Channel channel) {
+    }
 
-				}
-			}
-		}
-		return channel;
-	}
+    @Override
+    public void removeChannel(Channel channel) {
+        channel.close();
+    }
 
-	@Override
-	public void returnChannel(Channel channel) {
+    @Override
+    public void close() {
+    }
 
-	}
+    @Override
+    public void updateMaxConnection(int num) {
+    }
 
-	@Override
-	public void removeChannel(Channel channel) {
-		closeChannel();
-	}
+    @Override
+    public int getCurrentMaxConnection() {
+        return getActiveConnectionNum();
+    }
 
-	@Override
-	public void close() {
-		closeChannel();
-	}
+    @Override
+    public int getActiveConnectionNum() {
+        return 0;
+    }
 
-	@Override
-	public void updateMaxConnection(int num) {
+    @Override
+    public int getIdleConnectionNum() {
+        return 0;
+    }
 
-		// do nothing
-
-	}
-
-	@Override
-	public int getCurrentMaxConnection() {
-		return getActiveConnectionNum();
-	}
-
-	@Override
-	public int getActiveConnectionNum() {
-		if (channel != null && channel.isActive()) {
-			return 1;
-		}
-
-		return 0;
-	}
-
-	@Override
-	public int getIdleConnectionNum() {
-		if (channel == null || !channel.isActive()) {
-			return 1;
-		}
-		return 0;
-	}
-
-	private void closeChannel() {
-		if (channel != null && channel.isActive()) {
-			channel.close();
-		}
-	}
 }
