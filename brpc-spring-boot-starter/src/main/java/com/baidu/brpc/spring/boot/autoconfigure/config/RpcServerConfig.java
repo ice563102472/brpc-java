@@ -22,17 +22,17 @@ import lombok.Setter;
 @Setter
 @Getter
 public class RpcServerConfig extends RpcServerOptions {
-	private int port;
-	private boolean useSharedThreadPool;
-	private String interceptorBeanName;
+    private int port;
+    private boolean useSharedThreadPool;
+    private String interceptorBeanNames;
 
-	public RpcServerConfig() {
-	}
+    public RpcServerConfig() {
+    }
 
-	public RpcServerConfig(RpcServerConfig rhs) {
-		super(rhs);
-		this.port = rhs.getPort();
-		this.useSharedThreadPool = rhs.isUseSharedThreadPool();
-		this.interceptorBeanName = rhs.getInterceptorBeanName();
-	}
+    public RpcServerConfig(RpcServerConfig rhs) {
+        super(rhs);
+        this.port = rhs.getPort();
+        this.useSharedThreadPool = rhs.isUseSharedThreadPool();
+        this.interceptorBeanNames = rhs.getInterceptorBeanNames();
+    }
 }

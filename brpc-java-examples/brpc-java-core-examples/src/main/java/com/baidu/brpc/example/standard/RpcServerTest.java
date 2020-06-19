@@ -25,28 +25,28 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class RpcServerTest {
-	public static void main(String[] args) {
-		int port = 8002;
-		if (args.length == 1) {
-			port = Integer.valueOf(args[0]);
-		}
+    public static void main(String[] args) {
+        int port = 8002;
+        if (args.length == 1) {
+            port = Integer.valueOf(args[0]);
+        }
 
-		RpcServerOptions options = new RpcServerOptions();
-		options.setReceiveBufferSize(64 * 1024 * 1024);
-		options.setSendBufferSize(64 * 1024 * 1024);
-		options.setKeepAliveTime(20);
-//        options.setNamingServiceUrl("zookeeper://127.0.0.1:2181");
+        RpcServerOptions options = new RpcServerOptions();
+        options.setReceiveBufferSize(64 * 1024 * 1024);
+        options.setSendBufferSize(64 * 1024 * 1024);
+        options.setKeepAliveTime(20);
+//        options.setNamingServiceUrl("consul://127.0.0.1:8500");
 //        final RpcServer rpcServer = new RpcServer(port, options);
-		final RpcServer rpcServer = new RpcServer(port, options);
-		rpcServer.registerService(new EchoServiceImpl());
-		rpcServer.start();
+        final RpcServer rpcServer = new RpcServer(port, options);
+        rpcServer.registerService(new EchoServiceImpl());
+        rpcServer.start();
 
-		// make server keep running
-		synchronized (RpcServerTest.class) {
-			try {
-				RpcServerTest.class.wait();
-			} catch (Throwable e) {
-			}
-		}
-	}
+        // make server keep running
+        synchronized (RpcServerTest.class) {
+            try {
+                RpcServerTest.class.wait();
+            } catch (Throwable e) {
+            }
+        }
+    }
 }

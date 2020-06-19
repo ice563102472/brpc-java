@@ -19,46 +19,47 @@ import com.baidu.brpc.RpcContext;
 import com.baidu.brpc.client.BrpcProxy;
 import com.baidu.brpc.client.RpcClient;
 import com.baidu.brpc.client.RpcClientOptions;
-import com.baidu.brpc.naming.NamingOptions;
+import com.baidu.brpc.naming.zookeeper.StargateNamingFactory;
+import com.baidu.brpc.protocol.NamingOptions;
 import com.baidu.brpc.protocol.Options;
 import com.baidu.brpc.utils.GsonUtils;
 
 public class StargateDemoClient {
 
-	public static void main(String[] args) {
-		RpcClientOptions options = new RpcClientOptions();
-		// Stargate 协议需要强指定协议类型，不可使用BRPC协议解析器
-		options.setProtocolType(Options.ProtocolType.PROTOCOL_STARGATE_VALUE);
-		options.setReadTimeoutMillis(1000);
-		options.setWriteTimeoutMillis(1000);
-		RpcClient rpcClient = new RpcClient(StargateDemoConstant.namingUrl, options);
+    public static void main(String[] args) {
+        RpcClientOptions options = new RpcClientOptions();
+        // Stargate 协议需要强指定协议类型，不可使用BRPC协议解析器
+        options.setProtocolType(Options.ProtocolType.PROTOCOL_STARGATE_VALUE);
+        options.setReadTimeoutMillis(1000);
+        options.setWriteTimeoutMillis(1000);
+        RpcClient rpcClient = new RpcClient(StargateDemoConstant.namingUrl, options);
 
-		NamingOptions namingOptions = new NamingOptions();
-		namingOptions.setGroup(StargateDemoConstant.group);
-		namingOptions.setVersion(StargateDemoConstant.version);
+        NamingOptions namingOptions = new NamingOptions();
+        namingOptions.setGroup(StargateDemoConstant.group);
+        namingOptions.setVersion(StargateDemoConstant.version);
 
-		StargateDemoService proxy = BrpcProxy.getProxy(rpcClient, StargateDemoService.class, namingOptions);
+        StargateDemoService proxy = BrpcProxy.getProxy(rpcClient, StargateDemoService.class, namingOptions);
 
-		for (int i = 0, times = 10; i < times; i++) {
-			RpcContext rpcContext = RpcContext.getContext();
-			rpcContext.reset();
-			rpcContext.setRequestKvAttachment("key", "value");
-			StargateDemoReqDto reqDto = new StargateDemoReqDto();
-			reqDto.setId(1000L);
-			reqDto.setName("test");
-			StargateDemoResDto call = proxy.call(reqDto);
-			System.out.println(GsonUtils.toJson(call));
-			if (rpcContext.getResponseKvAttachment() != null) {
-				System.out.println(rpcContext.getResponseKvAttachment().get("resKey"));
-			}
-			System.out.println();
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
+        for (int i = 0, times = 10; i < times; i++) {
+            RpcContext rpcContext = RpcContext.getContext();
+            rpcContext.reset();
+            rpcContext.setRequestKvAttachment("key", "value");
+            StargateDemoReqDto reqDto = new StargateDemoReqDto();
+            reqDto.setId(1000L);
+            reqDto.setName("test");
+            StargateDemoResDto call = proxy.call(reqDto);
+            System.out.println(GsonUtils.toJson(call));
+            if (rpcContext.getResponseKvAttachment() != null) {
+                System.out.println(rpcContext.getResponseKvAttachment().get("resKey"));
+            }
+            System.out.println();
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
 
-		rpcClient.stop();
-	}
+        rpcClient.stop();
+    }
 }

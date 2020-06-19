@@ -16,43 +16,45 @@
 
 package com.baidu.brpc.example.standard;
 
-import com.baidu.brpc.RpcContext;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.baidu.brpc.RpcContext;
+
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 /**
  * Created by wenweihu86 on 2017/4/25.
  */
 public class EchoServiceImpl implements EchoService {
-	private static final Logger LOG = LoggerFactory.getLogger(EchoServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(EchoServiceImpl.class);
 
-	@Override
-	public Echo.EchoResponse echo(Echo.EchoRequest request) {
-		// 读取request attachment
-		if (RpcContext.isSet()) {
-			RpcContext rpcContext = RpcContext.getContext();
-			String remoteHost = rpcContext.getRemoteHost();
-			LOG.debug("remote host:{}", remoteHost);
-			ByteBuf attachment = rpcContext.getRequestBinaryAttachment();
-			if (attachment != null) {
-				if (LOG.isDebugEnabled()) {
-					String attachmentString = new String(attachment.array());
-					LOG.debug("request attachment={}", attachmentString);
-				}
-				// 设置response attachment
-				rpcContext.setResponseBinaryAttachment(Unpooled.copiedBuffer(attachment));
-			}
-		}
+    @Override
+    public Echo.EchoResponse echo(Echo.EchoRequest request) {
+        // 读取request attachment
+        if (RpcContext.isSet()) {
+            RpcContext rpcContext = RpcContext.getContext();
+            String remoteHost = rpcContext.getRemoteHost();
+            LOG.debug("remote host:{}", remoteHost);
+            ByteBuf attachment = rpcContext.getRequestBinaryAttachment();
+            if (attachment != null) {
+                if (LOG.isDebugEnabled()) {
+                    String attachmentString = new String(attachment.array());
+                    LOG.debug("request attachment={}", attachmentString);
+                }
+                // 设置response attachment
+                rpcContext.setResponseBinaryAttachment(Unpooled.copiedBuffer(attachment));
+            }
+        }
 
-		String message = request.getMessage();
-		Echo.EchoResponse response = Echo.EchoResponse.newBuilder()
-				.setMessage(message).build();
-//        LOG.debug("EchoService.echo, request={}, response={}",
-//                request.getMessage(), response.getMessage());
+        String message = request.getMessage();
+        Echo.EchoResponse response = Echo.EchoResponse.newBuilder()
+                .setMessage(message).build();
+        LOG.info("EchoService.echo, request={}, response={}",
+                request.getMessage(), response.getMessage());
 
-		return response;
-	}
+        return response;
+    }
 
 }

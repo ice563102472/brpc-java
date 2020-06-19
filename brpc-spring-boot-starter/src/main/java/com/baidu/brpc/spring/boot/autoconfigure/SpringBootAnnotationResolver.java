@@ -19,12 +19,10 @@ import com.baidu.bjf.remoting.protobuf.utils.JDKCompilerHelper;
 import com.baidu.bjf.remoting.protobuf.utils.compiler.Compiler;
 import com.baidu.brpc.client.RpcClientOptions;
 import com.baidu.brpc.interceptor.Interceptor;
-import com.baidu.brpc.naming.NamingOptions;
 import com.baidu.brpc.naming.NamingServiceFactory;
 import com.baidu.brpc.spring.RpcProxyFactoryBean;
 import com.baidu.brpc.spring.RpcServiceExporter;
 import com.baidu.brpc.spring.annotation.AbstractAnnotationParserCallback;
-import com.baidu.brpc.spring.annotation.NamingOption;
 import com.baidu.brpc.spring.annotation.RpcAnnotationResolverListener;
 import com.baidu.brpc.spring.annotation.RpcExporter;
 import com.baidu.brpc.spring.annotation.RpcProxy;
@@ -35,6 +33,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.MutablePropertyValues;
@@ -55,7 +54,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -105,9 +103,9 @@ public class SpringBootAnnotationResolver extends AbstractAnnotationParserCallba
     private NamingServiceFactory namingServiceFactory;
 
     /**
-     * The default interceptor for all service
+     * The default interceptors for all service
      */
-    private Interceptor interceptor;
+//    private List<Interceptor> interceptors;
 
     /**
      * The protobuf rpc annotation resolver listener.
@@ -269,16 +267,13 @@ public class SpringBootAnnotationResolver extends AbstractAnnotationParserCallba
 
         // interceptor
         if (brpcConfig.getServer() != null
-                && StringUtils.isNoneBlank(brpcConfig.getServer().getInterceptorBeanName())) {
-            Interceptor interceptor = beanFactory.getBean(
-                    brpcConfig.getServer().getInterceptorBeanName(), Interceptor.class);
-            if (rpcServiceExporter.getInterceptors() != null &&
-                    !rpcServiceExporter.getInterceptors().contains(interceptor)) {
-                rpcServiceExporter.getInterceptors().add(interceptor);
-            } else {
-                List<Interceptor> interceptors = new ArrayList<>();
-                interceptors.add(interceptor);
-                rpcServiceExporter.setInterceptors(interceptors); // must be immutable
+                && StringUtils.isNoneBlank(brpcConfig.getServer().getInterceptorBeanNames())) {
+            String[] interceptorNameArray = brpcConfig.getServer().getInterceptorBeanNames().trim().split(",");
+            for (String interceptorBeanName : interceptorNameArray) {
+                Interceptor interceptor = beanFactory.getBean(interceptorBeanName.trim(), Interceptor.class);
+                if (!rpcServiceExporter.getInterceptors().contains(interceptor)) {
+                    rpcServiceExporter.getInterceptors().add(interceptor);
+                }
             }
         }
 
@@ -345,6 +340,10 @@ public class SpringBootAnnotationResolver extends AbstractAnnotationParserCallba
         BrpcConfig brpcConfig = getServiceConfig(beanFactory, serviceInterface);
         for (Field field : RpcClientOptions.class.getDeclaredFields()) {
             try {
+                if (field.getType().equals(Logger.class)) {
+                    // ignore properties of org.slf4j.Logger class
+                    continue;
+                }
                 field.setAccessible(true);
                 values.addPropertyValue(field.getName(), field.get(brpcConfig.getClient()));
             } catch (Exception ex) {
@@ -362,10 +361,15 @@ public class SpringBootAnnotationResolver extends AbstractAnnotationParserCallba
         }
 
         // interceptor
-        String interceptorName = brpcConfig.getClient().getInterceptorBeanName();
-        if (!StringUtils.isBlank(interceptorName)) {
-            Interceptor interceptor = beanFactory.getBean(interceptorName, Interceptor.class);
-            values.addPropertyValue("interceptors", Arrays.asList(interceptor));
+        String interceptorNames = brpcConfig.getClient().getInterceptorBeanNames();
+        if (!StringUtils.isBlank(interceptorNames)) {
+            List<Interceptor> customInterceptors = new ArrayList<>();
+            String[] interceptorNameArray = interceptorNames.split(",");
+            for (String interceptorBeanName : interceptorNameArray) {
+                Interceptor interceptor = beanFactory.getBean(interceptorBeanName, Interceptor.class);
+                customInterceptors.add(interceptor);
+            }
+            values.addPropertyValue("interceptors", Arrays.asList(customInterceptors));
         }
 
         beanDef.setPropertyValues(values);

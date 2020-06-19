@@ -15,9 +15,14 @@
  */
 package com.baidu.brpc.spring.annotation;
 
-import com.baidu.brpc.spring.RpcServiceExporter;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import java.lang.annotation.*;
+import com.baidu.brpc.spring.RpcServiceExporter;
 
 /**
  * Annotation publish for {@link RpcServiceExporter}.
@@ -31,57 +36,57 @@ import java.lang.annotation.*;
 @Documented
 public @interface RpcExporter {
 
-	/**
-	 * RPC server port to publish.
-	 *
-	 * @return the string
-	 */
-	String port() default "8080";
+    /**
+     * RPC server port to publish.
+     *
+     * @return the string
+     */
+    String port() default "8080";
 
-	/**
-	 * bean name of RPC server options bean type must be {@link com.baidu.brpc.server.RpcServerOptions}.
-	 *
-	 * @return the string
-	 */
-	String rpcServerOptionsBeanName() default "";
+    /**
+     * bean name of RPC server options bean type must be {@link com.baidu.brpc.server.RpcServerOptions}.
+     *
+     * @return the string
+     */
+    String rpcServerOptionsBeanName() default "";
 
-	/**
-	 * bean name of RPC interceptor bean type must be {@link com.baidu.brpc.interceptor.Interceptor}.
-	 *
-	 * @return the string
-	 */
-	String interceptorBeanName() default "";
+    /**
+     * bean name of RPC interceptor bean type must be {@link com.baidu.brpc.interceptor.Interceptor}.
+     *
+     * @return the string
+     */
+    String interceptorBeanNames() default "";
 
-	/**
-	 * Group for naming service
-	 */
-	String group() default "normal";
+    /**
+     * Group for naming service
+     */
+    String group() default "normal";
 
-	/**
-	 * Version for naming service
-	 */
-	String version() default "1.0.0";
+    /**
+     * Version for naming service
+     */
+    String version() default "1.0.0";
 
-	/**
-	 * ignore it when failed to register naming service
-	 *
-	 * @return true, ignore
-	 */
-	boolean ignoreFailOfNamingService() default false;
+    /**
+     * ignore it when failed to register naming service
+     *
+     * @return true, ignore
+     */
+    boolean ignoreFailOfNamingService() default false;
 
-	/**
-	 * true: use the shared thread pool
-	 * false: create individual thread pool for register service
-	 * attention here - it is not global share thread pool between multi RpcClient/RpcServer , if you want to use
-	 * global thread pool , see rpc options.
-	 */
-	boolean useServiceSharedThreadPool() default true;
+    /**
+     * true: use the shared thread pool
+     * false: create individual thread pool for register service
+     * attention here - it is not global share thread pool between multi RpcClient/RpcServer , if you want to use
+     * global thread pool , see rpc options.
+     */
+    boolean useServiceSharedThreadPool() default true;
 
-	/**
-	 * Extra naming options. This option is effective on service-scope.
-	 * <p>
-	 * This config may have different behavior depending on which NamingService is used,
-	 * consult documentation of the specific {@link com.baidu.brpc.naming.NamingService} for detailed usage.
-	 */
-	NamingOption[] extraOptions() default {};
+    /**
+     * Extra naming options. This option is effective on service-scope.
+     * <p>
+     * This config may have different behavior depending on which NamingService is used,
+     * consult documentation of the specific {@link com.baidu.brpc.naming.NamingService} for detailed usage.
+     */
+    NamingOption[] extraOptions() default {};
 }

@@ -29,32 +29,31 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public abstract class RpcXmlConfigurationTestBase {
 
-	/**
-	 * context of {@link AbstractApplicationContext}
-	 */
-	protected AbstractApplicationContext context;
+    /**
+     * context of {@link AbstractApplicationContext}
+     */
+    protected AbstractApplicationContext context;
 
+    @Before
+    public void setUp() {
+        context = new ClassPathXmlApplicationContext(getConfigurationPath());
+        context.start();
+    }
+    
+    protected abstract String getConfigurationPath();
 
-	@Before
-	public void setUp() {
-		context =
-				new ClassPathXmlApplicationContext(getConfigurationPath());
-	}
+    @After
+    public void tearDown() {
+        if (context != null) {
+            context.close();
+        }
+    }
 
-	protected abstract String getConfigurationPath();
+    protected void internalRpcRequestAndResponse(EchoService echoService) {
+        EchoRequest echo = new EchoRequest();
+        echo.setMessage("world");
 
-	@After
-	public void tearDown() {
-		if (context != null) {
-			context.close();
-		}
-	}
-
-	protected void internalRpcRequestAndResponse(EchoService echoService) {
-		EchoRequest echo = new EchoRequest();
-		echo.setMessage("world");
-
-		EchoResponse response = echoService.echo(echo);
-		Assert.assertEquals("world", response.getMessage());
-	}
+        EchoResponse response = echoService.echo(echo);
+        Assert.assertEquals("world", response.getMessage());
+    }
 }

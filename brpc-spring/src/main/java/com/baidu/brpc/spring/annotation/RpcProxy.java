@@ -15,7 +15,12 @@
  */
 package com.baidu.brpc.spring.annotation;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * Annotation publish for {@link com.baidu.brpc.spring.RpcProxyFactoryBean}.
@@ -29,46 +34,48 @@ import java.lang.annotation.*;
 @Documented
 public @interface RpcProxy {
 
-	/**
-	 * bean name of RPC client options.  bean type must be {@link com.baidu.brpc.client.RpcClientOptions}
-	 *
-	 * @return the string
-	 */
-	String rpcClientOptionsBeanName() default "";
+    /**
+     * bean name of RPC client options.  bean type must be {@link com.baidu.brpc.client.RpcClientOptions}
+     *
+     * @return the string
+     */
+    String rpcClientOptionsBeanName() default "";
 
-	/**
-	 * RPC server naming url to connect.
-	 *
-	 * @return the string
-	 */
-	String namingServiceUrl() default "";
+    /**
+     * RPC server naming url to connect.
+     *
+     * @return the string
+     */
+    String namingServiceUrl() default "";
 
-	/**
-	 * group for naming service
-	 */
-	String group() default "normal";
+    /**
+     * group for naming service
+     *
+     */
+    String group() default "normal";
 
-	/**
-	 * version for naming service
-	 */
-	String version() default "1.0.0";
+    /**
+     * version for naming service
+     *
+     */
+    String version() default "1.0.0";
 
-	/**
-	 * ignore it when failed to lookup/subscribe naming service
-	 *
-	 * @return true, ignore
-	 */
-	boolean ignoreFailOfNamingService() default false;
+    /**
+     * ignore it when failed to lookup/subscribe naming service
+     *
+     * @return true, ignore
+     */
+    boolean ignoreFailOfNamingService() default false;
+    
+    /**
+     * bean name of RPC interceptor bean type must be {@link com.baidu.brpc.interceptor.Interceptor}.
+     *
+     * @return the string
+     */
+    String interceptorBeanNames() default "";
 
-	/**
-	 * bean name of RPC interceptor bean type must be {@link com.baidu.brpc.interceptor.Interceptor}.
-	 *
-	 * @return the string
-	 */
-	String interceptorBeanName() default "";
-
-	/**
-	 * use name to identify all the instances for this service from registry.
-	 */
-	String name() default "";
+    /**
+     * use name to identify all the instances for this service from registry.
+     */
+    String name() default "";
 }
