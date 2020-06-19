@@ -42,6 +42,8 @@ public class RpcProxyTest {
     public void setUp() throws Exception {
 
         rpcServiceExporter = new RpcServiceExporter();
+        rpcServiceExporter.setIoThreadNum(1);
+        rpcServiceExporter.setWorkThreadNum(1);
         rpcServiceExporter.setServicePort(servicePort);
 
         EchoServiceImpl service = new EchoServiceImpl();
@@ -51,6 +53,8 @@ public class RpcProxyTest {
 
         // setup client
         rpcProxyFactoryBean = new RpcProxyFactoryBean();
+        rpcProxyFactoryBean.setIoThreadNum(1);
+        rpcProxyFactoryBean.setWorkThreadNum(1);
         rpcProxyFactoryBean.setServiceInterface(EchoService.class);
         rpcProxyFactoryBean.setNamingServiceUrl("list://127.0.0.1:" + servicePort);
         rpcProxyFactoryBean.afterPropertiesSet();
@@ -59,12 +63,15 @@ public class RpcProxyTest {
 
     @After
     public void tearDown() {
-        if (rpcServiceExporter != null) {
-            try {
-                rpcServiceExporter.destroy();
-            } catch (Exception e) {
-                e.printStackTrace();
+        try {
+            if (rpcProxyFactoryBean != null) {
+                rpcProxyFactoryBean.destroy();
             }
+            if (rpcServiceExporter != null) {
+                rpcServiceExporter.destroy();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

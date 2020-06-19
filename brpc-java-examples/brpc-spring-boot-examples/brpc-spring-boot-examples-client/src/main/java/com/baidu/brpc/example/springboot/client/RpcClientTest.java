@@ -29,30 +29,30 @@ import java.util.concurrent.Future;
 @SpringBootApplication
 @RestController
 public class RpcClientTest {
-    @Autowired
-    private EchoFacade echoFacade;
+	@Autowired
+	private EchoFacade echoFacade;
 
-    public static void main(String[] args) {
-        SpringApplication.run(RpcClientTest.class, args);
-    }
+	public static void main(String[] args) {
+		SpringApplication.run(RpcClientTest.class, args);
+	}
 
-    @RequestMapping("/echo")
-    public String echo() {
-        EchoRequest request = new EchoRequest();
-        request.setMessage("hello");
-        EchoResponse response = echoFacade.echo(request);
-        System.out.println(response.getMessage());
+	@RequestMapping("/echo")
+	public String echo() {
+		EchoRequest request = new EchoRequest();
+		request.setMessage("hello");
+		EchoResponse response = echoFacade.echo(request);
+		System.out.println(response.getMessage());
 
-        EchoResponse response2 = echoFacade.echo2(request);
-        System.out.println(response2.getMessage());
+		EchoResponse response2 = echoFacade.echo2(request);
+		System.out.println(response2.getMessage());
 
-        Future<EchoResponse> future = echoFacade.echo3(request);
-        try {
-            future.get();
-        } catch (Exception ex) {
-            // ignore
-        }
+		Future<EchoResponse> future = echoFacade.echo3(request);
+		try {
+			future.get();
+		} catch (Exception ex) {
+			// ignore
+		}
 
-        return response2.getMessage();
-    }
+		return response2.getMessage();
+	}
 }

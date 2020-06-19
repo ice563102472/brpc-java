@@ -27,13 +27,13 @@ import java.lang.annotation.RetentionPolicy;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface NamingOption {
-    /**
-     * Key of the option
-     */
-    String key() default "";
+	/**
+	 * Key of the option
+	 */
+	String key() default "";
 
-    /**
-     * Value of the option
-     */
-    String value() default "";
+	/**
+	 * Value of the option
+	 */
+	String value() default "";
 }

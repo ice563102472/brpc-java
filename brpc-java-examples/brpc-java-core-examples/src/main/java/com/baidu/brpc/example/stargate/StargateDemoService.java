@@ -20,10 +20,10 @@ import java.util.Map;
 
 public interface StargateDemoService {
 
-    StargateDemoResDto call(StargateDemoReqDto reqDto);
+	StargateDemoResDto call(StargateDemoReqDto reqDto);
 
-    List<StargateDemoResDto> list(StargateDemoReqDto reqDto);
+	List<StargateDemoResDto> list(StargateDemoReqDto reqDto);
 
-    Map<Long, StargateDemoResDto> map(StargateDemoReqDto reqDto);
+	Map<Long, StargateDemoResDto> map(StargateDemoReqDto reqDto);
 
 }

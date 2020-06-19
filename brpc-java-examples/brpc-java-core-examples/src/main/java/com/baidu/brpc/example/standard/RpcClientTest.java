@@ -21,7 +21,7 @@ import com.baidu.brpc.client.BrpcProxy;
 import com.baidu.brpc.client.RpcCallback;
 import com.baidu.brpc.client.RpcClient;
 import com.baidu.brpc.client.RpcClientOptions;
-import com.baidu.brpc.client.loadbalance.LoadBalanceStrategy;
+import com.baidu.brpc.loadbalance.LoadBalanceStrategy;
 import com.baidu.brpc.example.interceptor.CustomInterceptor;
 import com.baidu.brpc.exceptions.RpcException;
 import com.baidu.brpc.interceptor.Interceptor;
@@ -44,14 +44,14 @@ public class RpcClientTest {
         RpcClientOptions clientOption = new RpcClientOptions();
         clientOption.setProtocolType(Options.ProtocolType.PROTOCOL_BAIDU_STD_VALUE);
         clientOption.setWriteTimeoutMillis(1000);
-        clientOption.setReadTimeoutMillis(5000);
+        clientOption.setReadTimeoutMillis(50000);
         clientOption.setMaxTotalConnections(1000);
         clientOption.setMinIdleConnections(10);
         clientOption.setLoadBalanceType(LoadBalanceStrategy.LOAD_BALANCE_FAIR);
         clientOption.setCompressType(Options.CompressType.COMPRESS_TYPE_NONE);
 
         String serviceUrl = "list://127.0.0.1:8002";
-//        String serviceUrl = "zookeeper://127.0.0.1:2181";
+//        String serviceUrl = "consul://127.0.0.1:8500";
         if (args.length == 1) {
             serviceUrl = args[0];
         }
@@ -68,7 +68,7 @@ public class RpcClientTest {
         RpcClient rpcClient = new RpcClient(serviceUrl, clientOption, interceptors);
 //        RpcClient rpcClient = new RpcClient(serviceUrl, clientOption, interceptors);
         EchoService echoService = BrpcProxy.getProxy(rpcClient, EchoService.class);
-        RpcContext.getContext().setLogId(1234);
+        RpcContext.getContext().setLogId(1234L);
         try {
             Echo.EchoResponse response = echoService.echo(request);
             System.out.printf("sync call service=EchoService.echo success, "

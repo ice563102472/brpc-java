@@ -21,13 +21,13 @@ import com.baidu.brpc.naming.NamingServiceFactory;
 
 public class StargateNamingFactory implements NamingServiceFactory {
 
-    @Override
-    public String getName() {
-        return "star";
-    }
+	@Override
+	public String getName() {
+		return "star";
+	}
 
-    @Override
-    public NamingService createNamingService(BrpcURL url) {
-        return new StargateZookeeperNamingService(url);
-    }
+	@Override
+	public NamingService createNamingService(BrpcURL url) {
+		return new StargateZookeeperNamingService(url);
+	}
 }

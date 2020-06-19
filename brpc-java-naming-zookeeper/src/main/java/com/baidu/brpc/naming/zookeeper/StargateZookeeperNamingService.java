@@ -15,13 +15,13 @@
  */
 package com.baidu.brpc.naming.zookeeper;
 
-import com.baidu.brpc.client.instance.ServiceInstance;
+import com.baidu.brpc.client.channel.ServiceInstance;
 import com.baidu.brpc.exceptions.RpcException;
 import com.baidu.brpc.naming.BrpcURL;
-import com.baidu.brpc.naming.NamingOptions;
 import com.baidu.brpc.naming.NotifyListener;
 import com.baidu.brpc.naming.RegisterInfo;
-import com.baidu.brpc.naming.SubscribeInfo;
+import com.baidu.brpc.protocol.NamingOptions;
+import com.baidu.brpc.protocol.SubscribeInfo;
 import com.baidu.brpc.protocol.stargate.StargateConstants;
 import com.baidu.brpc.protocol.stargate.StargateURI;
 
@@ -29,6 +29,7 @@ import com.google.common.base.Strings;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.cache.ChildData;
 import org.apache.curator.framework.recipes.cache.PathChildrenCache;
@@ -65,8 +66,9 @@ public class StargateZookeeperNamingService extends ZookeeperNamingService {
     }
 
     @Override
-    public List<ServiceInstance> lookup(SubscribeInfo info) {
-        String path = buildParentNodePath(resolveGroup(info), info.getInterfaceName(), resolveVersion(info));
+    public List<ServiceInstance> lookup(SubscribeInfo subscribeInfo) {
+        String path = buildParentNodePath(resolveGroup(subscribeInfo),
+                subscribeInfo.getInterfaceName(), resolveVersion(subscribeInfo));
         List<ServiceInstance> instances = new ArrayList<ServiceInstance>();
         try {
             List<String> childList = client.getChildren().forPath(path);
@@ -79,7 +81,11 @@ public class StargateZookeeperNamingService extends ZookeeperNamingService {
                 try {
                     String childData = new String(client.getData().forPath(childPath));
                     StargateURI uri = new StargateURI.Builder(childData).build();
-                    instances.add(new ServiceInstance(uri.getHost(), uri.getPort()));
+                    ServiceInstance instance = new ServiceInstance(uri.getHost(), uri.getPort());
+                    if (subscribeInfo != null && StringUtils.isNoneBlank(subscribeInfo.getServiceId())) {
+                        instance.setServiceName(subscribeInfo.getServiceId());
+                    }
+                    instances.add(instance);
                 } catch (Exception getDataFailedException) {
                     log.warn("get child data failed, path:{}, ex:", childPath, getDataFailedException);
                 }
@@ -88,108 +94,83 @@ public class StargateZookeeperNamingService extends ZookeeperNamingService {
         } catch (Exception ex) {
             log.warn("lookup service instance list failed from {}, msg={}",
                     url, ex.getMessage());
-            if (!info.isIgnoreFailOfNamingService()) {
+            if (!subscribeInfo.isIgnoreFailOfNamingService()) {
                 throw new RpcException("lookup end point list failed from zookeeper failed", ex);
             }
         }
         return instances;
     }
 
+
+
     @Override
-    public void subscribe(SubscribeInfo info, final NotifyListener listener) {
-        try {
-            final String path = buildParentNodePath(resolveGroup(info), info.getInterfaceName(), resolveVersion(info));
-            PathChildrenCache cache = new PathChildrenCache(client, path, true);
-            cache.getListenable().addListener(new PathChildrenCacheListener() {
-                @Override
-                public void childEvent(CuratorFramework client, PathChildrenCacheEvent event) throws Exception {
-                    ChildData data = event.getData();
-                    // 子节点信息，将监听的父节点信息擦除
-                    String childNodePath = data.getPath().replace(path + "/", "");
-                    // 如果是客户端上线，不做处理
-                    if (StargateConstants.ZK_CONSUMER_DIR.equals(childNodePath)) {
-                        return;
-                    }
-                    switch (event.getType()) {
-                        case CHILD_ADDED: {
-                            ServiceInstance endPoint = new ServiceInstance(childNodePath);
-                            listener.notify(Collections.singletonList(endPoint),
-                                    Collections.<ServiceInstance>emptyList());
-                            break;
-                        }
-                        case CHILD_REMOVED: {
-                            ServiceInstance endPoint = new ServiceInstance(childNodePath);
-                            listener.notify(Collections.<ServiceInstance>emptyList(),
-                                    Collections.singletonList(endPoint));
-                            break;
-                        }
-                        case CHILD_UPDATED:
-                        default:
-                            break;
-                    }
+    public void doSubscribe(SubscribeInfo subscribeInfo, final NotifyListener listener) throws Exception {
+        final String path = buildParentNodePath(resolveGroup(subscribeInfo), subscribeInfo.getInterfaceName(), resolveVersion(subscribeInfo));
+        PathChildrenCache cache = new PathChildrenCache(client, path, true);
+        cache.getListenable().addListener(new PathChildrenCacheListener() {
+            @Override
+            public void childEvent(CuratorFramework client, PathChildrenCacheEvent event) throws Exception {
+                ChildData data = event.getData();
+                // 子节点信息，将监听的父节点信息擦除
+                String childNodePath = data.getPath().replace(path + "/", "");
+                // 如果是客户端上线，不做处理
+                if (StargateConstants.ZK_CONSUMER_DIR.equals(childNodePath)) {
+                    return;
                 }
-            });
-            cache.start(PathChildrenCache.StartMode.BUILD_INITIAL_CACHE);
-            failedSubscribes.remove(info);
-            subscribeCacheMap.putIfAbsent(info, cache);
-            log.info("stargate subscribe success from {}", url);
-        } catch (Exception ex) {
-            if (!info.isIgnoreFailOfNamingService()) {
-                throw new RpcException("stargate subscribe failed from " + url, ex);
-            } else {
-                failedSubscribes.putIfAbsent(info, listener);
-            }
-        }
-    }
-
-    @Override
-    public void unsubscribe(SubscribeInfo subscribeInfo) {
-        super.unsubscribe(subscribeInfo);
-    }
-
-    @Override
-    public void register(RegisterInfo info) {
-        String parentPath = buildParentNodePath(resolveGroup(info), info.getInterfaceName(), resolveVersion(info));
-        String path = parentPath + "/" + info.getHost() + ":" + info.getPort();
-        String pathData = buildStarRegisterPathData(info);
-        try {
-            if (client.checkExists().forPath(parentPath) == null) {
-                client.create().withMode(CreateMode.PERSISTENT).forPath(parentPath);
-            }
-            if (client.checkExists().forPath(path) != null) {
-                try {
-                    client.delete().forPath(path);
-                } catch (Exception deleteException) {
-                    log.info("zk delete node failed, ignore");
+                switch (event.getType()) {
+                    case CHILD_ADDED: {
+                        ServiceInstance endPoint = new ServiceInstance(childNodePath);
+                        listener.notify(Collections.singletonList(endPoint),
+                                Collections.<ServiceInstance>emptyList());
+                        break;
+                    }
+                    case CHILD_REMOVED: {
+                        ServiceInstance endPoint = new ServiceInstance(childNodePath);
+                        listener.notify(Collections.<ServiceInstance>emptyList(),
+                                Collections.singletonList(endPoint));
+                        break;
+                    }
+                    case CHILD_UPDATED:
+                    default:
+                        break;
                 }
             }
-            client.create().withMode(CreateMode.EPHEMERAL).forPath(path, pathData.getBytes());
-            log.info("stargate register success to {}", url);
-        } catch (Exception ex) {
-            if (!info.isIgnoreFailOfNamingService()) {
-                throw new RpcException("stargate Failed to register to " + url, ex);
-            } else {
-                failedRegisters.add(info);
-                return;
-            }
-        }
-        failedRegisters.remove(info);
+        });
+        cache.start(PathChildrenCache.StartMode.BUILD_INITIAL_CACHE);
+        subscribeCacheMap.putIfAbsent(subscribeInfo, cache);
+        log.info("stargate subscribe success from {}", url);
     }
 
     @Override
-    public void unregister(RegisterInfo info) {
-        String parentPath = buildParentNodePath(resolveGroup(info), info.getInterfaceName(), resolveVersion(info));
-        String path = "/" + info.getHost() + ":" + info.getPort();
-        try {
-            client.delete().guaranteed().forPath(parentPath + path);
-            log.info("stargate unregister success to {}", url);
-        } catch (Exception ex) {
-            if (!info.isIgnoreFailOfNamingService()) {
-                throw new RpcException("stargate Failed to unregister from " + url, ex);
-            } else {
-                failedUnregisters.add(info);
+    public void doUnsubscribe(SubscribeInfo subscribeInfo) throws Exception {
+        super.doUnsubscribe(subscribeInfo);
+    }
+
+    @Override
+    public void doRegister(RegisterInfo registerInfo) throws Exception {
+        String parentPath = buildParentNodePath(resolveGroup(registerInfo), registerInfo.getInterfaceName(), resolveVersion(registerInfo));
+        String path = parentPath + "/" + registerInfo.getHost() + ":" + registerInfo.getPort();
+        String pathData = buildStarRegisterPathData(registerInfo);
+        if (client.checkExists().forPath(parentPath) == null) {
+            client.create().withMode(CreateMode.PERSISTENT).forPath(parentPath);
+        }
+        if (client.checkExists().forPath(path) != null) {
+            try {
+                client.delete().forPath(path);
+            } catch (Exception deleteException) {
+                log.info("zk delete node failed, ignore");
             }
         }
+        client.create().withMode(CreateMode.EPHEMERAL).forPath(path, pathData.getBytes());
+        log.info("stargate register success to {}", url);
+    }
+
+    @Override
+    public void doUnregister(RegisterInfo registerInfo) throws Exception {
+        String parentPath = buildParentNodePath(resolveGroup(registerInfo), registerInfo.getInterfaceName(), resolveVersion(registerInfo));
+        String path = "/" + registerInfo.getHost() + ":" + registerInfo.getPort();
+        client.delete().guaranteed().forPath(parentPath + path);
+        log.info("stargate unregister success to {}", url);
     }
 
     /**

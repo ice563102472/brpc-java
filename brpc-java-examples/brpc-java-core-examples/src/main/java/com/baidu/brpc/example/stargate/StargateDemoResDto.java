@@ -24,8 +24,8 @@ import lombok.Setter;
 @Builder
 public class StargateDemoResDto {
 
-    private Long id;
+	private Long id;
 
-    private String name;
+	private String name;
 
 }

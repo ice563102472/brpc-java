@@ -20,17 +20,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class EchoService2Impl implements EchoService2 {
-    private static final Logger LOG = LoggerFactory.getLogger(EchoService2Impl.class);
-    public static volatile boolean client2Started = false;
+	private static final Logger LOG = LoggerFactory.getLogger(EchoService2Impl.class);
+	public static volatile boolean client2Started = false;
 
-    @Override
-    public EchoResponse echo(EchoRequest request) {
-        String message = request.getMessage();
-        EchoResponse response = new EchoResponse();
-        response.setMessage(message);
-        LOG.debug("EchoService.echo, request={}, response={}",
-                request.getMessage(), response.getMessage());
-        client2Started = true;
-        return response;
-    }
+	@Override
+	public EchoResponse echo(EchoRequest request) {
+		String message = request.getMessage();
+		EchoResponse response = new EchoResponse();
+		response.setMessage(message);
+		LOG.debug("EchoService.echo, request={}, response={}",
+				request.getMessage(), response.getMessage());
+		client2Started = true;
+		return response;
+	}
 }

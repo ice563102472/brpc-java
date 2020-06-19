@@ -24,5 +24,5 @@ import java.util.concurrent.Future;
  * Created by baidu on 2017/9/23.
  */
 public interface EchoServiceAsync extends EchoService {
-    Future<Echo.EchoResponse> echo(Echo.EchoRequest request, RpcCallback<Echo.EchoResponse> callback);
+	Future<Echo.EchoResponse> echo(Echo.EchoRequest request, RpcCallback<Echo.EchoResponse> callback);
 }

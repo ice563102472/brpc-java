@@ -32,38 +32,38 @@ import java.util.concurrent.Future;
 @Setter
 @Getter
 public class EchoFacadeImpl implements EchoFacade {
-    @RpcProxy
-    private EchoService echoService;
+	@RpcProxy
+	private EchoService echoService;
 
-    @RpcProxy
-    private EchoService echoService2;
+	@RpcProxy
+	private EchoService echoService2;
 
-    @RpcProxy
-    private AsyncEchoService echoService3;
+	@RpcProxy
+	private AsyncEchoService echoService3;
 
-    public EchoResponse echo(EchoRequest request) {
-        System.out.println(echoService.hashCode());
-        return echoService.echo(request);
-    }
+	public EchoResponse echo(EchoRequest request) {
+		System.out.println(echoService.hashCode());
+		return echoService.echo(request);
+	}
 
-    public EchoResponse echo2(EchoRequest request) {
-        System.out.println(echoService2.hashCode());
-        return echoService2.echo(request);
-    }
+	public EchoResponse echo2(EchoRequest request) {
+		System.out.println(echoService2.hashCode());
+		return echoService2.echo(request);
+	}
 
-    public Future<EchoResponse> echo3(EchoRequest request) {
-        System.out.println(echoService3.hashCode());
-        Future<EchoResponse> future = echoService3.echo(request, new RpcCallback<EchoResponse>() {
-            @Override
-            public void success(EchoResponse response) {
-                System.out.println(response.getMessage());
-            }
+	public Future<EchoResponse> echo3(EchoRequest request) {
+		System.out.println(echoService3.hashCode());
+		Future<EchoResponse> future = echoService3.echo(request, new RpcCallback<EchoResponse>() {
+			@Override
+			public void success(EchoResponse response) {
+				System.out.println(response.getMessage());
+			}
 
-            @Override
-            public void fail(Throwable e) {
-                e.printStackTrace();
-            }
-        });
-        return future;
-    }
+			@Override
+			public void fail(Throwable e) {
+				e.printStackTrace();
+			}
+		});
+		return future;
+	}
 }

@@ -17,13 +17,13 @@ package com.baidu.brpc.example.stargate;
 
 public interface StargateDemoConstant {
 
-    String version = "1.0.0";
-    
-    String group = "normal";
+	String version = "1.0.0";
 
-    /**
-     * star 并无特殊含义，单纯只是长得像
-     */
-    String namingUrl = "star://127.0.0.1:2181/stargate";
+	String group = "normal";
+
+	/**
+	 * star 并无特殊含义，单纯只是长得像
+	 */
+	String namingUrl = "star://127.0.0.1:2181/stargate";
 
 }

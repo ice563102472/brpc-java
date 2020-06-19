@@ -50,7 +50,7 @@ public @interface RpcExporter {
      *
      * @return the string
      */
-    String interceptorBeanName() default "";
+    String interceptorBeanNames() default "";
 
     /**
      * Group for naming service

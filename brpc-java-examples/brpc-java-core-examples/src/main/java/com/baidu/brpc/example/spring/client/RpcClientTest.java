@@ -23,25 +23,25 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import java.util.concurrent.Future;
 
 public class RpcClientTest {
-    public static void main(String[] args) {
-        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(
-                "classpath:applicationContext.client.xml");
-        context.start();
+	public static void main(String[] args) {
+		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(
+				"classpath:applicationContext.client.xml");
+		context.start();
 
-        EchoFacade facade = context.getBean("echoFacadeImpl", EchoFacade.class);
-        EchoRequest request = new EchoRequest();
-        request.setMessage("hello");
-        EchoResponse response = facade.echo(request);
-        System.out.println(response.getMessage());
+		EchoFacade facade = context.getBean("echoFacadeImpl", EchoFacade.class);
+		EchoRequest request = new EchoRequest();
+		request.setMessage("hello");
+		EchoResponse response = facade.echo(request);
+		System.out.println(response.getMessage());
 
-        EchoResponse response2 = facade.echo2(request);
-        System.out.println(response2.getMessage());
+		EchoResponse response2 = facade.echo2(request);
+		System.out.println(response2.getMessage());
 
-        Future<EchoResponse> future = facade.echo3(request);
-        try {
-            future.get();
-        } catch (Exception ex) {
-            // ignore
-        }
-    }
+		Future<EchoResponse> future = facade.echo3(request);
+		try {
+			future.get();
+		} catch (Exception ex) {
+			// ignore
+		}
+	}
 }

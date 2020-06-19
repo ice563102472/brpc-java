@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright (c) 2018 Baidu, Inc. All Rights Reserved.
+  ~ Copyright (c) 2019 Baidu, Inc. All Rights Reserved.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -20,13 +20,12 @@
     <parent>
         <groupId>com.baidu</groupId>
         <artifactId>brpc-java-parent</artifactId>
-        <version>2.5.5</version>
-
+        <version>3.0.2-SNAPSHOT</version>
     </parent>
     <artifactId>brpc-spring-boot-starter</artifactId>
     <packaging>jar</packaging>
     <name>${project.artifactId}</name>
-    <description>The module for Spring extendsion</description>
+    <description>The module for Spring extension</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -42,13 +41,6 @@
                     <source>1.8</source>
                     <target>1.8</target>
                     <encoding>UTF-8</encoding>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                            <version>${lombok.version}</version>
-                        </path>
-                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
             <plugin>
@@ -93,15 +85,19 @@
             <groupId>com.baidu</groupId>
             <artifactId>brpc-spring</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 </project>

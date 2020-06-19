@@ -28,20 +28,20 @@ import org.junit.Test;
 public class RpcXmlConfigurationTest extends RpcXmlConfigurationTestBase {
 
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.baidu.jprotobuf.pbrpc.spring.RpcXmlConfigurationTestBase#getConfigurationPath()
-     */
-    @Override
-    protected String getConfigurationPath() {
-        return "classpath:" + RpcXmlConfigurationTest.class.getName().replace('.', '/') + ".xml";
-    }
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see com.baidu.jprotobuf.pbrpc.spring.RpcXmlConfigurationTestBase#getConfigurationPath()
+	 */
+	@Override
+	protected String getConfigurationPath() {
+		return "classpath:" + RpcXmlConfigurationTest.class.getName().replace('.', '/') + ".xml";
+	}
 
 
-    @Test
-    public void testRpcRequestAndResponse() {
-        EchoService echoService = context.getBean("echoServiceProxy", EchoService.class);
-        super.internalRpcRequestAndResponse(echoService);
-    }
+	@Test
+	public void testRpcRequestAndResponse() {
+		EchoService echoService = context.getBean("echoServiceProxy", EchoService.class);
+		super.internalRpcRequestAndResponse(echoService);
+	}
 }

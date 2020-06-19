@@ -23,29 +23,29 @@ import com.baidu.brpc.server.RpcServerOptions;
  * Created by wenweihu86 on 2017/4/25.
  */
 public class RpcServerTest {
-    public static void main(String[] args) {
-        int port = 8002;
-        if (args.length == 1) {
-            port = Integer.valueOf(args[0]);
-        }
+	public static void main(String[] args) {
+		int port = 8002;
+		if (args.length == 1) {
+			port = Integer.valueOf(args[0]);
+		}
 
-        RpcServerOptions options = new RpcServerOptions();
+		RpcServerOptions options = new RpcServerOptions();
 //        options.setAcceptorThreadNum(8);
 //        options.setIoThreadNum(32);
 //        options.setWorkThreadNum(80);
-        options.setReceiveBufferSize(64 * 1024 * 1024);
-        options.setSendBufferSize(64 * 1024 * 1024);
-        RpcServer rpcServer = new RpcServer(port, options);
-        rpcServer.registerService(new EchoServiceImpl());
-        rpcServer.start();
+		options.setReceiveBufferSize(64 * 1024 * 1024);
+		options.setSendBufferSize(64 * 1024 * 1024);
+		RpcServer rpcServer = new RpcServer(port, options);
+		rpcServer.registerService(new EchoServiceImpl());
+		rpcServer.start();
 
-        // make server keep running
-        synchronized (RpcServerTest.class) {
-            try {
-                RpcServerTest.class.wait();
-            } catch (Throwable e) {
-                // ignore
-            }
-        }
-    }
+		// make server keep running
+		synchronized (RpcServerTest.class) {
+			try {
+				RpcServerTest.class.wait();
+			} catch (Throwable e) {
+				// ignore
+			}
+		}
+	}
 }

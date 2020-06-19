@@ -26,7 +26,6 @@ import com.baidu.brpc.server.BrpcPushProxy;
 import com.baidu.brpc.server.RpcServer;
 import com.baidu.brpc.server.RpcServerOptions;
 import com.baidu.brpc.utils.GsonUtils;
-
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -35,62 +34,62 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class RpcServerPushTest {
 
-    public static void main(String[] args) throws InterruptedException {
-        int port = 8002;
-        if (args.length == 1) {
-            port = Integer.valueOf(args[0]);
-        }
+	public static void main(String[] args) throws InterruptedException {
+		int port = 8002;
+		if (args.length == 1) {
+			port = Integer.valueOf(args[0]);
+		}
 
-        RpcServerOptions options = new RpcServerOptions();
-        options.setReceiveBufferSize(64 * 1024 * 1024);
-        options.setSendBufferSize(64 * 1024 * 1024);
-        options.setKeepAliveTime(20);
-        options.setProtocolType(Options.ProtocolType.PROTOCOL_SERVER_PUSH_VALUE);
+		RpcServerOptions options = new RpcServerOptions();
+		options.setReceiveBufferSize(64 * 1024 * 1024);
+		options.setSendBufferSize(64 * 1024 * 1024);
+		options.setKeepAliveTime(20);
+		options.setProtocolType(Options.ProtocolType.PROTOCOL_SERVER_PUSH_VALUE);
 //        options.setNamingServiceUrl("zookeeper://127.0.0.1:2181");
 
-        final RpcServer rpcServer = new RpcServer(port, options);
-        rpcServer.registerService(new EchoServiceImpl());
-        rpcServer.registerService(new EchoService2Impl());
+		final RpcServer rpcServer = new RpcServer(port, options);
+		rpcServer.registerService(new EchoServiceImpl());
+		rpcServer.registerService(new EchoService2Impl());
 
-        // get push api
-        ServerSideUserPushApi proxyPushApi = BrpcPushProxy.getProxy(rpcServer, ServerSideUserPushApi.class);
-        rpcServer.start();
+		// get push api
+		ServerSideUserPushApi proxyPushApi = BrpcPushProxy.getProxy(rpcServer, ServerSideUserPushApi.class);
+		rpcServer.start();
 
-        // wait until the client connected to server
-        while (!EchoServiceImpl.clientStarted || !EchoService2Impl.client2Started) {
-            Thread.sleep(1000);
-        }
+		// wait until the client connected to server
+		while (!EchoServiceImpl.clientStarted || !EchoService2Impl.client2Started) {
+			Thread.sleep(1000);
+		}
 
-        // test clientname exist or not
-        try {
-            PushData p1 = new PushData();
-            p1.setData("hellooooo");
-            PushResult pushResultI = proxyPushApi.clientReceive("c3","c3", p1);
-            log.info("push result: {}" , GsonUtils.toJson(pushResultI) );
-        } catch (Exception e) {
-            log.error("case one--clientname not exist, exception: {}", e.getMessage());
-        }
+		// test clientname exist or not
+		try {
+			PushData p1 = new PushData();
+			p1.setData("hellooooo");
+			PushResult pushResultI = proxyPushApi.clientReceive("c3", "c3", p1);
+			log.info("push result: {}", GsonUtils.toJson(pushResultI));
+		} catch (Exception e) {
+			log.error("case one--clientname not exist, exception: {}", e.getMessage());
+		}
 
-        // push data to 2 clients : "c1" and "c2"
-        int i = 0;
-        while (true) {
-            i++;
-            PushData p = new PushData();
-            p.setData("pushData" + i);
-            int index = i % 2 + 1;
-            String clientName = "c" + index;
-            String extra = "c" + (index + 100);
-            log.info("pushing data to client:" + clientName);
-            try {
-                // last param of api is clientName
-                PushResult pushResult = proxyPushApi.clientReceive(clientName, extra, p);
-                log.info("received push result:" + GsonUtils.toJson(pushResult));
-            } catch (Exception e) {
-                log.error("push exception , please start up client c1 and c2", e);
-            }
+		// push data to 2 clients : "c1" and "c2"
+		int i = 0;
+		while (true) {
+			i++;
+			PushData p = new PushData();
+			p.setData("pushData" + i);
+			int index = i % 2 + 1;
+			String clientName = "c" + index;
+			String extra = "c" + (index + 100);
+			log.info("pushing data to client:" + clientName);
+			try {
+				// last param of api is clientName
+				PushResult pushResult = proxyPushApi.clientReceive(clientName, extra, p);
+				log.info("received push result:" + GsonUtils.toJson(pushResult));
+			} catch (Exception e) {
+				log.error("push exception , please start up client c1 and c2", e);
+			}
 
-            Thread.sleep(1000);
-        }
+			Thread.sleep(1000);
+		}
 
-    }
+	}
 }

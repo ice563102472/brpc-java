@@ -25,15 +25,15 @@ import org.slf4j.LoggerFactory;
 
 @RpcExporter
 public class EchoServiceImpl implements EchoService {
-    private static final Logger LOG = LoggerFactory.getLogger(EchoServiceImpl.class);
+	private static final Logger LOG = LoggerFactory.getLogger(EchoServiceImpl.class);
 
-    @Override
-    public EchoResponse echo(EchoRequest request) {
-        String message = request.getMessage();
-        EchoResponse response = new EchoResponse();
-        response.setMessage(message);
-        LOG.debug("EchoService.echo, request={}, response={}",
-                request.getMessage(), response.getMessage());
-        return response;
-    }
+	@Override
+	public EchoResponse echo(EchoRequest request) {
+		String message = request.getMessage();
+		EchoResponse response = new EchoResponse();
+		response.setMessage(message);
+		LOG.debug("EchoService.echo, request={}, response={}",
+				request.getMessage(), response.getMessage());
+		return response;
+	}
 }

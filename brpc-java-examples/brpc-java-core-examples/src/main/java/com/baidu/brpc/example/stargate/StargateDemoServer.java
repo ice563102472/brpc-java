@@ -15,35 +15,35 @@
  */
 package com.baidu.brpc.example.stargate;
 
-import com.baidu.brpc.naming.NamingOptions;
+import com.baidu.brpc.protocol.NamingOptions;
 import com.baidu.brpc.protocol.Options;
 import com.baidu.brpc.server.RpcServer;
 import com.baidu.brpc.server.RpcServerOptions;
 
 public class StargateDemoServer {
 
-    public static void main(String[] args) {
-        RpcServerOptions serverOptions = new RpcServerOptions();
-        serverOptions.setProtocolType(Options.ProtocolType.PROTOCOL_STARGATE_VALUE);
-        serverOptions.setNamingServiceUrl(StargateDemoConstant.namingUrl);
+	public static void main(String[] args) {
+		RpcServerOptions serverOptions = new RpcServerOptions();
+		serverOptions.setProtocolType(Options.ProtocolType.PROTOCOL_STARGATE_VALUE);
+		serverOptions.setNamingServiceUrl(StargateDemoConstant.namingUrl);
 
-        RpcServer rpcServer = new RpcServer(8898, serverOptions);
-        StargateDemoService demoService = new StargateDemoServiceImpl();
+		RpcServer rpcServer = new RpcServer(8898, serverOptions);
+		StargateDemoService demoService = new StargateDemoServiceImpl();
 
-        NamingOptions namingOptions = new NamingOptions();
-        namingOptions.setGroup(StargateDemoConstant.group);
-        namingOptions.setVersion(StargateDemoConstant.version);
+		NamingOptions namingOptions = new NamingOptions();
+		namingOptions.setGroup(StargateDemoConstant.group);
+		namingOptions.setVersion(StargateDemoConstant.version);
 
-        rpcServer.registerService(demoService, namingOptions);
-        rpcServer.start();
+		rpcServer.registerService(demoService, namingOptions);
+		rpcServer.start();
 
-        // make server keep running
-        synchronized (StargateDemoServer.class) {
-            try {
-                StargateDemoServer.class.wait();
-            } catch (Throwable e) {
-            }
-        }
-    }
+		// make server keep running
+		synchronized (StargateDemoServer.class) {
+			try {
+				StargateDemoServer.class.wait();
+			} catch (Throwable e) {
+			}
+		}
+	}
 
 }

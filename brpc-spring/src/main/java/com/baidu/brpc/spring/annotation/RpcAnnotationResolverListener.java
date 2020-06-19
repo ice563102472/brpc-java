@@ -30,14 +30,14 @@ public interface RpcAnnotationResolverListener {
 	/**
 	 * This method will called after {@link RpcExporter} annotation parsed.
 	 *
-	 * @param rpcExporter {@link RpcExporter} annotation
-	 * @param port real port
-	 * @param bean target bean
+	 * @param rpcExporter      {@link RpcExporter} annotation
+	 * @param port             real port
+	 * @param bean             target bean
 	 * @param registerServices registered service list
 	 */
 	void onRpcExporterAnnotationParsered(RpcExporter rpcExporter, int port, Object bean, List<Object> registerServices);
 
-	
+
 	/**
 	 * Destroy.
 	 */
@@ -47,13 +47,12 @@ public interface RpcAnnotationResolverListener {
 	/**
 	 * This method will called after {@link RpcProxy} annotation parsed.
 	 *
-	 * @param rpcProxy {@link RpcProxy} annotation
+	 * @param rpcProxy               {@link RpcProxy} annotation
 	 * @param newRpcProxyFactoryBean a new created {@link RpcProxyFactoryBean}
-	 * @param object target PROXY bean for this {@link RpcProxy} annotation delegated
+	 * @param object                 target PROXY bean for this {@link RpcProxy} annotation delegated
 	 */
 	void onRpcProxyAnnotationParsed(RpcProxy rpcProxy, RpcProxyFactoryBean newRpcProxyFactoryBean, Object object);
-	
-	
-	
+
+
 }
 

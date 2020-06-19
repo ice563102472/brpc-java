@@ -26,8 +26,8 @@ import org.springframework.context.annotation.Import;
 @Import({BeanPostProcessorRegister.class, RpcExporterRegister.class})
 public class BrpcAutoConfiguration {
 
-    @Bean
-    public BrpcApplicationContextUtils brpcApplicationContextUtils() {
-        return new BrpcApplicationContextUtils();
-    }
+	@Bean
+	public BrpcApplicationContextUtils brpcApplicationContextUtils() {
+		return new BrpcApplicationContextUtils();
+	}
 }

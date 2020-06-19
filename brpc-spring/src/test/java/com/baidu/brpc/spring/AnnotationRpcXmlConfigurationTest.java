@@ -24,51 +24,47 @@ import org.junit.Test;
  */
 public class AnnotationRpcXmlConfigurationTest extends RpcXmlConfigurationTestBase {
 
-    protected String getConfigurationPath() {
-        return "classpath:" + AnnotationRpcXmlConfigurationTest.class.getName().replace('.', '/') +
-               ".xml";
-    }
+	protected String getConfigurationPath() {
+		return "classpath:" + AnnotationRpcXmlConfigurationTest.class.getName().replace('.', '/') + ".xml";
+	}
 
-    @Test
-    public void testCommonRpcRequest() {
+	@Test
+	public void testCommonRpcRequest() {
 
-        AnnotationEchoServiceClient annotationEchoServiceClient =
-                (AnnotationEchoServiceClient) context.getBean("echoServiceClient",
-                                                              AnnotationEchoServiceClient.class);
+		AnnotationEchoServiceClient annotationEchoServiceClient =
+				(AnnotationEchoServiceClient) context.getBean("echoServiceClient", AnnotationEchoServiceClient.class);
 
-        // test common client
-        super.internalRpcRequestAndResponse(annotationEchoServiceClient.getEchoService());
+		// test common client
+		super.internalRpcRequestAndResponse(annotationEchoServiceClient.getEchoService());
 
-    }
+	}
 
-    @Test
-    public void testHaRpcRequest() {
+	@Test
+	public void testHaRpcRequest() {
 
-        AnnotationEchoServiceClient annotationEchoServiceClient =
-                (AnnotationEchoServiceClient) context.getBean("echoServiceClient",
-                                                              AnnotationEchoServiceClient.class);
+		AnnotationEchoServiceClient annotationEchoServiceClient =
+				(AnnotationEchoServiceClient) context.getBean("echoServiceClient", AnnotationEchoServiceClient.class);
 
-        // test ha client
-        super.internalRpcRequestAndResponse(annotationEchoServiceClient.getEchoService());
+		// test ha client
+		super.internalRpcRequestAndResponse(annotationEchoServiceClient.getEchoService());
 
-    }
+	}
 
-    @Test
-    public void testHaRpcRequestWithPartialFailed() {
+	@Test
+	public void testHaRpcRequestWithPartialFailed() {
 
-        AnnotationEchoServiceClient annotationEchoServiceClient =
-                (AnnotationEchoServiceClient) context.getBean("echoServiceClient",
-                                                              AnnotationEchoServiceClient.class);
+		AnnotationEchoServiceClient annotationEchoServiceClient =
+				(AnnotationEchoServiceClient) context.getBean("echoServiceClient", AnnotationEchoServiceClient.class);
 
-        // test ha client
-        super.internalRpcRequestAndResponse(annotationEchoServiceClient.getEchoService());
-    }
+		// test ha client
+		super.internalRpcRequestAndResponse(annotationEchoServiceClient.getEchoService());
+	}
 
-    protected void internalRpcRequestAndResponseTimeout(EchoService echoService) {
-        EchoRequest echo = new EchoRequest();
-        echo.setMessage("world");
+	protected void internalRpcRequestAndResponseTimeout(EchoService echoService) {
+		EchoRequest echo = new EchoRequest();
+		echo.setMessage("world");
 
-        EchoResponse response = echoService.echo(echo);
-        Assert.assertEquals("world", response.getMessage());
-    }
+		EchoResponse response = echoService.echo(echo);
+		Assert.assertEquals("world", response.getMessage());
+	}
 }

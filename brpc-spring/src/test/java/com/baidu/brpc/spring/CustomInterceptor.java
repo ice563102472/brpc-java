@@ -23,22 +23,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CustomInterceptor extends AbstractInterceptor {
-    private static final Logger LOG = LoggerFactory.getLogger(CustomInterceptor.class);
+	private static final Logger LOG = LoggerFactory.getLogger(CustomInterceptor.class);
 
-    @Override
-    public boolean handleRequest(Request rpcRequest) {
-        LOG.info("request intercepted, logId={}, service={}, method={}",
-                 rpcRequest.getLogId(),
-                 rpcRequest.getTarget().getClass().getSimpleName(),
-                 rpcRequest.getTargetMethod().getName());
-        return true;
-    }
+	public boolean handleRequest(Request rpcRequest) {
+		LOG.info("request intercepted, logId={}, service={}, method={}",
+				rpcRequest.getLogId(),
+				rpcRequest.getTarget().getClass().getSimpleName(),
+				rpcRequest.getTargetMethod().getName());
+		return true;
+	}
 
-    @Override
-    public void handleResponse(Response response) {
-        if (response != null) {
-            LOG.info("reponse intercepted, logId={}, result={}",
-                     response.getLogId(), response.getResult());
-        }
-    }
+	public void handleResponse(Response response) {
+		if (response != null) {
+			LOG.info("reponse intercepted, logId={}, result={}",
+					response.getLogId(), response.getResult());
+		}
+	}
 }

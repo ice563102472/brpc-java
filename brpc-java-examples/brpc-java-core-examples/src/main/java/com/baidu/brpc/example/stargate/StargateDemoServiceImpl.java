@@ -27,40 +27,40 @@ import java.util.Map;
 @Slf4j
 public class StargateDemoServiceImpl implements StargateDemoService {
 
-    @Override
-    public StargateDemoResDto call(StargateDemoReqDto reqDto) {
-        if (log.isDebugEnabled()) {
-            log.debug("rev from server {}", GsonUtils.toJson(reqDto));
-            RpcContext rpcContext = RpcContext.getContext();
-            Map<String, Object> attachment = rpcContext.getRequestKvAttachment();
-            if (attachment != null) {
-                log.info("request attachment:{}", attachment.get("key"));
-                rpcContext.setResponseKvAttachment("resKey", attachment.get("key"));
-            }
-        }
-        return StargateDemoResDto.builder().id(reqDto.getId()).name(reqDto.getName()).build();
-    }
+	@Override
+	public StargateDemoResDto call(StargateDemoReqDto reqDto) {
+		if (log.isDebugEnabled()) {
+			log.debug("rev from server {}", GsonUtils.toJson(reqDto));
+			RpcContext rpcContext = RpcContext.getContext();
+			Map<String, Object> attachment = rpcContext.getRequestKvAttachment();
+			if (attachment != null) {
+				log.info("request attachment:{}", attachment.get("key"));
+				rpcContext.setResponseKvAttachment("resKey", attachment.get("key"));
+			}
+		}
+		return StargateDemoResDto.builder().id(reqDto.getId()).name(reqDto.getName()).build();
+	}
 
-    @Override
-    public List<StargateDemoResDto> list(StargateDemoReqDto reqDto) {
-        if (log.isDebugEnabled()) {
-            log.info("rev from server {}", GsonUtils.toJson(reqDto));
-        }
-        List<StargateDemoResDto> list = new ArrayList<StargateDemoResDto>();
-        for (int i = 0; i < reqDto.getId(); i++) {
-            list.add(StargateDemoResDto.builder().id(reqDto.getId()).name(reqDto.getName()).build());
-        }
-        return list;
-    }
+	@Override
+	public List<StargateDemoResDto> list(StargateDemoReqDto reqDto) {
+		if (log.isDebugEnabled()) {
+			log.info("rev from server {}", GsonUtils.toJson(reqDto));
+		}
+		List<StargateDemoResDto> list = new ArrayList<StargateDemoResDto>();
+		for (int i = 0; i < reqDto.getId(); i++) {
+			list.add(StargateDemoResDto.builder().id(reqDto.getId()).name(reqDto.getName()).build());
+		}
+		return list;
+	}
 
-    @Override
-    public Map<Long, StargateDemoResDto> map(StargateDemoReqDto reqDto) {
-        if (log.isDebugEnabled()) {
-            log.info("rev from server {}", GsonUtils.toJson(reqDto));
-        }
-        Map<Long, StargateDemoResDto> map = new HashMap<Long, StargateDemoResDto>();
-        StargateDemoResDto build = StargateDemoResDto.builder().id(reqDto.getId()).name(reqDto.getName()).build();
-        map.put(reqDto.getId(), build);
-        return map;
-    }
+	@Override
+	public Map<Long, StargateDemoResDto> map(StargateDemoReqDto reqDto) {
+		if (log.isDebugEnabled()) {
+			log.info("rev from server {}", GsonUtils.toJson(reqDto));
+		}
+		Map<Long, StargateDemoResDto> map = new HashMap<Long, StargateDemoResDto>();
+		StargateDemoResDto build = StargateDemoResDto.builder().id(reqDto.getId()).name(reqDto.getName()).build();
+		map.put(reqDto.getId(), build);
+		return map;
+	}
 }
